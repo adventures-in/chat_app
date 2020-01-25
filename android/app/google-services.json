@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "487707907739",
+    "firebase_url": "https://adventures-in.firebaseio.com",
+    "project_id": "adventures-in",
+    "storage_bucket": "adventures-in.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487707907739:android:1c4e72f8b262cd4f50d83e",
+        "android_client_info": {
+          "package_name": "network.adventuresin.meetup_chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487707907739-rk62ma4kqprvmis80m0hbdn10hegiskl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "network.adventuresin.meetup_chatapp",
+            "certificate_hash": "86df0f019f75f4403833cab147ed2d1b944892b7"
+          }
+        },
+        {
+          "client_id": "487707907739-j52128dc64rcottv0flg64djqfveos7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwdLAHWJ1OHJGIzcGfMI0L7l85jiG95mI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487707907739-j52128dc64rcottv0flg64djqfveos7j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "487707907739-084c8ksdv5gmha7m143rn01gl7r7tgum.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "network.adventuresin.meetupChatapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
