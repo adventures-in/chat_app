@@ -11,14 +11,7 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(username),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            // Navigate back to first route when tapped.
-          },
-          child: Text('Go back!'),
-        ),
-      ),
+      body: Center(),
     );
   }
 }
