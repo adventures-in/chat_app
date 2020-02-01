@@ -119,7 +119,10 @@ class _ConversationListState extends State<ConversationList> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChatPage()),
+                    MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                              username: userNames[index],
+                            )),
                   );
                 },
               );
