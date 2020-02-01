@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
-List<String> options = ["View Profile", "Message Requests", "Account Settings", "Logout"];
-List<Icon> icons = [Icon(Icons.account_circle, size: 45), Icon(Icons.textsms, size: 45), Icon(Icons.exit_to_app, size: 45)];
+List<String> options = [
+  "View Profile",
+  "Message Requests",
+  "Account Settings",
+  "Logout"
+];
+List<Icon> icons = [
+  Icon(Icons.account_circle, size: 45),
+  Icon(Icons.textsms, size: 45),
+  Icon(Icons.settings, size: 45),
+  Icon(Icons.exit_to_app, size: 45)
+];
 
 class optionsPage extends StatefulWidget {
   @override
@@ -11,8 +21,8 @@ class optionsPage extends StatefulWidget {
 class _optionsPageState extends State<optionsPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
+    return Scaffold(
+      body: Center(
         child: ListView.builder(
             itemCount: options.length,
             itemBuilder: (BuildContext context, int index) {
@@ -20,8 +30,7 @@ class _optionsPageState extends State<optionsPage> {
                 leading: icons[index],
                 title: Text(options[(index)]),
               );
-            }
-        ),
+            }),
       ),
     );
   }
