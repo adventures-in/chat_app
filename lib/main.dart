@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'chat_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -97,28 +98,33 @@ class ConversationList extends StatefulWidget {
 }
 
 class _ConversationListState extends State<ConversationList> {
-
-  List<String> userNames = ["Chirs David", "Brin Page", "Harry Shanes"];
-  List<String> mockMessages = ["Hey there,", "Message me when free.", "Happy Birthday !"];
+  List<String> userNames = ["Chirs David", "Brin Page", "Harry Shane"];
+  List<String> mockMessages = [
+    "Hey there,",
+    "Message me when free.",
+    "Happy Birthday !"
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-
         child: ListView.builder(
-          itemCount: userNames.length,
-          itemBuilder: (BuildContext context, int index) {
-            return new ListTile(
-              leading: Icon(Icons.account_circle, size: 45),
-              title: Text(userNames[index]),
-              subtitle: Text(mockMessages[index]),
-            );
-          }
-        ),
-
+            itemCount: userNames.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new ListTile(
+                leading: Icon(Icons.account_circle, size: 45),
+                title: Text(userNames[index]),
+                subtitle: Text(mockMessages[index]),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatPage()),
+                  );
+                },
+              );
+            }),
       ),
     );
   }
 }
-
