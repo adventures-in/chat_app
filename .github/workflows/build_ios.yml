@@ -1,4 +1,4 @@
-name: A workflow to build iOS app
+name: Build iOS App
 
 on:
   push:
@@ -18,4 +18,4 @@ jobs:
       with:
         channel: 'dev' # or: 'stable' or 'beta'
     - run: flutter pub get
-    - run: flutter build ios
+    - run: flutter build ios --release --no-codesign
