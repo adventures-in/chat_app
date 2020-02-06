@@ -1,0 +1,21 @@
+name: A workflow to build iOS app
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: 'dev' # or: 'stable' or 'beta'
+    - run: flutter pub get
+    - run: flutter build ios
