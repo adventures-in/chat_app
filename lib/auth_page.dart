@@ -103,13 +103,14 @@ Stream<int> _facebookSignin(BuildContext context) async* {
         /// the auth info will be picked up by the listener on [onAuthStateChanged]
         /// and emitted by [streamOfStateChanges]
         
+        // signal to change UI
+        yield 2;
+
         final credential = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
         await _fireAuth.signInWithCredential(credential);
 
-        // final credential = GoogleAuthProvider.getCredential(
-        //   accessToken: googleAuth.accessToken,
-        //   idToken: googleAuth.idToken,
-        // );
+        // we are signed in so reset the UI
+        yield 0;
         break;
       case FacebookLoginStatus.cancelledByUser:
         // _showCancelledMessage();
@@ -121,8 +122,6 @@ Stream<int> _facebookSignin(BuildContext context) async* {
         break;
     }
 
-    // we are signed in so reset the UI
-    yield 0;
   } catch (error, trace) {
     // reset the UI and display an alert
 
