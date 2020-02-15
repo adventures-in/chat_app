@@ -53,11 +53,8 @@
 				<string>com.googleusercontent.apps.487707907739-084c8ksdv5gmha7m143rn01gl7r7tgum</string>
 			</array>
 		</dict>
-	</array>
-	<!-- End of the Google Sign-in Section -->
-	<!-- Facebook Sign-in Section-->
-	<key>CFBundleURLTypes</key>
-	<array>
+		<!-- End of the Google Sign-in Section -->
+		<!-- Facebook Sign-in Section-->
 		<!--
 		<dict>
 		... Some other CFBundleURLTypes definition.
