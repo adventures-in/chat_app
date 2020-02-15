@@ -2,9 +2,9 @@
 
 A Chat App for Adventures in Flutter.
 
-## Missing Files 
+## Missing Files
 
-### Firebase Config 
+### Firebase Config
 
 Get `GoogleService-Info.plist` and `google-services.json` from the [Shared Project Folder](https://drive.google.com/drive/folders/1URxuILxk8NR66DIRbuERFDXIILCX6jM2?usp=sharing)
 
