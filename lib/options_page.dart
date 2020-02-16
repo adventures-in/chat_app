@@ -1,37 +1,64 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-List<String> options = [
-  "View Profile",
-  "Message Requests",
-  "Account Settings",
-  "Logout"
-];
-List<Icon> icons = [
-  Icon(Icons.account_circle, size: 45),
-  Icon(Icons.textsms, size: 45),
-  Icon(Icons.settings, size: 45),
-  Icon(Icons.exit_to_app, size: 45)
-];
-
-class optionsPage extends StatefulWidget {
-  @override
-  _optionsPageState createState() => _optionsPageState();
-}
-
-class _optionsPageState extends State<optionsPage> {
+class OptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ListView.builder(
-            itemCount: options.length,
-            itemBuilder: (BuildContext context, int index) {
-              return new ListTile(
-                leading: icons[index],
-                title: Text(options[(index)]),
-              );
-            }),
-      ),
-    );
+        appBar: AppBar(),
+        body: ListView(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.account_circle, size: 32),
+              title: Text("View Profile"),
+              onTap: () {
+                debugPrint("Not yet implemented");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.textsms, size: 32),
+              title: Text("Message Requests"),
+              onTap: () {
+                debugPrint("Not yet implemented");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app,
+                  size: 32, color: Theme.of(context).errorColor),
+              title: Text("Logout",
+                  style: TextStyle(color: Theme.of(context).errorColor)),
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        title: const Text("Logout"),
+                        content: const Text("Are you sure you want to logout?"),
+                        actions: <Widget>[
+                          FlatButton(
+                              child: Text("CANCEL"),
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                              }),
+                          FlatButton(
+                            child: Text("LOGOUT",
+                                style: TextStyle(
+                                    color: Theme.of(context).errorColor)),
+                            onPressed: () async {
+                              await FirebaseAuth.instance.signOut();
+
+                              Navigator.pop(dialogContext);
+                              Navigator.pop(
+                                  context); // TODO remove this once the navigation has been switched to a bottom app bar
+                            },
+                          )
+                        ],
+                      );
+                    });
+              },
+            ),
+          ],
+        ));
   }
 }
