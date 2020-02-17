@@ -7,18 +7,18 @@ class OptionsPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(),
         body: ListView(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           children: <Widget>[
             ListTile(
-              leading: Icon(Icons.account_circle, size: 32),
-              title: Text("View Profile"),
+              leading: const Icon(Icons.account_circle, size: 32),
+              title: const Text("View Profile"),
               onTap: () {
                 debugPrint("Not yet implemented");
               },
             ),
             ListTile(
-              leading: Icon(Icons.textsms, size: 32),
-              title: Text("Message Requests"),
+              leading: const Icon(Icons.textsms, size: 32),
+              title: const Text("Message Requests"),
               onTap: () {
                 debugPrint("Not yet implemented");
               },
@@ -37,7 +37,7 @@ class OptionsPage extends StatelessWidget {
                         content: const Text("Are you sure you want to logout?"),
                         actions: <Widget>[
                           FlatButton(
-                              child: Text("CANCEL"),
+                              child: const Text("CANCEL"),
                               onPressed: () {
                                 Navigator.pop(dialogContext);
                               }),
