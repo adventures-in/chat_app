@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meetup_chatapp/chat_page.dart';
-import 'package:meetup_chatapp/auth_page.dart';
+import 'package:meetup_chatapp/options_page.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override
@@ -12,13 +12,12 @@ class ConversationsPage extends StatelessWidget {
         leading: Icon(Icons.account_circle, size: 50),
         title: Text("Adventures.in Messenger"),
         actions: <Widget>[
-          IconButton(onPressed: (){
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AuthPage()),
-            );
-          }, icon: Icon(Icons.exit_to_app, size: 40)),
+          IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OptionsPage()));
+              }),
         ],
       ),
 

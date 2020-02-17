@@ -12,3 +12,9 @@ Add them to your project at:
 
 - `ios/Runner/GoogleService-Info.plist`
 - `android/app/google-services.json`
+
+iOS clean script
+
+``` sh
+cd ios/; rm -rf ~/Library/Caches/CocoaPods Pods ~/Library/Developer/Xcode/DerivedData/*; pod deintegrate; pod setup; pod install;
+```
