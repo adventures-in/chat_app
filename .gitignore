@@ -39,3 +39,5 @@ lib/generated_plugin_registrant.dart
 # don't add project credentials to version control
 ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
+
+ios/Build/
