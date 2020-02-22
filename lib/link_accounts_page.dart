@@ -28,7 +28,7 @@ class LinkAccountsPage extends StatelessWidget {
                           });
                         },
                       ),
-                    if (!_hasLinkedProvider('facebook', user.providerData))
+                    if (!_hasLinkedProvider('facebook.com', user.providerData))
                       FacebookSignInButton(
                         onPressed: () {
                           _linkFacebook(context, user).listen((event) {

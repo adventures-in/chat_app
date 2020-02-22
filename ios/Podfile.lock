@@ -254,6 +254,10 @@ PODS:
     - GoogleUtilities/Environment (~> 6.5)
     - GoogleUtilities/UserDefaults (~> 6.5)
   - Flutter (1.0.0)
+  - flutter_facebook_login (0.0.1):
+    - FBSDKCoreKit (~> 5.5)
+    - FBSDKLoginKit (~> 5.5)
+    - Flutter
   - google_sign_in (0.0.1):
     - Flutter
     - GoogleSignIn (~> 5.0)
@@ -329,6 +333,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
   - Flutter (from `Flutter`)
+  - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - google_sign_in_web (from `.symlinks/plugins/google_sign_in_web/ios`)
 
@@ -337,6 +342,8 @@ SPEC REPOS:
     - abseil
     - AppAuth
     - BoringSSL-GRPC
+    - FBSDKCoreKit
+    - FBSDKLoginKit
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -371,6 +378,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core_web/ios"
   Flutter:
     :path: Flutter
+  flutter_facebook_login:
+    :path: ".symlinks/plugins/flutter_facebook_login/ios"
   google_sign_in:
     :path: ".symlinks/plugins/google_sign_in/ios"
   google_sign_in_web:
@@ -397,6 +406,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 575cd32f2aec0feeb0e44f5d0110a09e5e60b47b
   FirebaseInstanceID: 6668efc1655a4052c083f287a7141f1ead12f9c2
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
   google_sign_in: decaf71f56e22fb1dc179de062177ae6df415716
   google_sign_in_web: 52deb24929ac0992baff65c57956031c44ed44c3
   GoogleAppMeasurement: a08a43b8677b95ed51fcef880e36737334d804fd
