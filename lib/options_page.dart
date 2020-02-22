@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:meetup_chatapp/profile_page.dart';
 
 class OptionsPage extends StatelessWidget {
   @override
@@ -13,7 +14,10 @@ class OptionsPage extends StatelessWidget {
               leading: const Icon(Icons.account_circle, size: 32),
               title: const Text("View Profile"),
               onTap: () {
-                debugPrint("Not yet implemented");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
               },
             ),
             ListTile(
