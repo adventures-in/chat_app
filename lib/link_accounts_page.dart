@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LinkAccountsPage extends StatelessWidget {
@@ -29,7 +30,11 @@ class LinkAccountsPage extends StatelessWidget {
                       ),
                     if (!_hasLinkedProvider('facebook', user.providerData))
                       FacebookSignInButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _linkFacebook(context, user).listen((event) {
+                            print(event);
+                          });
+                        },
                       ),
                   ],
                 ),
@@ -51,7 +56,6 @@ bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
 
 Stream<int> _linkGoogle(BuildContext context, FirebaseUser user) async* {
   try {
-    
     final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>['email']);
     final _googleUser = await _googleSignIn.signIn();
 
@@ -72,7 +76,7 @@ Stream<int> _linkGoogle(BuildContext context, FirebaseUser user) async* {
       idToken: googleAuth.idToken,
     );
 
-    user.linkWithCredential(credential);
+    await user.linkWithCredential(credential);
 
     // we are linked so reset the UI
     yield 0;
@@ -83,6 +87,44 @@ Stream<int> _linkGoogle(BuildContext context, FirebaseUser user) async* {
     // errors with code kSignInCanceledError are swallowed by the
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
+    _showDialog(context, error.toString());
+  }
+}
+
+Stream<int> _linkFacebook(BuildContext context, FirebaseUser user) async* {
+  try {
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+
+        /// the auth info will be picked up by the listener on [onAuthStateChanged]
+        /// and emitted by [streamOfStateChanges]
+
+        // signal to change UI
+        yield 2;
+
+        final credential = FacebookAuthProvider.getCredential(
+            accessToken: result.accessToken.token);
+
+        await user.linkWithCredential(credential);
+
+        // we are signed in so reset the UI
+        yield 0;
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        yield 0;
+        break;
+      case FacebookLoginStatus.error:
+        yield 0;
+        throw result.errorMessage;
+        break;
+    }
+  } catch (error) {
+    // reset the UI and display an alert
+
+    yield 0;
     _showDialog(context, error.toString());
   }
 }
