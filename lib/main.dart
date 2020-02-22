@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meetup_chatapp/auth_page.dart';
 import 'package:meetup_chatapp/conversations_page.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return ConversationsPage();
+              return Provider<FirebaseUser>.value(
+                value: snapshot.data as FirebaseUser,
+                child: ConversationsPage(),
+              );
             } else {
               return AuthPage();
             }
