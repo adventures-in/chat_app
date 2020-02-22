@@ -41,9 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<!-- Google Sign-in Section -->
 	<key>CFBundleURLTypes</key>
 	<array>
+		<!-- Google Sign-in Section -->
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -53,7 +53,36 @@
 				<string>com.googleusercontent.apps.487707907739-084c8ksdv5gmha7m143rn01gl7r7tgum</string>
 			</array>
 		</dict>
+		<!-- End of the Google Sign-in Section -->
+		<!-- Facebook Sign-in Section-->
+		<!--
+		<dict>
+		... Some other CFBundleURLTypes definition.
+		</dict>
+		-->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- This is our Facebook App ID here -->
+				<string>fb219671022403094</string>
+			</array>
+		</dict>
 	</array>
-	<!-- End of the Google Sign-in Section -->
+
+	<key>FacebookAppID</key>
+
+	<string>219671022403094</string>
+	<key>FacebookDisplayName</key>
+
+	<string>Adventures In Chat App</string>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+	<!-- End of Facebook Sign-in Section-->
 </dict>
 </plist>
