@@ -22,7 +22,7 @@ class LinkAccountsPage extends StatelessWidget {
                     if (!_hasLinkedProvider('google.com', user.providerData))
                       GoogleSignInButton(
                         onPressed: () async {
-                          _signin(context).listen((event) {
+                          _linkGoogle(context, user).listen((event) {
                             print(event);
                           });
                         },
@@ -49,9 +49,9 @@ bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
   return false;
 }
 
-Stream<int> _signin(BuildContext context) async* {
+Stream<int> _linkGoogle(BuildContext context, FirebaseUser user) async* {
   try {
-    final _fireAuth = FirebaseAuth.instance;
+    
     final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>['email']);
     final _googleUser = await _googleSignIn.signIn();
 
@@ -72,32 +72,30 @@ Stream<int> _signin(BuildContext context) async* {
       idToken: googleAuth.idToken,
     );
 
-    /// the auth info will be picked up by the listener on [onAuthStateChanged]
-    /// and emitted by [streamOfStateChanges]
-    await _fireAuth.signInWithCredential(credential);
+    user.linkWithCredential(credential);
 
-    // we are signed in so reset the UI
+    // we are linked so reset the UI
     yield 0;
-  } catch (error, trace) {
+  } catch (error) {
     // reset the UI and display an alert
 
     yield 0;
     // errors with code kSignInCanceledError are swallowed by the
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
-    _showDialog(context);
+    _showDialog(context, error.toString());
   }
 }
 
-void _showDialog(BuildContext context) {
+void _showDialog(BuildContext context, String errorMessage) {
   // flutter defined function
   showDialog(
     context: context,
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title: new Text("Alert Dialog title"),
-        content: new Text("Alert Dialog body"),
+        title: Text("There was a problem"),
+        content: Text(errorMessage),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
           new FlatButton(
