@@ -79,7 +79,7 @@ Stream<int> _googleSignin(BuildContext context) async* {
     // errors with code kSignInCanceledError are swallowed by the
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
-    _showDialog(context);
+    _showDialog(context, error.toString());
   }
 }
 
@@ -119,6 +119,7 @@ Stream<int> _facebookSignin(BuildContext context) async* {
       case FacebookLoginStatus.error:
         // _showErrorOnUI(result.errorMessage);
         yield 0;
+        throw result.errorMessage;
         break;
     }
 
@@ -129,11 +130,11 @@ Stream<int> _facebookSignin(BuildContext context) async* {
     // errors with code kSignInCanceledError are swallowed by the
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
-    _showDialog(context);
+    _showDialog(context, error.toString());
   }
 }
 
-void _showDialog(BuildContext context) {
+void _showDialog(BuildContext context, String errorMessage) {
   // flutter defined function
   showDialog(
     context: context,
@@ -141,7 +142,7 @@ void _showDialog(BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
         title: new Text("Alert Dialog title"),
-        content: new Text("Alert Dialog body"),
+        content: new Text(errorMessage),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
           new FlatButton(
