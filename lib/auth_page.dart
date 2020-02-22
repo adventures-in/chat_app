@@ -25,21 +25,9 @@ class AuthPage extends StatelessWidget {
               });
             }
           ),
-          IconButton(onPressed: (){
-            _signoutAll();
-          }, icon: Icon(Icons.exit_to_app, size: 40)),
         ],
       ),
     );
-  }
-}
-
-void _googleSignout() {
-  try {
-    final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>['email']);
-    _googleSignIn.signOut();
-  } catch (error, trace) {
-    // reset the UI and display an alert
   }
 }
 
@@ -80,15 +68,6 @@ Stream<int> _googleSignin(BuildContext context) async* {
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
     _showDialog(context, error.toString());
-  }
-}
-
-void _facebookSignout() {
-  try {
-    final _facebookLogin = FacebookLogin();
-    _facebookLogin.logOut();
-  } catch (error, trace) {
-    // reset the UI and display an alert
   }
 }
 
@@ -155,23 +134,4 @@ void _showDialog(BuildContext context, String errorMessage) {
       );
     },
   );
-}
-
-void _firebaseSignout() {
-  try {
-    final _fireAuth = FirebaseAuth.instance;
-    _fireAuth.signOut();
-  } catch (error, trace) {
-    // reset the UI and display an alert
-  }
-}
-
-void _signoutAll() {
-  try {
-    _facebookSignout();
-    _googleSignout();
-    _firebaseSignout();
-  } catch (error, trace) {
-    // reset the UI and display an alert
-  }
 }
