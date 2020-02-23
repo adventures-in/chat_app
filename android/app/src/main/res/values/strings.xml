@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Adventures In Chat App</string>
+    <string name="facebook_app_id">871159273302929</string>
+    <string name="fb_login_protocol_scheme">fb871159273302929</string>
+</resources>

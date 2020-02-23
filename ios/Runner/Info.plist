@@ -49,33 +49,22 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
 				<string>com.googleusercontent.apps.487707907739-084c8ksdv5gmha7m143rn01gl7r7tgum</string>
 			</array>
 		</dict>
 		<!-- End of the Google Sign-in Section -->
 		<!-- Facebook Sign-in Section-->
-		<!--
-		<dict>
-		... Some other CFBundleURLTypes definition.
-		</dict>
-		-->
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- This is our Facebook App ID here -->
-				<string>fb219671022403094</string>
+				<string>fb871159273302929</string>
 			</array>
 		</dict>
 	</array>
-
 	<key>FacebookAppID</key>
-
-	<string>219671022403094</string>
+	<string>871159273302929</string>
 	<key>FacebookDisplayName</key>
-
 	<string>Adventures In Chat App</string>
-
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
