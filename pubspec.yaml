@@ -10,12 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  firebase_core: ^0.4.0+9
-  firebase_auth: ^0.14.0+5
-  flutter_facebook_login: ^3.0.0
+  firebase_core:
+  firebase_auth:
+  flutter_facebook_login:
   google_sign_in:
   flutter_auth_buttons:
-  cloud_firestore: ^0.12.9+5
+  cloud_firestore:
 
 dev_dependencies:
   flutter_test:
