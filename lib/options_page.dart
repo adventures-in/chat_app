@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meetup_chatapp/profile_page.dart';
 
+import 'link_accounts_page.dart';
+
 class OptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,16 @@ class OptionsPage extends StatelessWidget {
                         ],
                       );
                     });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.link, size: 32),
+              title: const Text("Link Accounts"),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LinkAccountsPage()));
               },
             ),
           ],

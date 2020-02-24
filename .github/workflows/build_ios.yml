@@ -10,12 +10,39 @@ jobs:
     name: Build iOS App
     runs-on: macOS-latest
     steps:
+    # several actions use checkout 
+    # docs in flutter-action say to use v1 but we should try to upgrade to v2 at some point 
     - uses: actions/checkout@v1
+    
+    ##############################################
+    # flutter-action
+    ##############################################
+    # the flutter-action action seems to need java
     - uses: actions/setup-java@v1
       with:
         java-version: '12.x'
+    # use flutter-action configured with flutter channel
     - uses: subosito/flutter-action@v1
       with:
         channel: 'dev' # or: 'stable' or 'beta'
+    
+    ##############################################
+    # setup-gcloud
+    ##############################################
+    # the setup-gcloud action seems to need python
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    # use setup-gcloud configured with auth credentials 
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.GCS_EMAIL }}
+        service_account_key: ${{ secrets.GCS_KEY }}
+    
+    ##############################################
+    # run everything we setup
+    ##############################################
+    - run: gsutil cp gs://adventures-in-credentials/GoogleService-Info.plist ./ios/Runner/GoogleService-Info.plist
     - run: flutter pub get
     - run: flutter build ios --release --no-codesign

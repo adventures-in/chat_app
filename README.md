@@ -13,6 +13,26 @@ Add them to your project at:
 - `ios/Runner/GoogleService-Info.plist`
 - `android/app/google-services.json`
 
+## Cloud Functions 
+
+We are using Cloud Functions for Firebase to automatically run backend code in response to events triggered by Firebase features, such as: 
+- Initial Sign In
+- Changes to Firestore that should send an FCM
+
+The relevant code is all in `functions/`
+
+To deploy you will need to: 
+- be an Editor on the Firebase project (just ask someone to be added)
+- have installed and setup the [firebase cli](https://firebase.google.com/docs/cli) 
+
+After that you can make changes to `functions/index.js` and deploy with:
+
+```
+firebase deploy --only functions
+```
+
+**Please push up changes to cloud functions in a PR for review before deploying.** 
+
 ## Misc Tips
 
 ### ios
