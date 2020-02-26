@@ -55,8 +55,6 @@ class OptionsPage extends StatelessWidget {
                               await FirebaseAuth.instance.signOut();
 
                               Navigator.pop(dialogContext);
-                              Navigator.pop(
-                                  context); // TODO remove this once the navigation has been switched to a bottom app bar
                             },
                           )
                         ],
