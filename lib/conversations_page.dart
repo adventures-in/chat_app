@@ -52,13 +52,10 @@ class _ConversationListState extends State<ConversationList> {
                 title: Text(userNames[index]),
                 subtitle: Text(mockMessages[index]),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatPage(
-                              username: userNames[index],
-                            )),
-                  );
+                  Navigator.pushNamed(context, ChatPage.routeName,
+                      arguments: ChatPageArgs(
+                        userNames[index],
+                      ));
                 },
               );
             }),

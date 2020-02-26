@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPageArgs {
   final String username;
 
-  ChatPage({Key key, @required this.username}) : super(key: key);
+  ChatPageArgs(this.username);
+}
+
+class ChatPage extends StatelessWidget {
+  static const routeName = '/chat';
 
   @override
   Widget build(BuildContext context) {
+    final ChatPageArgs args = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(username),
+        title: Text(args.username),
       ),
       body: Center(),
     );

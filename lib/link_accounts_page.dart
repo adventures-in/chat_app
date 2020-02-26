@@ -5,6 +5,8 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LinkAccountsPage extends StatelessWidget {
+  static final routeName = '/link_accounts';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
