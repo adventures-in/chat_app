@@ -13,6 +13,11 @@ Add them to your project at:
 - `ios/Runner/GoogleService-Info.plist`
 - `android/app/google-services.json`
 
+*Note:* if you would like to run the app on Android, you will need to have add your SHA-1 debug key to the firebase project:
+1. Run `keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore` to find your SHA-1 debug key
+1. Just press enter when it asks for a password
+1. Open [Firebase](https://console.firebase.google.com) > `adventures-in` > `Project Settings` > `Your Apps` > `Android Chat` > `Add fingerprint`
+
 ## Cloud Functions 
 
 We are using Cloud Functions for Firebase to automatically run backend code in response to events triggered by Firebase features, such as: 
