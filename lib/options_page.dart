@@ -8,7 +8,7 @@ class OptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text("Settings")),
         body: ListView(
           padding: const EdgeInsets.symmetric(vertical: 20),
           children: <Widget>[

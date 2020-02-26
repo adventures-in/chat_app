@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meetup_chatapp/chat_page.dart';
-import 'package:meetup_chatapp/options_page.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override
@@ -10,15 +9,7 @@ class ConversationsPage extends StatelessWidget {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         leading: Icon(Icons.account_circle, size: 50),
-        title: Text("Adventures.in Messenger"),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OptionsPage()));
-              }),
-        ],
+        title: Text("Chats"),
       ),
 
       body: ConversationList(),
