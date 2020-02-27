@@ -13,6 +13,11 @@ Add them to your project at:
 - `ios/Runner/GoogleService-Info.plist`
 - `android/app/google-services.json`
 
+*Note:* if you would like to run the app on Android, you will need to have add your SHA-1 debug key to the firebase project:
+1. Run `keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore` to find your SHA-1 debug key
+1. Just press enter when it asks for a password
+1. Open [Firebase](https://console.firebase.google.com) > `adventures-in` > `Project Settings` > `Your Apps` > `Android Chat` > `Add fingerprint`
+
 ## Firebase Backend
 
 To make changes you need to: 
@@ -48,7 +53,7 @@ We are using Cloud Functions for Firebase to automatically run backend code in r
 
 The relevant code is all in `functions/`
 
-After that you can make changes to `functions/index.js` and deploy with:
+After making changes to `functions/index.js`
 
 ```
 firebase deploy --only functions
