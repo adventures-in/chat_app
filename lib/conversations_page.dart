@@ -10,13 +10,8 @@ class ConversationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        leading: CircleAvatar(
-          backgroundImage:
-              NetworkImage(Provider.of<FirebaseUser>(context).photoUrl),
-        ),
-        // Icon(Icons.account_circle, size: 50),
+        leading:
+            ProfileAvatar(url: Provider.of<FirebaseUser>(context).photoUrl),
         title: Text("Adventures.in Messenger"),
         actions: <Widget>[
           IconButton(
@@ -60,25 +55,47 @@ class _ConversationListState extends State<ConversationList> {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: ListView.builder(
-            itemCount: userNames.length,
-            itemBuilder: (BuildContext context, int index) {
-              return new ListTile(
-                leading: Icon(Icons.account_circle, size: 45),
-                title: Text(userNames[index]),
-                subtitle: Text(mockMessages[index]),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatPage(
+        child: FutureBuilder(
+            future: Firestore.instance.collection('users').getDocuments(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return CircularProgressIndicator();
+              QuerySnapshot querySnapshot = snapshot.data;
+              return ListView.builder(
+                  itemCount: querySnapshot.documents.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Map<String, dynamic> docData =
+                        querySnapshot.documents[index].data;
+                    return ListTile(
+                      leading: ProfileAvatar(url: docData['photoURL']),
+                      title: Text(docData['displayName']),
+                      subtitle: Text(mockMessages[index]),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
                               username: userNames[index],
-                            )),
-                  );
-                },
-              );
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  });
             }),
       ),
+    );
+  }
+}
+
+class ProfileAvatar extends StatelessWidget {
+  ProfileAvatar({@required this.url});
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      backgroundImage: NetworkImage(url),
     );
   }
 }

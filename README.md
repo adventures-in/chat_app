@@ -13,17 +13,40 @@ Add them to your project at:
 - `ios/Runner/GoogleService-Info.plist`
 - `android/app/google-services.json`
 
-## Cloud Functions 
+## Firebase Backend
+
+To make changes you need to: 
+- be an Editor on the Firebase project (just ask someone to be added)
+- have installed and setup the [firebase cli](https://firebase.google.com/docs/cli)
+
+### Firestore 
+
+#### Security Rules 
+
+After making changes to `firestore.rules`
+
+```
+firebase deploy --only firestore:rules
+```
+
+see [Manage and deploy Firebase Security Rules](https://firebase.google.com/docs/rules/manage-deploy)
+
+#### Indexes
+
+After making changes to `firestore.indexes.json`
+```
+firebase deploy --only firestore:indexes
+```
+
+see [Managing indexes  |  Firestore  |  Google Cloud](https://cloud.google.com/firestore/docs/query-data/indexing)
+
+### Cloud Functions 
 
 We are using Cloud Functions for Firebase to automatically run backend code in response to events triggered by Firebase features, such as: 
 - Initial Sign In
 - Changes to Firestore that should send an FCM
 
 The relevant code is all in `functions/`
-
-To deploy you will need to: 
-- be an Editor on the Firebase project (just ask someone to be added)
-- have installed and setup the [firebase cli](https://firebase.google.com/docs/cli) 
 
 After that you can make changes to `functions/index.js` and deploy with:
 
