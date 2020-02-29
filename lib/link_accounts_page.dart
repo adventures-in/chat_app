@@ -22,28 +22,26 @@ class LinkAccountsPage extends StatelessWidget {
               );
             } else {
               FirebaseUser user = snapshot.data;
-              return Material(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    if (!_hasLinkedProvider('google.com', user.providerData))
-                      GoogleSignInButton(
-                        onPressed: () async {
-                          _linkGoogle(context, user).listen((event) {
-                            print(event);
-                          });
-                        },
-                      ),
-                    if (!_hasLinkedProvider('facebook.com', user.providerData))
-                      FacebookSignInButton(
-                        onPressed: () {
-                          _linkFacebook(context, user).listen((event) {
-                            print(event);
-                          });
-                        },
-                      ),
-                  ],
-                ),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  if (!_hasLinkedProvider('google.com', user.providerData))
+                    GoogleSignInButton(
+                      onPressed: () async {
+                        _linkGoogle(context, user).listen((event) {
+                          print(event);
+                        });
+                      },
+                    ),
+                  if (!_hasLinkedProvider('facebook.com', user.providerData))
+                    FacebookSignInButton(
+                      onPressed: () {
+                        _linkFacebook(context, user).listen((event) {
+                          print(event);
+                        });
+                      },
+                    ),
+                ],
               );
             }
           }),

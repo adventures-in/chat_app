@@ -19,15 +19,13 @@ class ProfilePage extends StatelessWidget {
               );
             } else {
               FirebaseUser user = snapshot.data;
-              return Material(
-                child: ListTile(
-                  leading: CircleAvatar(
-                      backgroundImage: NetworkImage(user.photoUrl)),
-                  title: Text(user.displayName),
-                  onTap: () {
-                    debugPrint("Not yet implemented");
-                  },
-                ),
+              return ListTile(
+                leading:
+                    CircleAvatar(backgroundImage: NetworkImage(user.photoUrl)),
+                title: Text(user.displayName),
+                onTap: () {
+                  debugPrint("Not yet implemented");
+                },
               );
             }
           }),

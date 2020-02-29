@@ -15,8 +15,7 @@ class OptionsPage extends StatelessWidget {
         ),
         body: ListView(
           children: <Widget>[
-            Material(
-                child: ListTile(
+            ListTile(
               leading: const Icon(Icons.account_circle, size: 32),
               title: const Text("View Profile"),
               onTap: () {
@@ -25,17 +24,15 @@ class OptionsPage extends StatelessWidget {
                   ProfilePage.routeName,
                 );
               },
-            )),
-            Material(
-                child: ListTile(
+            ),
+            ListTile(
               leading: const Icon(Icons.textsms, size: 32),
               title: const Text("Message Requests"),
               onTap: () {
                 debugPrint("Not yet implemented");
               },
-            )),
-            Material(
-                child: ListTile(
+            ),
+            ListTile(
               leading: Icon(Icons.exit_to_app,
                   size: 32, color: Theme.of(context).errorColor),
               title: Text("Logout",
@@ -67,15 +64,14 @@ class OptionsPage extends StatelessWidget {
                       );
                     });
               },
-            )),
-            Material(
-                child: ListTile(
+            ),
+            ListTile(
               leading: const Icon(Icons.link, size: 32),
               title: const Text("Link Accounts"),
               onTap: () {
                 Navigator.pushNamed(context, LinkAccountsPage.routeName);
               },
-            )),
+            ),
           ],
         ));
   }

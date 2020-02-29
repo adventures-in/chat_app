@@ -15,6 +15,7 @@ class ChatPage extends StatelessWidget {
     final ChatPageArgs args = ModalRoute.of(context).settings.arguments;
 
     return PlatformScaffold(
+      iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(args.username),
       ),

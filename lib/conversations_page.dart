@@ -43,17 +43,16 @@ class _ConversationListState extends State<ConversationList> {
             itemBuilder: (BuildContext context, int index) {
               Map<String, dynamic> docData =
                   querySnapshot.documents[index].data;
-              return Material(
-                  child: ListTile(
-                      leading: ProfileAvatar(url: docData['photoURL']),
-                      title: Text(docData['displayName']),
-                      subtitle: Text('Coming soon.'),
-                      onTap: () {
-                        Navigator.pushNamed(context, ChatPage.routeName,
-                            arguments: ChatPageArgs(
-                              docData['displayName'],
-                            ));
-                      }));
+              return ListTile(
+                  leading: ProfileAvatar(url: docData['photoURL']),
+                  title: Text(docData['displayName']),
+                  subtitle: Text('Coming soon.'),
+                  onTap: () {
+                    Navigator.pushNamed(context, ChatPage.routeName,
+                        arguments: ChatPageArgs(
+                          docData['displayName'],
+                        ));
+                  });
             },
           );
         });
