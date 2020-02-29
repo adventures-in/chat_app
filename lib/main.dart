@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meetup_chatapp/auth_page.dart';
+import 'package:meetup_chatapp/conversations_page.dart';
+import 'package:provider/provider.dart';
 import 'package:meetup_chatapp/chat_page.dart';
 import 'package:meetup_chatapp/home.dart';
 import 'package:meetup_chatapp/splash.dart';
@@ -22,7 +24,10 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             if (snapshot.hasData) {
-              return HomePage();
+              return Provider<FirebaseUser>.value(
+                value: snapshot.data as FirebaseUser,
+                child: HomePage(),
+              );
             } else {
               return AuthPage();
             }
