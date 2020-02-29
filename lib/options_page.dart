@@ -1,17 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:meetup_chatapp/link_accounts_page.dart';
 import 'package:meetup_chatapp/profile_page.dart';
 
 class OptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("Settings")),
+    return PlatformScaffold(
+        appBar: PlatformAppBar(
+          title: Text("Settings"),
+          ios: (context) =>
+              CupertinoNavigationBarData(transitionBetweenRoutes: false),
+        ),
         body: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 20),
           children: <Widget>[
-            ListTile(
+            Material(
+                child: ListTile(
               leading: const Icon(Icons.account_circle, size: 32),
               title: const Text("View Profile"),
               onTap: () {
@@ -20,15 +25,17 @@ class OptionsPage extends StatelessWidget {
                   ProfilePage.routeName,
                 );
               },
-            ),
-            ListTile(
+            )),
+            Material(
+                child: ListTile(
               leading: const Icon(Icons.textsms, size: 32),
               title: const Text("Message Requests"),
               onTap: () {
                 debugPrint("Not yet implemented");
               },
-            ),
-            ListTile(
+            )),
+            Material(
+                child: ListTile(
               leading: Icon(Icons.exit_to_app,
                   size: 32, color: Theme.of(context).errorColor),
               title: Text("Logout",
@@ -37,17 +44,17 @@ class OptionsPage extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (BuildContext dialogContext) {
-                      return AlertDialog(
+                      return PlatformAlertDialog(
                         title: const Text("Logout"),
                         content: const Text("Are you sure you want to logout?"),
                         actions: <Widget>[
-                          FlatButton(
-                              child: const Text("CANCEL"),
+                          PlatformDialogAction(
+                              child: PlatformText("Cancel"),
                               onPressed: () {
                                 Navigator.pop(dialogContext);
                               }),
-                          FlatButton(
-                            child: Text("LOGOUT",
+                          PlatformDialogAction(
+                            child: PlatformText("Logout",
                                 style: TextStyle(
                                     color: Theme.of(context).errorColor)),
                             onPressed: () async {
@@ -60,14 +67,15 @@ class OptionsPage extends StatelessWidget {
                       );
                     });
               },
-            ),
-            ListTile(
+            )),
+            Material(
+                child: ListTile(
               leading: const Icon(Icons.link, size: 32),
               title: const Text("Link Accounts"),
               onTap: () {
                 Navigator.pushNamed(context, LinkAccountsPage.routeName);
               },
-            ),
+            )),
           ],
         ));
   }

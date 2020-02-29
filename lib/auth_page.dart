@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
@@ -119,13 +120,13 @@ void _showDialog(BuildContext context, String errorMessage) {
     context: context,
     builder: (BuildContext context) {
       // return object of type Dialog
-      return AlertDialog(
+      return PlatformAlertDialog(
         title: new Text("Alert Dialog title"),
         content: new Text(errorMessage),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
-          new FlatButton(
-            child: new Text("Close"),
+          PlatformDialogAction(
+            child: PlatformText('Close'),
             onPressed: () {
               Navigator.of(context).pop();
             },

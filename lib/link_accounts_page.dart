@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LinkAccountsPage extends StatelessWidget {
@@ -9,13 +10,16 @@ class LinkAccountsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(),
+      iosContentPadding: true,
       body: FutureBuilder(
           future: FirebaseAuth.instance.currentUser(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return CircularProgressIndicator();
+              return Center(
+                child: PlatformCircularProgressIndicator(),
+              );
             } else {
               FirebaseUser user = snapshot.data;
               return Material(
@@ -137,13 +141,13 @@ void _showDialog(BuildContext context, String errorMessage) {
     context: context,
     builder: (BuildContext context) {
       // return object of type Dialog
-      return AlertDialog(
+      return PlatformAlertDialog(
         title: Text("There was a problem"),
         content: Text(errorMessage),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
-          new FlatButton(
-            child: new Text("Close"),
+          new PlatformDialogAction(
+            child: PlatformText("Close"),
             onPressed: () {
               Navigator.of(context).pop();
             },

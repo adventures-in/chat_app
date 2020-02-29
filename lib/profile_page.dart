@@ -1,34 +1,32 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class ProfilePage extends StatelessWidget {
   static final routeName = '/profile';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(),
+      iosContentPadding: true,
       body: FutureBuilder(
           future: FirebaseAuth.instance.currentUser(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return CircularProgressIndicator();
+              return Center(
+                child: PlatformCircularProgressIndicator(),
+              );
             } else {
               FirebaseUser user = snapshot.data;
               return Material(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    ListTile(
-                      leading: CircleAvatar(
-                          backgroundImage: NetworkImage(user.photoUrl)
-                      ),
-                      title: Text(user.displayName),
-                      onTap: () {
-                        debugPrint("Not yet implemented");
-                      },
-                    ),
-                  ],
+                child: ListTile(
+                  leading: CircleAvatar(
+                      backgroundImage: NetworkImage(user.photoUrl)),
+                  title: Text(user.displayName),
+                  onTap: () {
+                    debugPrint("Not yet implemented");
+                  },
                 ),
               );
             }

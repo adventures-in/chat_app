@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:meetup_chatapp/conversations_page.dart';
 import 'package:meetup_chatapp/options_page.dart';
 
@@ -12,7 +13,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PlatformScaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: <Widget>[
@@ -20,20 +21,20 @@ class HomePageState extends State<HomePage> {
           OptionsPage(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavBar: PlatformNavBar(
         currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text("Chats")),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings), title: Text("Settings")),
         ],
-        onTap: (int index) {
+        itemChanged: (int index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        selectedItemColor: Theme.of(context).accentColor,
       ),
+      iosContentBottomPadding: true,
     );
   }
 }
