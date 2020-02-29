@@ -44,13 +44,6 @@ class ConversationList extends StatefulWidget {
 }
 
 class _ConversationListState extends State<ConversationList> {
-  List<String> userNames = ["Chirs David", "Brin Page", "Harry Shane"];
-  List<String> mockMessages = [
-    "Hey there,",
-    "Message me when free.",
-    "Happy Birthday !"
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,13 +61,13 @@ class _ConversationListState extends State<ConversationList> {
                     return ListTile(
                       leading: ProfileAvatar(url: docData['photoURL']),
                       title: Text(docData['displayName']),
-                      subtitle: Text(mockMessages[index]),
+                      subtitle: Text('Coming soon.'),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ChatPage(
-                              username: userNames[index],
+                              username: docData['displayName'],
                             ),
                           ),
                         );
