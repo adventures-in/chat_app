@@ -1,14 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:meetup_chatapp/link_accounts_page.dart';
 import 'package:meetup_chatapp/profile_page.dart';
-
-import 'link_accounts_page.dart';
 
 class OptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: Text("Settings")),
         body: ListView(
           padding: const EdgeInsets.symmetric(vertical: 20),
           children: <Widget>[
@@ -16,9 +15,9 @@ class OptionsPage extends StatelessWidget {
               leading: const Icon(Icons.account_circle, size: 32),
               title: const Text("View Profile"),
               onTap: () {
-                Navigator.push(
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                  ProfilePage.routeName,
                 );
               },
             ),
@@ -55,8 +54,6 @@ class OptionsPage extends StatelessWidget {
                               await FirebaseAuth.instance.signOut();
 
                               Navigator.pop(dialogContext);
-                              Navigator.pop(
-                                  context); // TODO remove this once the navigation has been switched to a bottom app bar
                             },
                           )
                         ],
@@ -68,10 +65,7 @@ class OptionsPage extends StatelessWidget {
               leading: const Icon(Icons.link, size: 32),
               title: const Text("Link Accounts"),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LinkAccountsPage()));
+                Navigator.pushNamed(context, LinkAccountsPage.routeName);
               },
             ),
           ],
