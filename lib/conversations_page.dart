@@ -44,6 +44,8 @@ class ConversationList extends StatefulWidget {
 }
 
 class _ConversationListState extends State<ConversationList> {
+  Map<String, dynamic> conversationsMap;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,6 +55,19 @@ class _ConversationListState extends State<ConversationList> {
             builder: (context, snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
               QuerySnapshot querySnapshot = snapshot.data;
+
+              for (DocumentSnapshot docSnapshot in querySnapshot.documents) {
+                if (docSnapshot.data['uid'] ==
+                    Provider.of<FirebaseUser>(context).uid) {
+                  if (docSnapshot.data['conversationsMap'] == null) {
+                    conversationsMap = {};
+                  } else {
+                    conversationsMap = docSnapshot.data['conversationsMap'];
+                  }
+                  break;
+                }
+              }
+
               return ListView.builder(
                 itemCount: querySnapshot.documents.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -63,10 +78,15 @@ class _ConversationListState extends State<ConversationList> {
                       title: Text(docData['displayName']),
                       subtitle: Text('Coming soon.'),
                       onTap: () {
+                        final tappedUser = docData;
                         Navigator.pushNamed(context, ChatPage.routeName,
                             arguments: ChatPageArgs(
-                              docData['displayName'],
-                            ));
+                                tappedUsername: tappedUser['displayName'],
+                                conversationId:
+                                    conversationsMap[tappedUser['uid']],
+                                currentUserId:
+                                    Provider.of<FirebaseUser>(context).uid,
+                                tappedUserId: tappedUser['uid']));
                       });
                 },
               );

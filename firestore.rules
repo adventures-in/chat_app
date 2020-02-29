@@ -1,6 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // True if the user is a participant in a conversation
+    function inConversation() {
+      return resource.data.participant1 == request.auth.uid || resource.data.participant2 == request.auth.uid;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -9,6 +15,14 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if request.auth.uid != null;
       allow write: if false;
+    }
+
+    // Match any document in the 'conversations' collection
+    match /conversations/{conversationsId} {
+      allow create: if request.auth.uid != null;
+      allow update: if false;
+      allow delete: if false;
+      allow read: if inConversation();
     }
   }
 }
