@@ -18,11 +18,21 @@ service cloud.firestore {
     }
 
     // Match any document in the 'conversations' collection
-    match /conversations/{conversationsId} {
+    match /conversations/{conversationId} {
+      
+      function isParticipant(rsc) {
+        return request.auth.uid == rsc.data.participant1 || request.auth.uid == rsc.data.participant2;
+      }
+
       allow create: if request.auth.uid != null;
       allow update: if false;
       allow delete: if false;
       allow read: if inConversation();
+
+      // see: https://firebase.google.com/docs/firestore/solutions/role-based-access
+      match /messages/{messageId} {
+        allow create: if isParticipant(get(/databases/$(database)/documents/conversations/$(conversationId)));
+      }
     }
   }
 }

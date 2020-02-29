@@ -44,10 +44,10 @@ class ConversationList extends StatefulWidget {
 }
 
 class _ConversationListState extends State<ConversationList> {
-  Map<String, dynamic> conversationsMap;
-
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> conversationsMap = {};
+
     return Container(
       child: Center(
         child: FutureBuilder(
@@ -57,11 +57,9 @@ class _ConversationListState extends State<ConversationList> {
               QuerySnapshot querySnapshot = snapshot.data;
 
               for (DocumentSnapshot docSnapshot in querySnapshot.documents) {
-                if (docSnapshot.data['uid'] ==
+                if (docSnapshot.documentID ==
                     Provider.of<FirebaseUser>(context).uid) {
-                  if (docSnapshot.data['conversationsMap'] == null) {
-                    conversationsMap = {};
-                  } else {
+                  if (docSnapshot.data['conversationsMap'] != null) {
                     conversationsMap = docSnapshot.data['conversationsMap'];
                   }
                   break;
@@ -73,6 +71,8 @@ class _ConversationListState extends State<ConversationList> {
                 itemBuilder: (BuildContext context, int index) {
                   Map<String, dynamic> docData =
                       querySnapshot.documents[index].data;
+                  String tappedUserId =
+                      querySnapshot.documents[index].documentID;
                   return ListTile(
                       leading: ProfileAvatar(url: docData['photoURL']),
                       title: Text(docData['displayName']),
@@ -81,12 +81,13 @@ class _ConversationListState extends State<ConversationList> {
                         final tappedUser = docData;
                         Navigator.pushNamed(context, ChatPage.routeName,
                             arguments: ChatPageArgs(
+                                currentUserId: Provider.of<FirebaseUser>(
+                                        context,
+                                        listen: false)
+                                    .uid,
                                 tappedUsername: tappedUser['displayName'],
-                                conversationId:
-                                    conversationsMap[tappedUser['uid']],
-                                currentUserId:
-                                    Provider.of<FirebaseUser>(context).uid,
-                                tappedUserId: tappedUser['uid']));
+                                conversationId: conversationsMap[tappedUserId],
+                                tappedUserId: tappedUserId));
                       });
                 },
               );
