@@ -12,7 +12,7 @@ class ConversationsPage extends StatelessWidget {
       appBar: AppBar(
         leading:
             ProfileAvatar(url: Provider.of<FirebaseUser>(context).photoUrl),
-        title: Text("Adventures.in Messenger"),
+        title: Text("Chats"),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.settings),
@@ -54,26 +54,22 @@ class _ConversationListState extends State<ConversationList> {
               if (!snapshot.hasData) return CircularProgressIndicator();
               QuerySnapshot querySnapshot = snapshot.data;
               return ListView.builder(
-                  itemCount: querySnapshot.documents.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Map<String, dynamic> docData =
-                        querySnapshot.documents[index].data;
-                    return ListTile(
+                itemCount: querySnapshot.documents.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Map<String, dynamic> docData =
+                      querySnapshot.documents[index].data;
+                  return ListTile(
                       leading: ProfileAvatar(url: docData['photoURL']),
                       title: Text(docData['displayName']),
                       subtitle: Text('Coming soon.'),
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                              username: docData['displayName'],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  });
+                        Navigator.pushNamed(context, ChatPage.routeName,
+                            arguments: ChatPageArgs(
+                              docData['displayName'],
+                            ));
+                      });
+                },
+              );
             }),
       ),
     );

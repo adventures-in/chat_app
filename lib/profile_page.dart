@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 class ProfilePage extends StatelessWidget {
+  static final routeName = '/profile';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
