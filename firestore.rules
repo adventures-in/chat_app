@@ -32,6 +32,9 @@ service cloud.firestore {
       // see: https://firebase.google.com/docs/firestore/solutions/role-based-access
       match /messages/{messageId} {
         allow create: if isParticipant(get(/databases/$(database)/documents/conversations/$(conversationId)));
+        allow update: if false;
+        allow delete: if false;
+        allow read: if isParticipant(get(/databases/$(database)/documents/conversations/$(conversationId)));
       }
     }
   }

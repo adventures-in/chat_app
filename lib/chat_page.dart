@@ -112,24 +112,29 @@ class _BottomChatBarState extends State<BottomChatBar> {
               border: OutlineInputBorder(),
               labelText: 'Message',
             ),
+            onSubmitted: (_) => _submitMessage(),
           ),
         ),
         IconButton(
           icon: Icon(Icons.send),
-          onPressed: () {
-            Firestore.instance
-                .collection('conversations')
-                .document(widget.conversationId)
-                .collection('messages')
-                .add({
-              'authorId': widget.currentUserId,
-              'text': _controller.text,
-              'timestamp': FieldValue.serverTimestamp()
-            });
-          },
+          onPressed: () => _submitMessage(),
         ),
       ],
     );
+  }
+
+  void _submitMessage() {
+    final messageText = _controller.text;
+    _controller.clear();
+    Firestore.instance
+        .collection('conversations')
+        .document(widget.conversationId)
+        .collection('messages')
+        .add({
+      'authorId': widget.currentUserId,
+      'text': messageText,
+      'timestamp': FieldValue.serverTimestamp()
+    });
   }
 }
 
