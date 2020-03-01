@@ -50,8 +50,8 @@ class _ConversationListState extends State<ConversationList> {
 
     return Container(
       child: Center(
-        child: FutureBuilder(
-            future: Firestore.instance.collection('users').getDocuments(),
+        child: StreamBuilder(
+            stream: Firestore.instance.collection('users').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
               QuerySnapshot querySnapshot = snapshot.data;
