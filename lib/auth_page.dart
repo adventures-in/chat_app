@@ -18,13 +18,11 @@ class AuthPage extends StatelessWidget {
               });
             },
           ),
-          FacebookSignInButton(
-            onPressed: () async {
-              _facebookSignin(context).listen((event) {
-                print(event);
-              });
-            }
-          ),
+          FacebookSignInButton(onPressed: () async {
+            _facebookSignin(context).listen((event) {
+              print(event);
+            });
+          }),
         ],
       ),
     );
@@ -79,13 +77,15 @@ Stream<int> _facebookSignin(BuildContext context) async* {
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
+
         /// the auth info will be picked up by the listener on [onAuthStateChanged]
         /// and emitted by [streamOfStateChanges]
-        
+
         // signal to change UI
         yield 2;
 
-        final credential = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
+        final credential = FacebookAuthProvider.getCredential(
+            accessToken: result.accessToken.token);
         await _fireAuth.signInWithCredential(credential);
 
         // we are signed in so reset the UI
@@ -101,7 +101,6 @@ Stream<int> _facebookSignin(BuildContext context) async* {
         throw result.errorMessage;
         break;
     }
-
   } catch (error, trace) {
     // reset the UI and display an alert
 
@@ -115,7 +114,7 @@ Stream<int> _facebookSignin(BuildContext context) async* {
 
 void _showDialog(BuildContext context, String errorMessage) {
   // flutter defined function
-  showDialog(
+  showDialog<dynamic>(
     context: context,
     builder: (BuildContext context) {
       // return object of type Dialog

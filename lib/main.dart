@@ -22,22 +22,20 @@ class MyApp extends StatelessWidget {
         // If we push the ChatPage route
         if (settings.name == ChatPage.routeName) {
           // Cast the arguments to the correct type: ChatPageArgs.
-          final ChatPageArgs args = settings.arguments;
+          final args = settings.arguments as ChatPageArgs;
 
           // Then, extract the required data from the arguments and
           // pass the data to the correct screen.
-          return MaterialPageRoute(
+          return MaterialPageRoute<dynamic>(
             builder: (context) {
               return ChatPage(
-                conversationId: args.conversationId,
-                tappedUserId: args.tappedUserId,
-                tappedUsername: args.tappedUsername,
+                conversationItem: args.conversationItem,
                 currentUserId: args.currentUserId,
               );
             },
           );
         }
-        return MaterialPageRoute(builder: (context) {
+        return MaterialPageRoute<dynamic>(builder: (context) {
           return Container();
         });
       },

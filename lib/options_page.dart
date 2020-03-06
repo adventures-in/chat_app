@@ -34,7 +34,7 @@ class OptionsPage extends StatelessWidget {
               title: Text("Logout",
                   style: TextStyle(color: Theme.of(context).errorColor)),
               onTap: () {
-                showDialog(
+                showDialog<dynamic>(
                     context: context,
                     builder: (BuildContext dialogContext) {
                       return AlertDialog(

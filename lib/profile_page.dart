@@ -14,15 +14,14 @@ class ProfilePage extends StatelessWidget {
             if (!snapshot.hasData) {
               return CircularProgressIndicator();
             } else {
-              FirebaseUser user = snapshot.data;
+              final user = snapshot.data as FirebaseUser;
               return Material(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     ListTile(
                       leading: CircleAvatar(
-                          backgroundImage: NetworkImage(user.photoUrl)
-                      ),
+                          backgroundImage: NetworkImage(user.photoUrl)),
                       title: Text(user.displayName),
                       onTap: () {
                         debugPrint("Not yet implemented");
@@ -35,27 +34,4 @@ class ProfilePage extends StatelessWidget {
           }),
     );
   }
-}
-
-void _showDialog(BuildContext context, String errorMessage) {
-  // flutter defined function
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // return object of type Dialog
-      return AlertDialog(
-        title: Text("There was a problem"),
-        content: Text(errorMessage),
-        actions: <Widget>[
-          // usually buttons at the bottom of the dialog
-          new FlatButton(
-            child: new Text("Close"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
 }

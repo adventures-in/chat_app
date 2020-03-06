@@ -16,22 +16,21 @@ exports.saveDetailsOnFirstSignIn = functions.auth.user().onCreate((user) => {
     });
 });
 
-exports.saveConversationIdsToUsers = functions.firestore.document('conversations/{conversationId}').onCreate((snapshot, context) => {
+exports.addConversationsToUsers = functions.firestore.document('conversations/{conversationId}').onCreate((snapshot, context) => {
     const docData = snapshot.data();
 
-    console.log('participant 1: ' + docData.participant1);
-    console.log('participant 2: ' + docData.participant2);
-    console.log('conversationId: ' + context.params.conversationId);
+    var i;
+    const promises = [];
+    for(i = 0; i < docData.uids.length; i++) {
+        const uid = docData.uids[i];
+        const promise = db.collection('users/'+uid+'/conversation-items')
+            .add({  conversationId: snapshot.id, 
+                    uids: docData.uids, 
+                    displayNames: docData.displayNames, 
+                    photoURLs: docData.photoURLs
+                }).add;
+        promises.push(promise);
+    }
 
-    var json1 = {};
-    var json2 = {};
-    json1[docData.participant2] = context.params.conversationId;
-    json2[docData.participant1] = context.params.conversationId;
-    
-    return db.doc('/users/'+docData.participant1).set(
-        {'conversationsMap': json1}, {merge: true})
-        .then((value) => {
-            db.doc('/users/'+docData.participant2).set({
-                'conversationsMap': json2}, {merge: true});
-        });
+    return promises;
 });

@@ -1,18 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:meetup_chatapp/models/conversation_item.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({
-    @required this.conversationId,
+    @required this.conversationItem,
     @required this.currentUserId,
-    @required this.tappedUserId,
-    @required this.tappedUsername,
   });
   static const routeName = '/chat';
-  final String tappedUsername;
+  final ConversationItem conversationItem;
   final String currentUserId;
-  final String tappedUserId;
-  final String conversationId;
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -24,49 +21,31 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.tappedUsername),
+        title: Text(widget.conversationItem.conversationId),
       ),
-      body: FutureBuilder(
-        future: (widget.conversationId == null)
-            ? Firestore.instance.collection('conversations').add({
-                'participant1': widget.currentUserId,
-                'participant2': widget.tappedUserId
-              })
-            : Firestore.instance
-                .collection('conversations')
-                .document(widget.conversationId)
-                .get(),
-        builder: (context, value) {
-          if (!value.hasData) {
+      body: StreamBuilder(
+        stream: Firestore.instance
+            .collection(
+                'conversations/${widget.conversationItem.conversationId}/messages')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
             return Container();
           }
-
-          DocumentReference ref = (value.data.runtimeType == DocumentSnapshot)
-              ? (value.data as DocumentSnapshot).reference
-              : value.data;
-
-          return StreamBuilder(
-            stream: ref.collection('messages').snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container();
-              }
-              QuerySnapshot querySnapshot = snapshot.data;
-              return ListView.builder(
-                  itemCount: querySnapshot.documents.length,
-                  itemBuilder: (context, index) {
-                    final doc = querySnapshot.documents[index];
-                    return ListTile(
-                      title: Text(doc.data['text']),
-                    );
-                  });
-            },
-          );
+          final querySnapshot = snapshot.data as QuerySnapshot;
+          return ListView.builder(
+              itemCount: querySnapshot.documents.length,
+              itemBuilder: (context, index) {
+                final doc = querySnapshot.documents[index];
+                return ListTile(
+                  title: Text(doc.data['text'] as String),
+                );
+              });
         },
       ),
       bottomNavigationBar: BottomAppBar(
         child: BottomChatBar(
-          conversationId: widget.conversationId,
+          conversationId: widget.conversationItem.conversationId,
           currentUserId: widget.currentUserId,
         ),
       ),
@@ -130,7 +109,7 @@ class _BottomChatBarState extends State<BottomChatBar> {
         .collection('conversations')
         .document(widget.conversationId)
         .collection('messages')
-        .add({
+        .add(<String, dynamic>{
       'authorId': widget.currentUserId,
       'text': messageText,
       'timestamp': FieldValue.serverTimestamp()
@@ -139,14 +118,8 @@ class _BottomChatBarState extends State<BottomChatBar> {
 }
 
 class ChatPageArgs {
-  final String tappedUsername;
-  final String tappedUserId;
-  final String conversationId;
+  final ConversationItem conversationItem;
   final String currentUserId;
 
-  ChatPageArgs(
-      {@required this.tappedUsername,
-      @required this.tappedUserId,
-      @required this.conversationId,
-      @required this.currentUserId});
+  ChatPageArgs({@required this.conversationItem, @required this.currentUserId});
 }
