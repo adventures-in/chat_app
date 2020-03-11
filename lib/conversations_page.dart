@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +15,11 @@ class ConversationsPage extends StatelessWidget {
       appBar: PlatformAppBar(
         ios: (context) =>
             CupertinoNavigationBarData(transitionBetweenRoutes: false),
-        leading:
-            ProfileAvatar(url: Provider.of<FirebaseUser>(context).photoUrl),
+        leading: Align(
+          alignment: Platform.isAndroid ? Alignment.center : Alignment.centerLeft,
+          child:
+              ProfileAvatar(url: Provider.of<FirebaseUser>(context).photoUrl),
+        ),
         title: Text("Chats"),
       ),
       body: ConversationList(),
