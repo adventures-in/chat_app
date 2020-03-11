@@ -15,3 +15,22 @@ exports.saveDetailsOnFirstSignIn = functions.auth.user().onCreate((user) => {
         'phoneNumber': user.phoneNumber
     });
 });
+
+exports.addConversationsToUsers = functions.firestore.document('conversations/{conversationId}').onCreate((snapshot, context) => {
+    const docData = snapshot.data();
+
+    var i;
+    const promises = [];
+    for(i = 0; i < docData.uids.length; i++) {
+        const uid = docData.uids[i];
+        const promise = db.collection('users/'+uid+'/conversation-items')
+            .add({  conversationId: snapshot.id, 
+                    uids: docData.uids, 
+                    displayNames: docData.displayNames, 
+                    photoURLs: docData.photoURLs
+                }).add;
+        promises.push(promise);
+    }
+
+    return promises;
+});

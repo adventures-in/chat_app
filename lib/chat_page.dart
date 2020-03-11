@@ -1,23 +1,125 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:meetup_chatapp/models/conversation_item.dart';
 
-class ChatPageArgs {
-  final String username;
-
-  ChatPageArgs(this.username);
+class ChatPage extends StatefulWidget {
+  ChatPage({
+    @required this.conversationItem,
+    @required this.currentUserId,
+  });
+  static const routeName = '/chat';
+  final ConversationItem conversationItem;
+  final String currentUserId;
+  @override
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class ChatPage extends StatelessWidget {
-  static const routeName = '/chat';
+class _ChatPageState extends State<ChatPage> {
+  DocumentReference ref;
 
   @override
   Widget build(BuildContext context) {
-    final ChatPageArgs args = ModalRoute.of(context).settings.arguments;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(args.username),
+        title: Text(widget.conversationItem.conversationId),
       ),
-      body: Center(),
+      body: StreamBuilder(
+        stream: Firestore.instance
+            .collection(
+                'conversations/${widget.conversationItem.conversationId}/messages')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+          final querySnapshot = snapshot.data as QuerySnapshot;
+          return ListView.builder(
+              itemCount: querySnapshot.documents.length,
+              itemBuilder: (context, index) {
+                final doc = querySnapshot.documents[index];
+                return ListTile(
+                  title: Text(doc.data['text'] as String),
+                );
+              });
+        },
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: BottomChatBar(
+          conversationId: widget.conversationItem.conversationId,
+          currentUserId: widget.currentUserId,
+        ),
+      ),
     );
   }
+}
+
+class BottomChatBar extends StatefulWidget {
+  final String conversationId;
+  final String currentUserId;
+
+  const BottomChatBar({
+    @required this.conversationId,
+    @required this.currentUserId,
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _BottomChatBarState createState() => _BottomChatBarState();
+}
+
+class _BottomChatBarState extends State<BottomChatBar> {
+  TextEditingController _controller;
+
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Message',
+            ),
+            onSubmitted: (_) => _submitMessage(),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.send),
+          onPressed: () => _submitMessage(),
+        ),
+      ],
+    );
+  }
+
+  void _submitMessage() {
+    final messageText = _controller.text;
+    _controller.clear();
+    Firestore.instance
+        .collection('conversations')
+        .document(widget.conversationId)
+        .collection('messages')
+        .add(<String, dynamic>{
+      'authorId': widget.currentUserId,
+      'text': messageText,
+      'timestamp': FieldValue.serverTimestamp()
+    });
+  }
+}
+
+class ChatPageArgs {
+  final ConversationItem conversationItem;
+  final String currentUserId;
+
+  ChatPageArgs({@required this.conversationItem, @required this.currentUserId});
 }

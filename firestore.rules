@@ -1,6 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -9,6 +10,29 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if request.auth.uid != null;
       allow write: if false;
+
+      // only the user can read their conversation items 
+      match /conversation-items/{conversationId} {
+        allow write: if false;
+        allow read: if request.auth.uid == userId;
+      }
+    }
+
+    // Match any document in the 'conversations' collection
+    match /conversations/{conversationId} {
+
+      allow create: if request.auth.uid != null;
+      allow update: if false;
+      allow delete: if false;
+      allow read: if request.auth.uid in resource.data.uids;
+
+      // see: https://firebase.google.com/docs/firestore/solutions/role-based-access
+      match /messages/{messageId} {
+        allow create: if request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.uids;
+        allow update: if false;
+        allow delete: if false;
+        allow read: if request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.uids;
+      }
     }
   }
 }

@@ -17,7 +17,7 @@ class LinkAccountsPage extends StatelessWidget {
             if (!snapshot.hasData) {
               return CircularProgressIndicator();
             } else {
-              FirebaseUser user = snapshot.data;
+              final user = snapshot.data as FirebaseUser;
               return Material(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -133,7 +133,7 @@ Stream<int> _linkFacebook(BuildContext context, FirebaseUser user) async* {
 
 void _showDialog(BuildContext context, String errorMessage) {
   // flutter defined function
-  showDialog(
+  showDialog<dynamic>(
     context: context,
     builder: (BuildContext context) {
       // return object of type Dialog

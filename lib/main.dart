@@ -18,6 +18,27 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      onGenerateRoute: (settings) {
+        // If we push the ChatPage route
+        if (settings.name == ChatPage.routeName) {
+          // Cast the arguments to the correct type: ChatPageArgs.
+          final args = settings.arguments as ChatPageArgs;
+
+          // Then, extract the required data from the arguments and
+          // pass the data to the correct screen.
+          return MaterialPageRoute<dynamic>(
+            builder: (context) {
+              return ChatPage(
+                conversationItem: args.conversationItem,
+                currentUserId: args.currentUserId,
+              );
+            },
+          );
+        }
+        return MaterialPageRoute<dynamic>(builder: (context) {
+          return Container();
+        });
+      },
       home: StreamBuilder(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (context, snapshot) {
@@ -36,7 +57,6 @@ class MyApp extends StatelessWidget {
         },
       ),
       routes: {
-        ChatPage.routeName: (context) => ChatPage(),
         ProfilePage.routeName: (context) => ProfilePage(),
         LinkAccountsPage.routeName: (context) => LinkAccountsPage(),
       },
