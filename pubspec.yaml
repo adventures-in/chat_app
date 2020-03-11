@@ -18,6 +18,7 @@ dependencies:
   flutter_auth_buttons:
   cloud_firestore:
   flutter_platform_widgets:
+  cupertino_icons:
 
 dev_dependencies:
   flutter_test:
