@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetup_chatapp/conversations_page.dart';
 import 'package:meetup_chatapp/options_page.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,7 +17,10 @@ class HomePageState extends State<HomePage> {
       body: IndexedStack(
         index: _currentIndex,
         children: <Widget>[
-          ConversationsPage(),
+          ChangeNotifierProvider(
+            create: (context) => ConversationsViewModel(),
+            child: ConversationsPage(),
+          ),
           OptionsPage(),
         ],
       ),

@@ -12,36 +12,33 @@ class ConversationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<FirebaseUser>(context, listen: false);
-    return ChangeNotifierProvider(
-      create: (context) => ConversationsViewModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: UserAvatar(url: currentUser.photoUrl),
-          title: Text("Conversations"),
-          actions: <Widget>[],
-        ),
-        body: ConversationList(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final conversationItem = await Navigator.push<ConversationItem>(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UserSearchPage(
-                  currentUserItem: UserItem(
-                      uid: currentUser.uid,
-                      displayName: currentUser.displayName,
-                      photoURL: currentUser.photoUrl),
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        leading: UserAvatar(url: currentUser.photoUrl),
+        title: Text("Conversations"),
+        actions: <Widget>[],
+      ),
+      body: ConversationList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final conversationItem = await Navigator.push<ConversationItem>(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserSearchPage(
+                currentUserItem: UserItem(
+                    uid: currentUser.uid,
+                    displayName: currentUser.displayName,
+                    photoURL: currentUser.photoUrl),
               ),
-            );
-            if (conversationItem != null) {
-              Provider.of<ConversationsViewModel>(context, listen: false)
-                  .add(item: conversationItem);
-            }
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.blue,
-        ),
+            ),
+          );
+          if (conversationItem != null) {
+            Provider.of<ConversationsViewModel>(context, listen: false)
+                .add(item: conversationItem);
+          }
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue,
       ),
     );
   }
