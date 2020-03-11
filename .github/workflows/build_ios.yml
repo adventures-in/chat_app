@@ -45,4 +45,5 @@ jobs:
     ##############################################
     - run: gsutil cp gs://adventures-in-credentials/GoogleService-Info.plist ./ios/Runner/GoogleService-Info.plist
     - run: flutter pub get
+    - run: flutter test
     - run: flutter build ios --release --no-codesign
