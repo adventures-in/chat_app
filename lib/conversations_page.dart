@@ -15,7 +15,7 @@ class ConversationsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: UserAvatar(url: currentUser.photoUrl),
-        title: Text("Conversations"),
+        title: Text('Conversations'),
         actions: <Widget>[],
       ),
       body: ConversationList(),
@@ -135,7 +135,7 @@ class ConversationsViewModel extends ChangeNotifier {
   /// TODO: this is probably not what we want in this case, review when
   /// more of the page has been built
   void populateWith(List<ConversationItem> models) {
-    if (_items.length == 0) {
+    if (_items.isEmpty) {
       _items.addAll(models);
     }
   }

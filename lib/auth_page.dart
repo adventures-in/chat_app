@@ -32,7 +32,7 @@ class AuthPage extends StatelessWidget {
 Stream<int> _googleSignin(BuildContext context) async* {
   try {
     final _fireAuth = FirebaseAuth.instance;
-    final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>['email']);
+    final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
     final _googleUser = await _googleSignIn.signIn();
 
     // if the user canceled signin, an error is thrown but it gets swallowed
@@ -58,7 +58,7 @@ Stream<int> _googleSignin(BuildContext context) async* {
 
     // we are signed in so reset the UI
     yield 0;
-  } catch (error, trace) {
+  } catch (error) {
     // reset the UI and display an alert
 
     yield 0;
@@ -101,7 +101,7 @@ Stream<int> _facebookSignin(BuildContext context) async* {
         throw result.errorMessage;
         break;
     }
-  } catch (error, trace) {
+  } catch (error) {
     // reset the UI and display an alert
 
     yield 0;
@@ -119,12 +119,12 @@ void _showDialog(BuildContext context, String errorMessage) {
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title: new Text("Alert Dialog title"),
-        content: new Text(errorMessage),
+        title: Text('Alert Dialog title'),
+        content: Text(errorMessage),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
-          new FlatButton(
-            child: new Text("Close"),
+          FlatButton(
+            child: Text('Close'),
             onPressed: () {
               Navigator.of(context).pop();
             },

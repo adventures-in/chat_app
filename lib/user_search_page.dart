@@ -18,7 +18,7 @@ class UserSearchPage extends StatelessWidget {
       create: (context) => UserSearchViewModel(),
       child: Scaffold(
           appBar: AppBar(
-            title: Text("Select a friend"),
+            title: Text('Select a friend'),
           ),
           body: UserList(currentUserItem)),
     );
@@ -53,8 +53,8 @@ class _UserListState extends State<UserList> {
                 final querySnapshot = snapshot.data as QuerySnapshot;
 
                 // remove our own document from the list
-                final List<UserItem> filteredUserList = [];
-                for (DocumentSnapshot docSnapshot in querySnapshot.documents) {
+                final filteredUserList = <UserItem>[];
+                for (final docSnapshot in querySnapshot.documents) {
                   if (docSnapshot.documentID != widget.currentUserItem.uid) {
                     filteredUserList.add(UserItem(
                         uid: docSnapshot.documentID,
@@ -169,7 +169,7 @@ class UserSearchViewModel extends ChangeNotifier {
   /// notifier structure. The check for an empty list acts as a first build flag
   /// and works for now but is not ideal
   void populateWith(List<UserItem> models) {
-    if (_selectedItems.length == 0) {
+    if (_selectedItems.isEmpty) {
       _unselectedItems.addAll(models);
     }
   }
