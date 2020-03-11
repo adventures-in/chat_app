@@ -11,5 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meetup_chatapp/main.dart';
 
 void main() {
-  // TODO
+  testWidgets('Fake test', (WidgetTester tester) async {
+  });
 }
