@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:meetup_chatapp/auth_page.dart';
+import 'package:adventures_in_chat_app/auth_page.dart';
 import 'package:provider/provider.dart';
-import 'package:meetup_chatapp/chat_page.dart';
-import 'package:meetup_chatapp/home_page.dart';
-import 'package:meetup_chatapp/splash_page.dart';
-import 'package:meetup_chatapp/link_accounts_page.dart';
-import 'package:meetup_chatapp/profile_page.dart';
+import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/home_page.dart';
+import 'package:adventures_in_chat_app/splash_page.dart';
+import 'package:adventures_in_chat_app/link_accounts_page.dart';
+import 'package:adventures_in_chat_app/profile_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Adventures In',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

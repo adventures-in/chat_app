@@ -1,4 +1,4 @@
-package network.adventuresin.meetup_chatapp
+package co.enspyr.adventures_in_chat_app
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
