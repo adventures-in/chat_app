@@ -8,9 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:meetup_chatapp/main.dart';
+import 'package:adventures_in_chat_app/main.dart';
 
 void main() {
-  testWidgets('Fake test', (WidgetTester tester) async {
-  });
+  testWidgets('Fake test', (WidgetTester tester) async {});
 }
