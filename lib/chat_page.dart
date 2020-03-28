@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:meetup_chatapp/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/models/conversation_item.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({

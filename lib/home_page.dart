@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meetup_chatapp/conversations_page.dart';
-import 'package:meetup_chatapp/options_page.dart';
+import 'package:adventures_in_chat_app/conversations_page.dart';
+import 'package:adventures_in_chat_app/options_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {

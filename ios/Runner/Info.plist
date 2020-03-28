@@ -11,15 +11,43 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>meetup_chatapp</string>
+	<string>AdventuresInChatApp</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.487707907739-07u5rnlk4fb8tggfudakug194frvj6cb</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb871159273302929</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAppID</key>
+	<string>871159273302929</string>
+	<key>FacebookDisplayName</key>
+	<string>Adventures In Chat App</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -41,37 +69,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<!-- Google Sign-in Section -->
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.487707907739-084c8ksdv5gmha7m143rn01gl7r7tgum</string>
-			</array>
-		</dict>
-		<!-- End of the Google Sign-in Section -->
-		<!-- Facebook Sign-in Section-->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fb871159273302929</string>
-			</array>
-		</dict>
-	</array>
-	<key>FacebookAppID</key>
-	<string>871159273302929</string>
-	<key>FacebookDisplayName</key>
-	<string>Adventures In Chat App</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fbapi</string>
-		<string>fb-messenger-share-api</string>
-		<string>fbauth2</string>
-		<string>fbshareextension</string>
-	</array>
-	<!-- End of Facebook Sign-in Section-->
 </dict>
 </plist>
