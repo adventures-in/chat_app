@@ -1,0 +1,8 @@
+app_identifier("co.enspyr.AdventuresInChatApp") # The bundle identifier of your app
+apple_id("ci@enspyr.co") # Your Apple email address
+
+itc_team_id("277719") # App Store Connect Team ID
+team_id("SPL85G447K") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

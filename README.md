@@ -18,6 +18,20 @@ Add them to your project at:
 1. Just press enter when it asks for a password
 1. Open [Firebase](https://console.firebase.google.com) > `adventures-in` > `Project Settings` > `Your Apps` > `Android Chat` > `Add fingerprint`
 
+### iOS Signing 
+
+We are using [match](https://docs.fastlane.tools/actions/match/) to manage Provisioning Profiles and Certificates. 
+
+You'll need to get `gc_keys.json` from the [adventures-in-credentials](https://console.cloud.google.com/storage/browser/adventures-in-credentials?forceOnBucketsSortingFiltering=false&project=adventures-in) bucket and add it to `ios/gc_keys.json`, then install the required Provisioning Profiles and Certificates by entering:
+
+```sh
+fastlane match appstore
+```
+and 
+```sh
+fastlane match development
+```
+
 ## Firebase Backend
 
 To make changes you need to: 
