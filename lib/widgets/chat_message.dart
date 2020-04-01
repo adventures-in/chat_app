@@ -9,15 +9,22 @@ class ChatMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    return ListTile(
-      title: Text(text,
-          style: theme.textTheme.bodyText1.merge(TextStyle(
-              fontSize: 20,
-              background: Paint()
-                ..strokeWidth = 30.0
-                ..color = theme.backgroundColor
-                ..style = PaintingStyle.stroke
-                ..strokeJoin = StrokeJoin.round))),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(text,
+                style: theme.textTheme.bodyText1.merge(TextStyle(
+                    fontSize: 20,
+                    background: Paint()
+                      ..strokeWidth = 30.0
+                      ..color = theme.backgroundColor
+                      ..style = PaintingStyle.stroke
+                      ..strokeJoin = StrokeJoin.round)))),
+      ],
     );
   }
 }
