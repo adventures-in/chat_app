@@ -15,7 +15,9 @@ class ConversationItem {
   final List<String> photoURLs;
 
   // Conversation items with the same conversationId are considered equivalent
+  @override
   bool operator ==(dynamic o) =>
       o.runtimeType == ConversationItem && o.id == conversationId;
+  @override
   int get hashCode => conversationId.hashCode;
 }

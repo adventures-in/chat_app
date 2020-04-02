@@ -24,7 +24,7 @@ class ProfilePage extends StatelessWidget {
                           backgroundImage: NetworkImage(user.photoUrl)),
                       title: Text(user.displayName),
                       onTap: () {
-                        debugPrint("Not yet implemented");
+                        debugPrint('Not yet implemented');
                       },
                     ),
                   ],

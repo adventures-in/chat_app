@@ -13,6 +13,8 @@ class UserItem {
   final String photoURL;
 
   // User items with the same id are considered equivalent
+  @override
   bool operator ==(dynamic o) => o.runtimeType == UserItem && o.uid == uid;
+  @override
   int get hashCode => uid.hashCode;
 }
