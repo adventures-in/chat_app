@@ -27,9 +27,9 @@ class HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text("Chats")),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('Chats')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text("Settings")),
+              icon: Icon(Icons.settings), title: Text('Settings')),
         ],
         onTap: (int index) {
           setState(() {
