@@ -40,4 +40,7 @@ lib/generated_plugin_registrant.dart
 ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
 
+# credentials used by Match to access bucket with iOS signing credentials
+ios/gc_keys.json
+
 ios/Build/

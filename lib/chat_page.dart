@@ -1,3 +1,4 @@
+import 'package:adventures_in_chat_app/widgets/chat_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
@@ -7,9 +8,11 @@ class ChatPage extends StatefulWidget {
     @required this.conversationItem,
     @required this.currentUserId,
   });
+
   static const routeName = '/chat';
   final ConversationItem conversationItem;
   final String currentUserId;
+
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -37,9 +40,7 @@ class _ChatPageState extends State<ChatPage> {
               itemCount: querySnapshot.documents.length,
               itemBuilder: (context, index) {
                 final doc = querySnapshot.documents[index];
-                return ListTile(
-                  title: Text(doc.data['text'] as String),
-                );
+                return ChatMessage(text: doc.data['text'] as String);
               });
         },
       ),
@@ -70,11 +71,13 @@ class BottomChatBar extends StatefulWidget {
 class _BottomChatBarState extends State<BottomChatBar> {
   TextEditingController _controller;
 
+  @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
   }
 
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();

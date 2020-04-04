@@ -48,7 +48,7 @@ class LinkAccountsPage extends StatelessWidget {
 }
 
 bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
-  for (UserInfo info in providersInfo) {
+  for (final info in providersInfo) {
     if (info.providerId == id) {
       return true;
     }
@@ -58,7 +58,7 @@ bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
 
 Stream<int> _linkGoogle(BuildContext context, FirebaseUser user) async* {
   try {
-    final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>['email']);
+    final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
     final _googleUser = await _googleSignIn.signIn();
 
     // if the user canceled signin, an error is thrown but it gets swallowed
@@ -138,12 +138,12 @@ void _showDialog(BuildContext context, String errorMessage) {
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title: Text("There was a problem"),
+        title: Text('There was a problem'),
         content: Text(errorMessage),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
-          new FlatButton(
-            child: new Text("Close"),
+          FlatButton(
+            child: Text('Close'),
             onPressed: () {
               Navigator.of(context).pop();
             },
