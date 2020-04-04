@@ -6,7 +6,7 @@ A Chat App for Adventures in Flutter.
 
 ### Firebase Config
 
-Get `GoogleService-Info.plist` and `google-services.json` from the [Shared Project Folder](https://drive.google.com/drive/folders/1URxuILxk8NR66DIRbuERFDXIILCX6jM2?usp=sharing)
+Get `GoogleService-Info.plist` and `google-services.json` from the [adventures-in-credentials bucket](https://console.cloud.google.com/storage/browser/adventures-in-credentials?project=adventures-in)
 
 Add them to your project at:
 
