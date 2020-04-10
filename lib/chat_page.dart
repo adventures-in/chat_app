@@ -22,44 +22,41 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    return Container(
-      padding: EdgeInsets.only(
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: mediaQuery.viewInsets.bottom,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.conversationItem.conversationId),
       ),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.conversationItem.conversationId),
-        ),
-        body: StreamBuilder(
-          stream: Firestore.instance
-              .collection(
-                  'conversations/${widget.conversationItem.conversationId}/messages')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Container();
-            }
-            final querySnapshot = snapshot.data as QuerySnapshot;
-            return ListView.builder(
-                itemCount: querySnapshot.documents.length,
-                itemBuilder: (context, index) {
-                  final doc = querySnapshot.documents[index];
-                  return ChatMessage(text: doc.data['text'] as String);
-                });
-          },
-        ),
-        resizeToAvoidBottomInset: true,
-        bottomNavigationBar: BottomAppBar(
-          child: BottomChatBar(
-            conversationId: widget.conversationItem.conversationId,
-            currentUserId: widget.currentUserId,
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: StreamBuilder(
+              stream: Firestore.instance
+                  .collection(
+                      'conversations/${widget.conversationItem.conversationId}/messages')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                }
+                final querySnapshot = snapshot.data as QuerySnapshot;
+                return ListView.builder(
+                    itemCount: querySnapshot.documents.length,
+                    itemBuilder: (context, index) {
+                      final doc = querySnapshot.documents[index];
+                      return ChatMessage(text: doc.data['text'] as String);
+                    });
+              },
+            ),
           ),
-        ),
+          BottomAppBar(
+            child: BottomChatBar(
+              conversationId: widget.conversationItem.conversationId,
+              currentUserId: widget.currentUserId,
+            ),
+          ),
+        ],
       ),
+      resizeToAvoidBottomInset: true,
     );
   }
 }
