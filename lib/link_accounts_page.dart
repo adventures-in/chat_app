@@ -10,6 +10,12 @@ enum UIStatus {
   error,
 }
 
+enum LinkingStatus {
+  loading,
+  done,
+  error,
+}
+
 class LinkAccountsPage extends StatefulWidget {
   static final routeName = '/link_accounts';
 
@@ -44,18 +50,27 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
     }
   }
 
-  // TODO use different enum for linking status events
-  void _handleEvents(UIStatus event) {
+  void _handleLinkingEvents(LinkingStatus event) {
     switch (event) {
-      case UIStatus.loading:
+      case LinkingStatus.loading:
         setState(() {
-          _status = event;
+          _status = UIStatus.loading;
         });
         break;
       default:
         _updateUser();
         break;
     }
+  }
+
+  Widget _buildLoadingUI() {
+    // TODO improve
+    return CircularProgressIndicator();
+  }
+
+  Widget _buildErrorUI() {
+    // TODO improve
+    return Icon(Icons.mood_bad);
   }
 
   Widget _buildLoadedUI(BuildContext context) {
@@ -65,7 +80,7 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
       buttons.add(GoogleSignInButton(
         onPressed: () {
           _linkGoogle(_user).listen(
-            _handleEvents,
+            _handleLinkingEvents,
             onError: (Object err) => _showDialog(context, err.toString()),
           );
         },
@@ -76,31 +91,29 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
       buttons.add(FacebookSignInButton(
         onPressed: () {
           _linkFacebook(_user).listen(
-            _handleEvents,
+            _handleLinkingEvents,
             onError: (Object err) => _showDialog(context, err.toString()),
           );
         },
       ));
     }
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: buttons.isNotEmpty
-            ? [
-                Text('Link your accounts'),
-                ...buttons,
-              ]
-            : <Widget>[
-                Icon(
-                  Icons.mood,
-                  size: 100,
-                ),
-                Text('You\'re all set!',
-                    style: Theme.of(context).textTheme.headline5),
-              ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: buttons.isNotEmpty
+          ? [
+              Text('Link your accounts'),
+              ...buttons,
+            ]
+          : <Widget>[
+              Icon(
+                Icons.mood,
+                size: 100,
+              ),
+              Text('You\'re all set!',
+                  style: Theme.of(context).textTheme.headline5),
+            ],
     );
   }
 
@@ -114,16 +127,23 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: (() {
-        switch (_status) {
-          case UIStatus.done:
-            return _buildLoadedUI(context);
-          case UIStatus.loading:
-            return CircularProgressIndicator();
-          default:
-            return Icon(Icons.mood_bad); // TODO create error UI
-        }
-      })(),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: (() {
+              switch (_status) {
+                case UIStatus.done:
+                  return _buildLoadedUI(context);
+                case UIStatus.error:
+                  return _buildErrorUI();
+                default:
+                  return _buildLoadingUI();
+              }
+            })(),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -137,7 +157,7 @@ bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
   return false;
 }
 
-Stream<UIStatus> _linkGoogle(FirebaseUser user) async* {
+Stream<LinkingStatus> _linkGoogle(FirebaseUser user) async* {
   try {
     final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
     final _googleUser = await _googleSignIn.signIn();
@@ -145,12 +165,12 @@ Stream<UIStatus> _linkGoogle(FirebaseUser user) async* {
     // if the user canceled signin, an error is thrown but it gets swallowed
     // by the signIn() method so we need to reset the UI and close the stream
     if (_googleUser == null) {
-      yield UIStatus.done;
+      yield LinkingStatus.done;
       return;
     }
 
     // signal to change UI
-    yield UIStatus.loading;
+    yield LinkingStatus.loading;
 
     final googleAuth = await _googleUser.authentication;
 
@@ -162,11 +182,11 @@ Stream<UIStatus> _linkGoogle(FirebaseUser user) async* {
     await user.linkWithCredential(credential);
 
     // we are linked so reset the UI
-    yield UIStatus.done;
+    yield LinkingStatus.done;
   } catch (error) {
     // reset the UI and display an alert
 
-    yield UIStatus.done;
+    yield LinkingStatus.error;
     // errors with code kSignInCanceledError are swallowed by the
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
@@ -174,7 +194,7 @@ Stream<UIStatus> _linkGoogle(FirebaseUser user) async* {
   }
 }
 
-Stream<UIStatus> _linkFacebook(FirebaseUser user) async* {
+Stream<LinkingStatus> _linkFacebook(FirebaseUser user) async* {
   try {
     final facebookLogin = FacebookLogin();
     final result = await facebookLogin.logIn(['email']);
@@ -186,7 +206,7 @@ Stream<UIStatus> _linkFacebook(FirebaseUser user) async* {
         /// and emitted by [streamOfStateChanges]
 
         // signal to change UI
-        yield UIStatus.loading;
+        yield LinkingStatus.loading;
 
         final credential = FacebookAuthProvider.getCredential(
             accessToken: result.accessToken.token);
@@ -194,19 +214,19 @@ Stream<UIStatus> _linkFacebook(FirebaseUser user) async* {
         await user.linkWithCredential(credential);
 
         // we are signed in so reset the UI
-        yield UIStatus.done;
+        yield LinkingStatus.done;
         break;
       case FacebookLoginStatus.cancelledByUser:
-        yield UIStatus.done;
+        yield LinkingStatus.done;
         break;
       case FacebookLoginStatus.error:
-        yield UIStatus.done;
+        yield LinkingStatus.error;
         throw result.errorMessage;
         break;
     }
   } catch (error) {
     // reset the UI and display an alert
-    yield UIStatus.done;
+    yield LinkingStatus.error;
     rethrow;
   }
 }
