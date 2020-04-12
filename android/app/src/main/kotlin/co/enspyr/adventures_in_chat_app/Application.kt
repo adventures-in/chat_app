@@ -1,10 +1,8 @@
 package co.enspyr.adventures_in_chat_app
 
 import io.flutter.app.FlutterApplication
-import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback
-import io.flutter.plugins.GeneratedPluginRegistrant
 import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService
 
 class Application : FlutterApplication(), PluginRegistrantCallback {
@@ -13,7 +11,7 @@ class Application : FlutterApplication(), PluginRegistrantCallback {
         FlutterFirebaseMessagingService.setPluginRegistrant(this)
     }
 
-    override fun registerWith(registry: PluginRegistry) {
-        GeneratedPluginRegistrant.registerWith((registry as FlutterEngine))
+    override fun registerWith(registry: PluginRegistry?) {
+        FirebaseCloudMessagingPluginRegistrant.registerWith(registry)
     }
 }

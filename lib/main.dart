@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/auth_page.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,51 @@ import 'package:adventures_in_chat_app/splash_page.dart';
 import 'package:adventures_in_chat_app/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/profile_page.dart';
 
-void main() => runApp(MyApp());
+final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+Future<dynamic> backgroundMessageHandler(Map<String, dynamic> message) {
+  if (message.containsKey('data')) {
+    // Handle data message
+    final dynamic data = message['data'];
+
+    print(data);
+  }
+
+  if (message.containsKey('notification')) {
+    // Handle notification message
+    final dynamic notification = message['notification'];
+
+    print(notification);
+  }
+
+  return null;
+}
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  _firebaseMessaging.configure(
+    onMessage: (Map<String, dynamic> message) async {
+      print('onMessage: $message');
+      // _showItemDialog(message);
+    },
+    onBackgroundMessage: backgroundMessageHandler,
+    onLaunch: (Map<String, dynamic> message) async {
+      print('onLaunch: $message');
+      // _navigateToItemDetail(message);
+    },
+    onResume: (Map<String, dynamic> message) async {
+      print('onResume: $message');
+      // _navigateToItemDetail(message);
+    },
+  );
+
+  _firebaseMessaging.requestNotificationPermissions();
+
+  _firebaseMessaging.getToken().then(print);
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
