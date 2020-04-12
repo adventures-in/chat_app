@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
@@ -10,56 +12,82 @@ enum UIStatus {
   error,
 }
 
-enum LinkingStatus {
-  loading,
-  done,
-  error,
-}
-
-class LinkAccountsPage extends StatefulWidget {
+class LinkAccountsPage extends StatelessWidget {
   static final routeName = '/link_accounts';
+  final StreamController<UIStatus> _uiController = StreamController();
 
-  @override
-  State<StatefulWidget> createState() => LinkAccountsPageState();
-}
+  Future<void> _linkGoogle(FirebaseUser user) async {
+    // signal to change UI
+    _uiController.add(UIStatus.loading);
 
-class LinkAccountsPageState extends State<LinkAccountsPage> {
-  UIStatus _status = UIStatus.loading;
-  FirebaseUser _user;
+    try {
+      final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
+      final _googleUser = await _googleSignIn.signIn();
 
-  void _updateUser() async {
-    setState(() {
-      _status = UIStatus.loading;
-      _user = null;
-    });
+      // if the user canceled signin, an error is thrown but it gets swallowed
+      // by the signIn() method so we need to reset the UI and close the stream
+      if (_googleUser == null) {
+        _uiController.add(UIStatus.done);
+        return;
+      }
 
-    var user = await FirebaseAuth.instance.currentUser();
+      final googleAuth = await _googleUser.authentication;
 
-    if (user == null) {
-      // Show an error if we don't have the current user's data.
-      // This shouldn't happen, but it's better to handle the case anyway.
-      setState(() {
-        _status = UIStatus.error;
-        _user = null;
-      });
-    } else {
-      setState(() {
-        _status = UIStatus.done;
-        _user = user;
-      });
+      final credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await user.linkWithCredential(credential);
+
+      // we are linked so reload the user's data and reset the UI
+      await user.reload();
+      _uiController.add(UIStatus.done);
+    } catch (error) {
+      // reset the UI and display an alert
+      _uiController.add(UIStatus.error);
+      // errors with code kSignInCanceledError are swallowed by the
+      // GoogleSignIn.signIn() method so we can assume anything caught here
+      // is unexpected and for display
+      rethrow;
     }
   }
 
-  void _handleLinkingEvents(LinkingStatus event) {
-    switch (event) {
-      case LinkingStatus.loading:
-        setState(() {
-          _status = UIStatus.loading;
-        });
-        break;
-      default:
-        _updateUser();
-        break;
+  Future<void> _linkFacebook(FirebaseUser user) async {
+    // signal to change UI
+    _uiController.add(UIStatus.loading);
+
+    try {
+      final facebookLogin = FacebookLogin();
+      final result = await facebookLogin.logIn(['email']);
+
+      switch (result.status) {
+        case FacebookLoginStatus.loggedIn:
+
+          /// the auth info will be picked up by the listener on [onAuthStateChanged]
+          /// and emitted by [streamOfStateChanges]
+
+          final credential = FacebookAuthProvider.getCredential(
+              accessToken: result.accessToken.token);
+
+          await user.linkWithCredential(credential);
+
+          // we are signed in so reload the user's data and reset the UI
+          await user.reload();
+          _uiController.add(UIStatus.done);
+          break;
+        case FacebookLoginStatus.cancelledByUser:
+          _uiController.add(UIStatus.done);
+          break;
+        case FacebookLoginStatus.error:
+          _uiController.add(UIStatus.error);
+          throw result.errorMessage;
+          break;
+      }
+    } catch (error) {
+      // reset the UI and display an alert
+      _uiController.add(UIStatus.error);
+      rethrow;
     }
   }
 
@@ -73,27 +101,23 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
     return Icon(Icons.mood_bad);
   }
 
-  Widget _buildLoadedUI(BuildContext context) {
+  Widget _buildLoadedUI(BuildContext context, FirebaseUser user) {
     var buttons = <Widget>[];
 
-    if (!_hasLinkedProvider('google.com', _user.providerData)) {
+    if (!_hasLinkedProvider('google.com', user.providerData)) {
       buttons.add(GoogleSignInButton(
         onPressed: () {
-          _linkGoogle(_user).listen(
-            _handleLinkingEvents,
-            onError: (Object err) => _showDialog(context, err.toString()),
-          );
+          _linkGoogle(user)
+              .catchError((Object err) => _showDialog(context, err.toString()));
         },
       ));
     }
 
-    if (!_hasLinkedProvider('facebook.com', _user.providerData)) {
+    if (!_hasLinkedProvider('facebook.com', user.providerData)) {
       buttons.add(FacebookSignInButton(
         onPressed: () {
-          _linkFacebook(_user).listen(
-            _handleLinkingEvents,
-            onError: (Object err) => _showDialog(context, err.toString()),
-          );
+          _linkFacebook(user)
+              .catchError((Object err) => _showDialog(context, err.toString()));
         },
       ));
     }
@@ -118,12 +142,6 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _updateUser();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
@@ -131,16 +149,28 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Center(
-            child: (() {
-              switch (_status) {
-                case UIStatus.done:
-                  return _buildLoadedUI(context);
-                case UIStatus.error:
-                  return _buildErrorUI();
-                default:
-                  return _buildLoadingUI();
-              }
-            })(),
+            child: StreamBuilder<UIStatus>(
+              initialData: UIStatus.done,
+              stream: _uiController.stream,
+              builder: (context, snapshot) {
+                switch (snapshot.data) {
+                  // Errors are already displayed as alert dialogs
+                  case UIStatus.done:
+                  case UIStatus.error:
+                    return FutureBuilder<FirebaseUser>(
+                        future: FirebaseAuth.instance.currentUser(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return _buildLoadedUI(context, snapshot.data);
+                          } else {
+                            return _buildLoadingUI();
+                          }
+                        });
+                  default:
+                    return _buildLoadingUI();
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -155,80 +185,6 @@ bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
     }
   }
   return false;
-}
-
-Stream<LinkingStatus> _linkGoogle(FirebaseUser user) async* {
-  try {
-    final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
-    final _googleUser = await _googleSignIn.signIn();
-
-    // if the user canceled signin, an error is thrown but it gets swallowed
-    // by the signIn() method so we need to reset the UI and close the stream
-    if (_googleUser == null) {
-      yield LinkingStatus.done;
-      return;
-    }
-
-    // signal to change UI
-    yield LinkingStatus.loading;
-
-    final googleAuth = await _googleUser.authentication;
-
-    final credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    await user.linkWithCredential(credential);
-
-    // we are linked so reset the UI
-    yield LinkingStatus.done;
-  } catch (error) {
-    // reset the UI and display an alert
-
-    yield LinkingStatus.error;
-    // errors with code kSignInCanceledError are swallowed by the
-    // GoogleSignIn.signIn() method so we can assume anything caught here
-    // is unexpected and for display
-    rethrow;
-  }
-}
-
-Stream<LinkingStatus> _linkFacebook(FirebaseUser user) async* {
-  try {
-    final facebookLogin = FacebookLogin();
-    final result = await facebookLogin.logIn(['email']);
-
-    switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-
-        /// the auth info will be picked up by the listener on [onAuthStateChanged]
-        /// and emitted by [streamOfStateChanges]
-
-        // signal to change UI
-        yield LinkingStatus.loading;
-
-        final credential = FacebookAuthProvider.getCredential(
-            accessToken: result.accessToken.token);
-
-        await user.linkWithCredential(credential);
-
-        // we are signed in so reset the UI
-        yield LinkingStatus.done;
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        yield LinkingStatus.done;
-        break;
-      case FacebookLoginStatus.error:
-        yield LinkingStatus.error;
-        throw result.errorMessage;
-        break;
-    }
-  } catch (error) {
-    // reset the UI and display an alert
-    yield LinkingStatus.error;
-    rethrow;
-  }
 }
 
 void _showDialog(BuildContext context, String errorMessage) {
