@@ -135,7 +135,7 @@ class LinkAccountsPage extends StatelessWidget {
         Text(
           buttons.isEmpty
               ? 'You already linked all your social accounts.'
-              : 'You can signin to this app with your social accounts by linking them to your profile.',
+              : 'You can sign in to this app with your social accounts by linking them to your profile.',
           style: theme.textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),
