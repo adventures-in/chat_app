@@ -92,17 +92,12 @@ class LinkAccountsPage extends StatelessWidget {
   }
 
   Widget _buildLoadingUI() {
-    // TODO improve
     return CircularProgressIndicator();
-  }
-
-  Widget _buildErrorUI() {
-    // TODO improve
-    return Icon(Icons.mood_bad);
   }
 
   Widget _buildLoadedUI(BuildContext context, FirebaseUser user) {
     var buttons = <Widget>[];
+    var theme = Theme.of(context);
 
     if (!_hasLinkedProvider('google.com', user.providerData)) {
       buttons.add(GoogleSignInButton(
@@ -125,19 +120,28 @@ class LinkAccountsPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: buttons.isNotEmpty
-          ? [
-              Text('Link your accounts'),
-              ...buttons,
-            ]
-          : <Widget>[
-              Icon(
-                Icons.mood,
-                size: 100,
-              ),
-              Text('You\'re all set!',
-                  style: Theme.of(context).textTheme.headline5),
-            ],
+      children: [
+        Icon(
+          buttons.isEmpty ? Icons.check_circle_outline : Icons.group_add,
+          size: 100,
+          color: theme.accentColor,
+        ),
+        SizedBox(height: 16),
+        Text(
+          buttons.isEmpty ? 'Accounts linked' : 'Link accounts',
+          style: theme.textTheme.headline5,
+        ),
+        SizedBox(height: 16),
+        Text(
+          buttons.isEmpty
+              ? 'You already linked all your social accounts.'
+              : 'You can signin to this app with your social accounts by linking them to your profile.',
+          style: theme.textTheme.bodyText1,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 32),
+        ...buttons,
+      ],
     );
   }
 
