@@ -45,16 +45,26 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
                   case UIStatus.done:
                   case UIStatus.error:
                     return FutureBuilder<FirebaseUser>(
-                        future: FirebaseAuth.instance.currentUser(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return LoadedUI(
-                                user: snapshot.data,
-                                streamController: _uiController);
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        });
+                      future: FirebaseAuth.instance.currentUser(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error.toString());
+                          return ErrorUI(
+                            title: 'Something went wrong',
+                            message:
+                                'There was a problem while loading your data. Please try again later.',
+                          );
+                        }
+
+                        if (snapshot.hasData) {
+                          return LoadedUI(
+                              user: snapshot.data,
+                              streamController: _uiController);
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    );
                   default:
                     return CircularProgressIndicator();
                 }
@@ -216,6 +226,7 @@ class LoadedUI extends StatelessWidget {
         Text(
           buttons.isEmpty ? 'Accounts linked' : 'Link accounts',
           style: theme.textTheme.headline5,
+          textAlign: TextAlign.center,
         ),
         SizedBox(height: 16),
         Text(
@@ -227,6 +238,42 @@ class LoadedUI extends StatelessWidget {
         ),
         SizedBox(height: 32),
         ...buttons,
+      ],
+    );
+  }
+}
+
+class ErrorUI extends StatelessWidget {
+  final String title;
+  final String message;
+
+  const ErrorUI({Key key, this.message, this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.error_outline,
+          size: 100,
+          color: theme.errorColor,
+        ),
+        SizedBox(height: 16),
+        Text(
+          title,
+          style: theme.textTheme.headline5,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 16),
+        Text(
+          message,
+          style: theme.textTheme.bodyText1,
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }
