@@ -12,13 +12,102 @@ enum UIStatus {
   error,
 }
 
-class LinkAccountsPage extends StatelessWidget {
+class LinkAccountsPage extends StatefulWidget {
   static final routeName = '/link_accounts';
+
+  @override
+  State<StatefulWidget> createState() => LinkAccountsPageState();
+}
+
+class LinkAccountsPageState extends State<LinkAccountsPage> {
   final StreamController<UIStatus> _uiController = StreamController();
+
+  @override
+  void dispose() {
+    _uiController.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: StreamBuilder<UIStatus>(
+              initialData: UIStatus.done,
+              stream: _uiController.stream,
+              builder: (context, snapshot) {
+                switch (snapshot.data) {
+                  // Errors are already displayed as alert dialogs
+                  case UIStatus.done:
+                  case UIStatus.error:
+                    return FutureBuilder<FirebaseUser>(
+                        future: FirebaseAuth.instance.currentUser(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return LoadedUI(
+                                user: snapshot.data,
+                                streamController: _uiController);
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        });
+                  default:
+                    return CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
+  for (final info in providersInfo) {
+    if (info.providerId == id) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void _showDialog(BuildContext context, String errorMessage) {
+  // flutter defined function
+  showDialog<dynamic>(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return AlertDialog(
+        title: Text('There was a problem'),
+        content: Text(errorMessage),
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          FlatButton(
+            child: Text('Close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class LoadedUI extends StatelessWidget {
+  final FirebaseUser user;
+  final StreamController<UIStatus> streamController;
+
+  const LoadedUI({Key key, this.user, this.streamController}) : super(key: key);
 
   Future<void> _linkGoogle(FirebaseUser user) async {
     // signal to change UI
-    _uiController.add(UIStatus.loading);
+    streamController.add(UIStatus.loading);
 
     try {
       final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
@@ -27,7 +116,7 @@ class LinkAccountsPage extends StatelessWidget {
       // if the user canceled signin, an error is thrown but it gets swallowed
       // by the signIn() method so we need to reset the UI and close the stream
       if (_googleUser == null) {
-        _uiController.add(UIStatus.done);
+        streamController.add(UIStatus.done);
         return;
       }
 
@@ -42,10 +131,10 @@ class LinkAccountsPage extends StatelessWidget {
 
       // we are linked so reload the user's data and reset the UI
       await user.reload();
-      _uiController.add(UIStatus.done);
+      streamController.add(UIStatus.done);
     } catch (error) {
       // reset the UI and display an alert
-      _uiController.add(UIStatus.error);
+      streamController.add(UIStatus.error);
       // errors with code kSignInCanceledError are swallowed by the
       // GoogleSignIn.signIn() method so we can assume anything caught here
       // is unexpected and for display
@@ -55,7 +144,7 @@ class LinkAccountsPage extends StatelessWidget {
 
   Future<void> _linkFacebook(FirebaseUser user) async {
     // signal to change UI
-    _uiController.add(UIStatus.loading);
+    streamController.add(UIStatus.loading);
 
     try {
       final facebookLogin = FacebookLogin();
@@ -74,28 +163,25 @@ class LinkAccountsPage extends StatelessWidget {
 
           // we are signed in so reload the user's data and reset the UI
           await user.reload();
-          _uiController.add(UIStatus.done);
+          streamController.add(UIStatus.done);
           break;
         case FacebookLoginStatus.cancelledByUser:
-          _uiController.add(UIStatus.done);
+          streamController.add(UIStatus.done);
           break;
         case FacebookLoginStatus.error:
-          _uiController.add(UIStatus.error);
+          streamController.add(UIStatus.error);
           throw result.errorMessage;
           break;
       }
     } catch (error) {
       // reset the UI and display an alert
-      _uiController.add(UIStatus.error);
+      streamController.add(UIStatus.error);
       rethrow;
     }
   }
 
-  Widget _buildLoadingUI() {
-    return CircularProgressIndicator();
-  }
-
-  Widget _buildLoadedUI(BuildContext context, FirebaseUser user) {
+  @override
+  Widget build(BuildContext context) {
     var buttons = <Widget>[];
     var theme = Theme.of(context);
 
@@ -144,72 +230,4 @@ class LinkAccountsPage extends StatelessWidget {
       ],
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Center(
-            child: StreamBuilder<UIStatus>(
-              initialData: UIStatus.done,
-              stream: _uiController.stream,
-              builder: (context, snapshot) {
-                switch (snapshot.data) {
-                  // Errors are already displayed as alert dialogs
-                  case UIStatus.done:
-                  case UIStatus.error:
-                    return FutureBuilder<FirebaseUser>(
-                        future: FirebaseAuth.instance.currentUser(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return _buildLoadedUI(context, snapshot.data);
-                          } else {
-                            return _buildLoadingUI();
-                          }
-                        });
-                  default:
-                    return _buildLoadingUI();
-                }
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
-  for (final info in providersInfo) {
-    if (info.providerId == id) {
-      return true;
-    }
-  }
-  return false;
-}
-
-void _showDialog(BuildContext context, String errorMessage) {
-  // flutter defined function
-  showDialog<dynamic>(
-    context: context,
-    builder: (BuildContext context) {
-      // return object of type Dialog
-      return AlertDialog(
-        title: Text('There was a problem'),
-        content: Text(errorMessage),
-        actions: <Widget>[
-          // usually buttons at the bottom of the dialog
-          FlatButton(
-            child: Text('Close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
 }
