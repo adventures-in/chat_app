@@ -31,6 +31,8 @@ jobs:
         service_account_key: ${{ secrets.GCS_KEY }}
 
     - run: gsutil cp gs://adventures-in-credentials/google-services.json ./android/app/google-services.json
+    - run: gsutil cp gs://adventures-in-credentials/keystore.config ./android/app/keystore.config
+    - run: gsutil cp gs://adventures-in-credentials/keystore.jks ./android/app/keystore.jks
     - run: flutter pub get
     - run: flutter test
     - run: flutter build apk --debug --split-per-abi
