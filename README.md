@@ -44,6 +44,10 @@ For deploying you may need:
 fastlane match appstore
 ```
 
+### Android Signing
+
+Get `keystore.config` and `keystore.jks` from the [adventures-in-credentials bucket](https://console.cloud.google.com/storage/browser/adventures-in-credentials?project=adventures-in) and put both files in the `android/app` folder.
+
 ## Firebase Backend
 
 To make changes you need to:
