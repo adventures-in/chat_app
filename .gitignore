@@ -43,4 +43,7 @@ android/app/google-services.json
 # credentials used by Match to access bucket with iOS signing credentials
 ios/gc_keys.json
 
+### Added ignores 
 ios/Build/
+android/app/keystore.config
+android/app/keystore.jks
