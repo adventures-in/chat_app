@@ -1,3 +1,5 @@
+import 'package:adventures_in_chat_app/services/api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/auth_page.dart';
@@ -8,9 +10,15 @@ import 'package:adventures_in_chat_app/splash_page.dart';
 import 'package:adventures_in_chat_app/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/profile_page.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
+  final Api api = Api(Firestore.instance.collection);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,6 +39,7 @@ class MyApp extends StatelessWidget {
               return ChatPage(
                 conversationItem: args.conversationItem,
                 currentUserId: args.currentUserId,
+                api: api,
               );
             },
           );
