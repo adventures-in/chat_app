@@ -17,6 +17,7 @@ dependencies:
   google_sign_in:
   flutter_auth_buttons:
   cloud_firestore:
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:
