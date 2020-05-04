@@ -26,6 +26,8 @@ dev_dependencies:
   flutter_launcher_icons:
 
 flutter:
+  assets:
+    - assets/images/
   uses-material-design: true
 
 flutter_icons:
