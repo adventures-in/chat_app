@@ -1,4 +1,4 @@
-name: CI
+name: Mobile Apps
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: Build iOS App
+    name: CI/CD
     runs-on: macOS-latest
     steps:
     # several actions use checkout 
