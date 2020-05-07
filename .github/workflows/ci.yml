@@ -1,4 +1,4 @@
-name: Build iOS App
+name: CI
 
 on:
   push:
