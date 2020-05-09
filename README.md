@@ -2,6 +2,8 @@
 
 A Chat App for Adventures in Flutter.
 
+![CI](https://github.com/adventuresin/chat_app/workflows/Mobile%20Apps/badge.svg)
+
 ## Missing Files
 
 ### Firebase Config
