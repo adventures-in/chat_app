@@ -1,13 +1,18 @@
-name: Build iOS App
+name: Mobile Apps
 
 on:
   push:
     branches:
+      - dev
+      - master
+  pull_request:
+    branches:
+      - dev
       - master
 
 jobs:
   build:
-    name: Build iOS App
+    name: CI
     runs-on: macOS-latest
     steps:
     # several actions use checkout 

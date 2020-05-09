@@ -68,6 +68,14 @@ class OptionsPage extends StatelessWidget {
                 Navigator.pushNamed(context, LinkAccountsPage.routeName);
               },
             ),
+            AboutListTile(
+              icon: const Icon(Icons.help_outline, size: 32),
+              applicationIcon: Image.asset(
+                'assets/images/logo.png',
+                height: 64,
+              ),
+              applicationVersion: '1.0.0+1',
+            ),
           ],
         ));
   }
