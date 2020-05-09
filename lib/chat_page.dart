@@ -33,6 +33,7 @@ class _ChatPageState extends State<ChatPage> {
               stream: Firestore.instance
                   .collection(
                       'conversations/${widget.conversationItem.conversationId}/messages')
+                  .orderBy('timestamp', descending: false)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
