@@ -44,6 +44,6 @@ android/app/google-services.json
 ios/gc_keys.json
 
 ### Added ignores 
-ios/Build/
 android/app/keystore.config
 android/app/keystore.jks
+.firebase/
