@@ -1,6 +1,8 @@
-# meetup_chatapp
+# adventures_in_chat_app
 
 A Chat App for Adventures in Flutter.
+
+![CI](https://github.com/adventuresin/chat_app/workflows/Mobile%20Apps/badge.svg)
 
 ## Missing Files
 
@@ -93,6 +95,22 @@ firebase deploy --only functions
 ```
 
 **Please push up changes to cloud functions in a PR for review before deploying.** 
+
+## Web 
+
+### Build 
+
+```sh
+flutter build web -t lib/main_web.dart 
+```
+
+- builds to `build/web/`
+
+### Deploy 
+
+```sh
+firebase deploy --only hosting:adventures-in
+```
 
 ## Misc Tips
 
