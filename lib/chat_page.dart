@@ -43,7 +43,9 @@ class _ChatPageState extends State<ChatPage> {
                     itemCount: querySnapshot.documents.length,
                     itemBuilder: (context, index) {
                       final doc = querySnapshot.documents[index];
-                      return ChatMessage(text: doc.data['text'] as String);
+                      return ChatMessage(
+                          text: doc.data['text'] as String,
+                          dateTime: (doc['timestamp'] as Timestamp).toDate());
                     });
               },
             ),
