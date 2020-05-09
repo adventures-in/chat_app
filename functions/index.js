@@ -28,7 +28,7 @@ exports.addConversationsToUsers = functions.firestore.document('conversations/{c
                     uids: docData.uids, 
                     displayNames: docData.displayNames, 
                     photoURLs: docData.photoURLs
-                }).add;
+                });
         promises.push(promise);
     }
 

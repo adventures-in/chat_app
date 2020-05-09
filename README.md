@@ -1,4 +1,4 @@
-# meetup_chatapp
+# adventures_in_chat_app
 
 A Chat App for Adventures in Flutter.
 
