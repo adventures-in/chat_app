@@ -96,6 +96,22 @@ firebase deploy --only functions
 
 **Please push up changes to cloud functions in a PR for review before deploying.** 
 
+## Web 
+
+### Build 
+
+```sh
+flutter build web -t lib/main_web.dart 
+```
+
+- builds to `build/web/`
+
+### Deploy 
+
+```sh
+firebase deploy --only hosting:adventures-in
+```
+
 ## Misc Tips
 
 Restart vs code after `flutter upgrade`.
