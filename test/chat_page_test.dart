@@ -13,8 +13,7 @@ class MockApi extends Mock implements Api {
 
 void main() {
   group('ChatMessage', () {
-    testWidgets('Should contain text content',
-        (WidgetTester tester) async {
+    testWidgets('Should contain text content', (WidgetTester tester) async {
       await tester.pumpWidget(wrapWidget(ChatMessage(
         text: 'Test message',
       )));
@@ -98,6 +97,36 @@ void main() {
 
       expect(find.byType(ListView), findsOneWidget);
       expect(find.byType(ChatMessage), findsNWidgets(messages.length));
+    });
+
+    testWidgets('Should send a message when submit is pressed',
+        (WidgetTester tester) async {
+      final api = MockApi(null);
+      final testMessage = 'Test message';
+      final testConversationId = 'testConversationId';
+      final testUsers = ['testUser1', 'testUser2'];
+
+      await tester.pumpWidget(wrapWidget(ChatPage(
+        api: api,
+        conversationItem: ConversationItem(
+          displayNames: null,
+          conversationId: testConversationId,
+          photoURLs: null,
+          uids: testUsers,
+        ),
+        currentUserId: testUsers[0],
+      )));
+
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), testMessage);
+      await tester.tap(find.byType(IconButton));
+
+      verify(api.sendMessage(
+        text: testMessage,
+        userId: testUsers[0],
+        conversationId: testConversationId,
+      ));
     });
   });
 }
