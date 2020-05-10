@@ -10,8 +10,10 @@ class Api {
   Api(this.collectionGet);
 
   Stream<List<Message>> getMessagesStream(String conversationId) =>
-      collectionGet('conversations/$conversationId/messages').snapshots().map(
-          (QuerySnapshot snapshot) => snapshot.documents
+      collectionGet('conversations/$conversationId/messages')
+          .orderBy('timestamp', descending: false)
+          .snapshots()
+          .map((QuerySnapshot snapshot) => snapshot.documents
               .map((document) => Message.fromDocument(document))
               .toList());
 
