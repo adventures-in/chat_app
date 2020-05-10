@@ -17,11 +17,21 @@ dependencies:
   google_sign_in:
   flutter_auth_buttons:
   cloud_firestore:
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^4.1.1
 
+  flutter_launcher_icons:
+
 flutter:
+  assets:
+    - assets/images/
   uses-material-design: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
