@@ -13,7 +13,7 @@ class MockApi extends Mock implements Api {
 
 void main() {
   group('ChatMessage', () {
-    testWidgets('Should contain display text content',
+    testWidgets('Should contain text content',
         (WidgetTester tester) async {
       await tester.pumpWidget(wrapWidget(ChatMessage(
         text: 'Test message',
