@@ -1,4 +1,4 @@
-import 'package:adventures_in_chat_app/services/api.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -58,7 +58,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final Api api = Api(Firestore.instance.collection);
+  final DatabaseService api = DatabaseService(Firestore.instance);
 
   @override
   Widget build(BuildContext context) {

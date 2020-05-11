@@ -1,14 +1,14 @@
 import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
-import 'package:adventures_in_chat_app/services/api.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/widgets/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockApi extends Mock implements Api {
-  MockApi(CollectionGet collectionGet);
+class MockApi extends Mock implements DatabaseService {
+  MockApi();
 }
 
 void main() {
@@ -51,7 +51,7 @@ void main() {
   group('ChatPage', () {
     testWidgets('Should contain an empty container and a bottom bar',
         (WidgetTester tester) async {
-      final api = MockApi(null);
+      final api = MockApi();
 
       await tester.pumpWidget(wrapWidget(ChatPage(
         api: api,
@@ -72,7 +72,7 @@ void main() {
 
     testWidgets('Should contain a list of messages when available',
         (WidgetTester tester) async {
-      final api = MockApi(null);
+      final api = MockApi();
       final messages = [
         Message(text: 'Message1'),
         Message(text: 'Message2'),
@@ -101,7 +101,7 @@ void main() {
 
     testWidgets('Should send a message when submit is pressed',
         (WidgetTester tester) async {
-      final api = MockApi(null);
+      final api = MockApi();
       final testMessage = 'Test message';
       final testConversationId = 'testConversationId';
       final testUsers = ['testUser1', 'testUser2'];
