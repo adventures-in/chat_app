@@ -1,3 +1,4 @@
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -11,9 +12,8 @@ class DatabaseService {
       .collection('conversations/$conversationId/messages')
       .orderBy('timestamp', descending: false)
       .snapshots()
-      .map((QuerySnapshot snapshot) => snapshot.documents
-          .map((document) => Message.fromDocument(document))
-          .toList());
+      .map((QuerySnapshot snapshot) =>
+          snapshot.documents.map((document) => document.toMessage()).toList());
 
   Future<String> sendMessage({
     @required String text,
