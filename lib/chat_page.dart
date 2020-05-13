@@ -1,5 +1,6 @@
+import 'package:adventures_in_chat_app/models/message.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/widgets/chat_message.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 
@@ -7,19 +8,19 @@ class ChatPage extends StatefulWidget {
   ChatPage({
     @required this.conversationItem,
     @required this.currentUserId,
+    @required this.db,
   });
 
   static const routeName = '/chat';
   final ConversationItem conversationItem;
   final String currentUserId;
+  final DatabaseService db;
 
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  DocumentReference ref;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,32 +30,34 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection(
-                      'conversations/${widget.conversationItem.conversationId}/messages')
-                  .orderBy('timestamp', descending: false)
-                  .snapshots(),
+            child: StreamBuilder<List<Message>>(
+              stream: widget.db
+                  .getMessagesStream(widget.conversationItem.conversationId),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Container();
                 }
-                final querySnapshot = snapshot.data as QuerySnapshot;
+
+                final messages = snapshot.data;
                 return ListView.builder(
-                    itemCount: querySnapshot.documents.length,
-                    itemBuilder: (context, index) {
-                      final doc = querySnapshot.documents[index];
-                      return ChatMessage(
-                          text: doc.data['text'] as String,
-                          dateTime: (doc['timestamp'] as Timestamp).toDate());
-                    });
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) => ChatMessage(
+                    text: messages[index].text,
+                    dateTime: messages[index].timestamp,
+                  ),
+                );
               },
             ),
           ),
           BottomAppBar(
             child: BottomChatBar(
-              conversationId: widget.conversationItem.conversationId,
-              currentUserId: widget.currentUserId,
+              onSubmit: (String text) {
+                widget.db.sendMessage(
+                  text: text,
+                  userId: widget.currentUserId,
+                  conversationId: widget.conversationItem.conversationId,
+                );
+              },
             ),
           ),
         ],
@@ -65,12 +68,10 @@ class _ChatPageState extends State<ChatPage> {
 }
 
 class BottomChatBar extends StatefulWidget {
-  final String conversationId;
-  final String currentUserId;
+  final Function(String) onSubmit;
 
   const BottomChatBar({
-    @required this.conversationId,
-    @required this.currentUserId,
+    @required this.onSubmit,
     Key key,
   }) : super(key: key);
 
@@ -116,17 +117,8 @@ class _BottomChatBarState extends State<BottomChatBar> {
   }
 
   void _submitMessage() {
-    final messageText = _controller.text;
+    widget.onSubmit(_controller.text);
     _controller.clear();
-    Firestore.instance
-        .collection('conversations')
-        .document(widget.conversationId)
-        .collection('messages')
-        .add(<String, dynamic>{
-      'authorId': widget.currentUserId,
-      'text': messageText,
-      'timestamp': FieldValue.serverTimestamp()
-    });
   }
 }
 
@@ -134,5 +126,8 @@ class ChatPageArgs {
   final ConversationItem conversationItem;
   final String currentUserId;
 
-  ChatPageArgs({@required this.conversationItem, @required this.currentUserId});
+  ChatPageArgs({
+    @required this.conversationItem,
+    @required this.currentUserId,
+  });
 }
