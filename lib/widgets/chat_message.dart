@@ -9,8 +9,9 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var formattedDate =
-        '${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}';
+    var formattedDate = (dateTime == null)
+        ? ''
+        : '${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}';
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
