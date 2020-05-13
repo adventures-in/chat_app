@@ -8,13 +8,13 @@ class ChatPage extends StatefulWidget {
   ChatPage({
     @required this.conversationItem,
     @required this.currentUserId,
-    @required this.api,
+    @required this.db,
   });
 
   static const routeName = '/chat';
   final ConversationItem conversationItem;
   final String currentUserId;
-  final DatabaseService api;
+  final DatabaseService db;
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -31,7 +31,7 @@ class _ChatPageState extends State<ChatPage> {
         children: <Widget>[
           Expanded(
             child: StreamBuilder<List<Message>>(
-              stream: widget.api
+              stream: widget.db
                   .getMessagesStream(widget.conversationItem.conversationId),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -50,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
           BottomAppBar(
             child: BottomChatBar(
               onSubmit: (String text) {
-                widget.api.sendMessage(
+                widget.db.sendMessage(
                   text: text,
                   userId: widget.currentUserId,
                   conversationId: widget.conversationItem.conversationId,

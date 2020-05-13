@@ -58,7 +58,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final DatabaseService api = DatabaseService(Firestore.instance);
+  final DatabaseService db = DatabaseService(Firestore.instance);
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
               return ChatPage(
                 conversationItem: args.conversationItem,
                 currentUserId: args.currentUserId,
-                api: api,
+                db: db,
               );
             },
           );

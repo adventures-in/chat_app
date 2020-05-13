@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockApi extends Mock implements DatabaseService {
-  MockApi();
+class MockDatabase extends Mock implements DatabaseService {
+  MockDatabase();
 }
 
 void main() {
@@ -51,10 +51,10 @@ void main() {
   group('ChatPage', () {
     testWidgets('Should contain an empty container and a bottom bar',
         (WidgetTester tester) async {
-      final api = MockApi();
+      final db = MockDatabase();
 
       await tester.pumpWidget(wrapWidget(ChatPage(
-        api: api,
+        db: db,
         conversationItem: ConversationItem(
           displayNames: null,
           conversationId: 'testId',
@@ -72,18 +72,18 @@ void main() {
 
     testWidgets('Should contain a list of messages when available',
         (WidgetTester tester) async {
-      final api = MockApi();
+      final db = MockDatabase();
       final messages = [
         Message(text: 'Message1'),
         Message(text: 'Message2'),
         Message(text: 'Message3'),
       ];
 
-      when(api.getMessagesStream('testId'))
+      when(db.getMessagesStream('testId'))
           .thenAnswer((_) => Stream<List<Message>>.value(messages));
 
       await tester.pumpWidget(wrapWidget(ChatPage(
-        api: api,
+        db: db,
         conversationItem: ConversationItem(
           displayNames: null,
           conversationId: 'testId',
@@ -101,13 +101,13 @@ void main() {
 
     testWidgets('Should send a message when submit is pressed',
         (WidgetTester tester) async {
-      final api = MockApi();
+      final db = MockDatabase();
       final testMessage = 'Test message';
       final testConversationId = 'testConversationId';
       final testUsers = ['testUser1', 'testUser2'];
 
       await tester.pumpWidget(wrapWidget(ChatPage(
-        api: api,
+        db: db,
         conversationItem: ConversationItem(
           displayNames: null,
           conversationId: testConversationId,
@@ -122,7 +122,7 @@ void main() {
       await tester.enterText(find.byType(TextField), testMessage);
       await tester.tap(find.byType(IconButton));
 
-      verify(api.sendMessage(
+      verify(db.sendMessage(
         text: testMessage,
         userId: testUsers[0],
         conversationId: testConversationId,
