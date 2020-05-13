@@ -41,8 +41,10 @@ class _ChatPageState extends State<ChatPage> {
                 final messages = snapshot.data;
                 return ListView.builder(
                   itemCount: messages.length,
-                  itemBuilder: (context, index) =>
-                      ChatMessage(text: messages[index].text),
+                  itemBuilder: (context, index) => ChatMessage(
+                    text: messages[index].text,
+                    dateTime: messages[index].timestamp,
+                  ),
                 );
               },
             ),
