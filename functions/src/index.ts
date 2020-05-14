@@ -113,3 +113,31 @@ export const updateConversationItems = functions.firestore.document('users/{user
     return promises;
     
 });
+
+import { Request, Response } from 'express';
+
+/**
+ * HTTP Cloud Function.
+ *
+ * @param {Object} req Cloud Function request context.
+ *                     More info: https://expressjs.com/en/api.html#req
+ * @param {Object} res Cloud Function response context.
+ *                     More info: https://expressjs.com/en/api.html#res
+ */
+export const fixConversationItems = async (req : Request, res : Response) => {
+    let usersSnapshot = await db.collection('users').get();
+    var count = 0;
+    for(let doc of usersSnapshot.docs) {
+        let userId = doc.id;
+        let itemsRef = db.collection('users/'+userId+'/conversation-items');
+        let itemsSnapshot = await itemsRef.get();
+        for(let itemSnapshot of itemsSnapshot.docs) {
+            let data : FirebaseFirestore.DocumentData = itemSnapshot.data();
+            delete data.conversationId;
+            itemsRef.doc(data.id).set(data);
+            data.delete();
+            count++;
+        }
+    }
+    res.send(`Updated ${count} documents`);
+};
