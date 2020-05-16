@@ -21,6 +21,8 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final ScrollController _controller = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +40,8 @@ class _ChatPageState extends State<ChatPage> {
                   return Container();
                 }
 
-                final messages = snapshot.data;
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) => ChatMessage(
-                    text: messages[index].text,
-                    dateTime: messages[index].timestamp,
-                  ),
-                );
+                return MessagesList(
+                    controller: _controller, messages: snapshot.data);
               },
             ),
           ),
@@ -63,6 +59,43 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       resizeToAvoidBottomInset: true,
+    );
+  }
+}
+
+class MessagesList extends StatefulWidget {
+  const MessagesList({
+    Key key,
+    @required ScrollController controller,
+    @required this.messages,
+  })  : controller = controller,
+        super(key: key);
+
+  final ScrollController controller;
+  final List<Message> messages;
+
+  @override
+  _MessagesListState createState() => _MessagesListState();
+}
+
+class _MessagesListState extends State<MessagesList> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      widget.controller.jumpTo(widget.controller.position.maxScrollExtent);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      controller: widget.controller,
+      itemCount: widget.messages.length,
+      itemBuilder: (context, index) => ChatMessage(
+        text: widget.messages[index].text,
+        dateTime: widget.messages[index].timestamp,
+      ),
     );
   }
 }
