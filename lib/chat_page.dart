@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/widgets/chat_message.dart';
@@ -26,13 +24,6 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _controller = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-    Timer(Duration(milliseconds: 100),
-        () => _controller.jumpTo(_controller.position.maxScrollExtent));
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -49,15 +40,8 @@ class _ChatPageState extends State<ChatPage> {
                   return Container();
                 }
 
-                final messages = snapshot.data;
-                return ListView.builder(
-                  controller: _controller,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) => ChatMessage(
-                    text: messages[index].text,
-                    dateTime: messages[index].timestamp,
-                  ),
-                );
+                return MessagesList(
+                    controller: _controller, messages: snapshot.data);
               },
             ),
           ),
@@ -75,6 +59,43 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       resizeToAvoidBottomInset: true,
+    );
+  }
+}
+
+class MessagesList extends StatefulWidget {
+  const MessagesList({
+    Key key,
+    @required ScrollController controller,
+    @required this.messages,
+  })  : controller = controller,
+        super(key: key);
+
+  final ScrollController controller;
+  final List<Message> messages;
+
+  @override
+  _MessagesListState createState() => _MessagesListState();
+}
+
+class _MessagesListState extends State<MessagesList> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      widget.controller.jumpTo(widget.controller.position.maxScrollExtent);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      controller: widget.controller,
+      itemCount: widget.messages.length,
+      itemBuilder: (context, index) => ChatMessage(
+        text: widget.messages[index].text,
+        dateTime: widget.messages[index].timestamp,
+      ),
     );
   }
 }
