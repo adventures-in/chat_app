@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/widgets/chat_message.dart';
@@ -21,6 +23,15 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    Timer(Duration(milliseconds: 100),
+        () => _controller.jumpTo(_controller.position.maxScrollExtent));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +51,7 @@ class _ChatPageState extends State<ChatPage> {
 
                 final messages = snapshot.data;
                 return ListView.builder(
+                  controller: _controller,
                   itemCount: messages.length,
                   itemBuilder: (context, index) => ChatMessage(
                     text: messages[index].text,
