@@ -11,7 +11,7 @@ class ChatMessage extends StatelessWidget {
     var theme = Theme.of(context);
     var formattedDate = (dateTime == null)
         ? ''
-        : '${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute}';
+        : '${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}';
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
