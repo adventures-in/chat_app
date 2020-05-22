@@ -1,9 +1,10 @@
-import 'package:apple_sign_in/apple_sign_in.dart';
+import 'dart:io';
+
+import 'package:apple_sign_in/apple_sign_in.dart' hide AppleSignInButton;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class AuthPage extends StatelessWidget {
   @override
@@ -76,6 +77,12 @@ Stream<int> _appleSignin(BuildContext context) async* {
   // signal to change UI
   yield 0;
 
+  if (Platform.isAndroid) {
+    _showDialog(
+        context, "Not implemented on Android yet, we're working on it...");
+    return;
+  }
+
   try {
     final result = await AppleSignIn.performRequests([
       AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
@@ -106,60 +113,11 @@ Stream<int> _appleSignin(BuildContext context) async* {
         yield 0;
         break;
     }
-  } catch (error, trace) {
+  } catch (error) {
     // reset the UI and display an alert
-
     yield 0;
     // any specific errors are caught and dealt with so we can assume
     // anything caught here is a problem and send to the store for display
-    yield AddProblem(
-      (b) => b.problem
-        ..message = error.toString()
-        ..trace = trace.toString()
-        ..type = ProblemTypeEnum.appleSignin,
-    );
-  }
-}
-
-Stream<int> _facebookSignin(BuildContext context) async* {
-  try {
-    final _fireAuth = FirebaseAuth.instance;
-    final facebookLogin = FacebookLogin();
-    final result = await facebookLogin.logIn(['email']);
-
-    switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-
-        /// the auth info will be picked up by the listener on [onAuthStateChanged]
-        /// and emitted by [streamOfStateChanges]
-
-        // signal to change UI
-        yield 2;
-
-        final credential = FacebookAuthProvider.getCredential(
-            accessToken: result.accessToken.token);
-        await _fireAuth.signInWithCredential(credential);
-
-        // we are signed in so reset the UI
-        yield 0;
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        // _showCancelledMessage();
-        yield 0;
-        break;
-      case FacebookLoginStatus.error:
-        // _showErrorOnUI(result.errorMessage);
-        yield 0;
-        throw result.errorMessage;
-        break;
-    }
-  } catch (error) {
-    // reset the UI and display an alert
-
-    yield 0;
-    // errors with code kSignInCanceledError are swallowed by the
-    // GoogleSignIn.signIn() method so we can assume anything caught here
-    // is unexpected and for display
     _showDialog(context, error.toString());
   }
 }
