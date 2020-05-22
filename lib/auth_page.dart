@@ -1,3 +1,4 @@
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
@@ -18,11 +19,13 @@ class AuthPage extends StatelessWidget {
               });
             },
           ),
-          FacebookSignInButton(onPressed: () async {
-            _facebookSignin(context).listen((event) {
-              print(event);
-            });
-          }),
+          AppleSignInButton(
+              style: AppleButtonStyle.black,
+              onPressed: () async {
+                _appleSignin(context).listen((event) {
+                  print(event);
+                });
+              }),
         ],
       ),
     );
@@ -66,6 +69,55 @@ Stream<int> _googleSignin(BuildContext context) async* {
     // GoogleSignIn.signIn() method so we can assume anything caught here
     // is unexpected and for display
     _showDialog(context, error.toString());
+  }
+}
+
+Stream<int> _appleSignin(BuildContext context) async* {
+  // signal to change UI
+  yield 0;
+
+  try {
+    final result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        // signal to change UI
+        yield 0;
+
+        // retrieve the apple credential and convert to oauth credential
+        final appleIdCredential = result.credential;
+        final oAuthProvider = OAuthProvider(providerId: 'apple.com');
+        final credential = oAuthProvider.getCredential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode),
+        );
+
+        // use the credential to sign in to firebase
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        break;
+      case AuthorizationStatus.error:
+        throw result.error;
+        break;
+
+      case AuthorizationStatus.cancelled:
+        yield 0;
+        break;
+    }
+  } catch (error, trace) {
+    // reset the UI and display an alert
+
+    yield 0;
+    // any specific errors are caught and dealt with so we can assume
+    // anything caught here is a problem and send to the store for display
+    yield AddProblem(
+      (b) => b.problem
+        ..message = error.toString()
+        ..trace = trace.toString()
+        ..type = ProblemTypeEnum.appleSignin,
+    );
   }
 }
 
