@@ -108,6 +108,8 @@ class MyApp extends StatelessWidget {
                     .currentUserId = snapshot.data.uid;
                 return HomePage();
               } else {
+                Provider.of<DatabaseService>(context, listen: false)
+                    .currentUserId = null;
                 return AuthPage();
               }
             }
