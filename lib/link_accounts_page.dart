@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:apple_sign_in/apple_sign_in.dart' hide AppleSignInButton;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 enum UIStatus {
@@ -152,40 +153,50 @@ class LoadedUI extends StatelessWidget {
     }
   }
 
-  Future<void> _linkFacebook(FirebaseUser user) async {
+  Future<void> _linkApple(FirebaseUser user) async {
     // signal to change UI
     streamController.add(UIStatus.loading);
 
+    if (Platform.isAndroid) {
+      streamController.add(UIStatus.error);
+      throw "Not implemented on Android yet, we're working on it...";
+    }
+
     try {
-      final facebookLogin = FacebookLogin();
-      final result = await facebookLogin.logIn(['email']);
+      final result = await AppleSignIn.performRequests([
+        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+      ]);
 
       switch (result.status) {
-        case FacebookLoginStatus.loggedIn:
+        case AuthorizationStatus.authorized:
 
-          /// the auth info will be picked up by the listener on [onAuthStateChanged]
-          /// and emitted by [streamOfStateChanges]
+          // retrieve the apple credential and convert to oauth credential
+          final appleIdCredential = result.credential;
+          final oAuthProvider = OAuthProvider(providerId: 'apple.com');
+          final credential = oAuthProvider.getCredential(
+            idToken: String.fromCharCodes(appleIdCredential.identityToken),
+            accessToken:
+                String.fromCharCodes(appleIdCredential.authorizationCode),
+          );
 
-          final credential = FacebookAuthProvider.getCredential(
-              accessToken: result.accessToken.token);
-
+          // use the credential to link accounts
           await user.linkWithCredential(credential);
-
           // we are signed in so reload the user's data and reset the UI
           await user.reload();
           streamController.add(UIStatus.done);
           break;
-        case FacebookLoginStatus.cancelledByUser:
-          streamController.add(UIStatus.done);
+        case AuthorizationStatus.error:
+          throw result.error;
           break;
-        case FacebookLoginStatus.error:
-          streamController.add(UIStatus.error);
-          throw result.errorMessage;
+        case AuthorizationStatus.cancelled:
+          streamController.add(UIStatus.done);
           break;
       }
     } catch (error) {
       // reset the UI and display an alert
       streamController.add(UIStatus.error);
+      // any specific errors are caught and dealt with so we can assume
+      // anything caught here is a problem and rethrow for display
       rethrow;
     }
   }
@@ -205,9 +216,9 @@ class LoadedUI extends StatelessWidget {
     }
 
     if (!_hasLinkedProvider('facebook.com', user.providerData)) {
-      buttons.add(FacebookSignInButton(
+      buttons.add(AppleSignInButton(
         onPressed: () {
-          _linkFacebook(user)
+          _linkApple(user)
               .catchError((Object err) => _showDialog(context, err.toString()));
         },
       ));
