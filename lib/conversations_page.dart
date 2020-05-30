@@ -57,7 +57,8 @@ class _ConversationListState extends State<ConversationList> {
       child: Center(
         child: StreamBuilder(
             stream: Firestore.instance
-                .collection('users/$currentUserId/conversation-items')
+                .collection('conversations')
+                .where('uids', arrayContains: currentUserId)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
@@ -67,8 +68,7 @@ class _ConversationListState extends State<ConversationList> {
                 querySnapshot.documents
                     .map(
                       (itemDoc) => ConversationItem(
-                          conversationId:
-                              itemDoc.data['conversationId'] as String,
+                          conversationId: itemDoc.documentID,
                           uids: List.from(itemDoc.data['uids'] as List),
                           displayNames:
                               List.from(itemDoc.data['displayNames'] as List),
