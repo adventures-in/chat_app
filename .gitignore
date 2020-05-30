@@ -58,3 +58,6 @@ android/app/keystore.jks
 
 # firebase hidden folder 
 .firebase/
+
+# node_modules created by cloud functions typescript 
+node_modules/

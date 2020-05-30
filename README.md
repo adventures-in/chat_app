@@ -88,7 +88,7 @@ We are using Cloud Functions for Firebase to automatically run backend code in r
 
 The relevant code is all in `functions/`
 
-After making changes to `functions/index.js`
+After making changes to `functions/src/index.ts`
 
 ```sh
 firebase deploy --only functions
