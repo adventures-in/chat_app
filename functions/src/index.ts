@@ -8,8 +8,6 @@ const db = admin.firestore();
 export const saveDetailsOnFirstSignIn = functions.auth.user().onCreate((user) => {
     return db.doc('/users/'+user.uid).set({
         'displayName': user.displayName,
-        'email': user.email,
-        'photoURL': user.photoURL, 
-        'phoneNumber': user.phoneNumber
+        'photoURL': user.photoURL
     });
 });
