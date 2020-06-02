@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/chat_page.dart';
@@ -9,6 +9,13 @@ import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatelessWidget {
+  final DatabaseService db;
+
+  const ConversationsPage({
+    Key key,
+    @required this.db,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<FirebaseUser>(context, listen: false);
@@ -18,10 +25,22 @@ class ConversationsPage extends StatelessWidget {
         title: Text('Conversations'),
         actions: <Widget>[],
       ),
-      body: ConversationList(),
+      body: Center(
+        child: StreamBuilder<List<ConversationItem>>(
+            stream: db.getConversationsStream(currentUser.uid),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return CircularProgressIndicator();
+
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) =>
+                    ConversationsListTile(item: snapshot.data[index]),
+              );
+            }),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final conversationItem = await Navigator.push<ConversationItem>(
+          await Navigator.push<ConversationItem>(
             context,
             MaterialPageRoute(
               builder: (context) => UserSearchPage(
@@ -32,60 +51,9 @@ class ConversationsPage extends StatelessWidget {
               ),
             ),
           );
-          if (conversationItem != null) {
-            Provider.of<ConversationsViewModel>(context, listen: false)
-                .add(item: conversationItem);
-          }
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
-      ),
-    );
-  }
-}
-
-class ConversationList extends StatefulWidget {
-  @override
-  _ConversationListState createState() => _ConversationListState();
-}
-
-class _ConversationListState extends State<ConversationList> {
-  @override
-  Widget build(BuildContext context) {
-    final currentUserId = Provider.of<FirebaseUser>(context, listen: false).uid;
-    return Container(
-      child: Center(
-        child: StreamBuilder(
-            stream: Firestore.instance
-                .collection('conversations')
-                .where('uids', arrayContains: currentUserId)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return CircularProgressIndicator();
-
-              final querySnapshot = snapshot.data as QuerySnapshot;
-              Provider.of<ConversationsViewModel>(context).populateWith(
-                querySnapshot.documents
-                    .map(
-                      (itemDoc) => ConversationItem(
-                          conversationId: itemDoc.documentID,
-                          uids: List.from(itemDoc.data['uids'] as List),
-                          displayNames:
-                              List.from(itemDoc.data['displayNames'] as List),
-                          photoURLs:
-                              List.from(itemDoc.data['photoURLs'] as List)),
-                    )
-                    .toList(),
-              );
-
-              return ListView.builder(
-                itemCount: querySnapshot.documents.length,
-                itemBuilder: (context, index) {
-                  return Provider.of<ConversationsViewModel>(context)
-                      .getListTile(index);
-                },
-              );
-            }),
       ),
     );
   }
@@ -113,30 +81,5 @@ class ConversationsListTile extends StatelessWidget {
                 conversationItem: item));
       },
     );
-  }
-}
-
-class ConversationsViewModel extends ChangeNotifier {
-  /// Internal, private state of the model.
-  final List<ConversationItem> _items = [];
-
-  /// Unmodifiable view of the widgets in the model.
-  Widget getListTile(int index) => ConversationsListTile(item: _items[index]);
-
-  /// Adds a ConversationItem to the view model.
-  /// The only way to modify the cart from outside.
-  void add({@required ConversationItem item}) {
-    _items.add(item);
-    // Tell the widgets that are listening to this model to rebuild.
-    notifyListeners();
-  }
-
-  /// Adds all conversations, if we don't yet have any
-  /// TODO: this is probably not what we want in this case, review when
-  /// more of the page has been built
-  void populateWith(List<ConversationItem> models) {
-    if (_items.isEmpty) {
-      _items.addAll(models);
-    }
   }
 }

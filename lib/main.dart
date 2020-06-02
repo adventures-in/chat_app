@@ -99,7 +99,9 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasData) {
               return Provider<FirebaseUser>.value(
                 value: snapshot.data as FirebaseUser,
-                child: HomePage(),
+                child: HomePage(
+                  db: db,
+                ),
               );
             } else {
               return AuthPage();
