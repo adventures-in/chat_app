@@ -18,9 +18,11 @@ class ConversationsPage extends StatelessWidget {
             stream: db.getCurrentUserStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return CircularProgressIndicator();
+                return CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                );
               } else {
-                return UserAvatar(url: snapshot.data?.photoURL);
+                return UserAvatar(url: snapshot.data.photoURL);
               }
             }),
         title: Text('Conversations'),
