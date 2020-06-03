@@ -11,10 +11,15 @@ class ProfilePage extends StatelessWidget {
     final db = Provider.of<DatabaseService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(),
-      body: FutureBuilder<UserItem>(
-          future: db.getCurrentUserItem(),
+      body: StreamBuilder<UserItem>(
+          stream: db.getCurrentUserStream(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasError) {
+              return ErrorUI(
+                title: 'Something went wrong',
+                message: snapshot.error.toString(),
+              );
+            } else if (snapshot.hasData) {
               return Material(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -32,9 +37,51 @@ class ProfilePage extends StatelessWidget {
                 ),
               );
             } else {
-              return CircularProgressIndicator();
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
           }),
+    );
+  }
+}
+
+class ErrorUI extends StatelessWidget {
+  final String title;
+  final String message;
+
+  const ErrorUI({
+    Key key,
+    @required this.message,
+    @required this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Icon(
+          Icons.error_outline,
+          size: 100,
+          color: theme.errorColor,
+        ),
+        SizedBox(height: 16),
+        Text(
+          title,
+          style: theme.textTheme.headline5,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 16),
+        Text(
+          message,
+          style: theme.textTheme.bodyText1,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

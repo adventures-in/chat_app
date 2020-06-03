@@ -14,13 +14,13 @@ class ConversationsPage extends StatelessWidget {
     final db = Provider.of<DatabaseService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        leading: FutureBuilder<UserItem>(
-            future: db.getCurrentUserItem(),
+        leading: StreamBuilder<UserItem>(
+            stream: db.getCurrentUserStream(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return UserAvatar(url: snapshot.data.photoURL);
-              } else {
+              if (!snapshot.hasData) {
                 return CircularProgressIndicator();
+              } else {
+                return UserAvatar(url: snapshot.data?.photoURL);
               }
             }),
         title: Text('Conversations'),
