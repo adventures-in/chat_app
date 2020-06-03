@@ -36,8 +36,7 @@ class DatabaseService {
   Future<ConversationItem> createConversation(List<String> uids,
       List<String> displayNames, List<String> photoURLs) async {
     // add the current user before saving to firestore
-    // TODO: discuss - should we keep the full user item in the database service?
-    final item = await getCurrentUserStream().last;
+    final item = await getCurrentUserFuture();
     uids.add(item.uid);
     displayNames.add(item.displayName);
     photoURLs.add(item.photoURL);
@@ -58,6 +57,11 @@ class DatabaseService {
         photoURLs: photoURLs,
         uids: uids);
   }
+
+  Future<UserItem> getCurrentUserFuture() => firestore
+      .document('users/$currentUserId')
+      .get()
+      .then((DocumentSnapshot snapshot) => snapshot.toUserItem());
 
   Stream<UserItem> getCurrentUserStream() => firestore
       .document('users/$currentUserId')
