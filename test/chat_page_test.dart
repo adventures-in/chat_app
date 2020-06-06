@@ -3,8 +3,6 @@ import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/widgets/chat_message.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -21,36 +19,15 @@ void main() {
       expect(find.text('Test message'), findsOneWidget);
     });
 
-    test('datetime is defaulted to now() when firebase Timestamp is null', () {
-      /// This logic closely mimics document_snapshot_extensions
-      /// Should likely look at seperate firebase repo tests instead of copy / paste implementaion
-      /// https://github.com/brianegan/flutter_architecture_samples/blob/master/firebase_flutter_repository/test/firebase_flutter_repository_test.dart
-      var now = Timestamp.now().toDate();
-      DateTime null_timestamp;
-      var dateTime = (null_timestamp as Timestamp) ?? now;
-      expect(dateTime, now);
-    });
-
-    test('date stays as it is when not null', () {
-      /// Testing dart conditional expresions.
-      var now = DateTime.now();
-      var moonLanding = DateTime.parse('1969-07-20 20:18:04Z');
-      var dateTime = moonLanding ?? now;
-      expect(dateTime, moonLanding);
-    });
-
     testWidgets('Should contain dateTime in chat widget when specified',
         (WidgetTester tester) async {
-      var dateTime = Timestamp.now().toDate();
+      var dateTime = DateTime.parse('1969-07-20 20:18:04Z');
       await tester.pumpWidget(
           wrapWidget(ChatMessage(text: 'Test message', dateTime: dateTime)));
 
-      log('dateTime: $dateTime');
+      // var formattedDate = '1969-07-20 20:18';
+      var formattedDate ='${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}';
 
-      var formattedDate =
-          '${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}';
-
-      log('formattedDate: $formattedDate');
       expect(find.text('Test message'), findsOneWidget);
       expect(find.text(formattedDate), findsOneWidget);
     });
