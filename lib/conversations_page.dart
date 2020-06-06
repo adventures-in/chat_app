@@ -1,5 +1,5 @@
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
@@ -11,10 +11,20 @@ import 'package:provider/provider.dart';
 class ConversationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<FirebaseUser>(context, listen: false);
+    final db = Provider.of<DatabaseService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        leading: UserAvatar(url: currentUser.photoUrl),
+        leading: StreamBuilder<UserItem>(
+            stream: db.getCurrentUserStream(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                );
+              } else {
+                return UserAvatar(url: snapshot.data.photoURL);
+              }
+            }),
         title: Text('Conversations'),
         actions: <Widget>[],
       ),
@@ -24,12 +34,7 @@ class ConversationsPage extends StatelessWidget {
           final conversationItem = await Navigator.push<ConversationItem>(
             context,
             MaterialPageRoute(
-              builder: (context) => UserSearchPage(
-                currentUserItem: UserItem(
-                    uid: currentUser.uid,
-                    displayName: currentUser.displayName,
-                    photoURL: currentUser.photoUrl),
-              ),
+              builder: (context) => UserSearchPage(),
             ),
           );
           if (conversationItem != null) {
@@ -52,7 +57,8 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
-    final currentUserId = Provider.of<FirebaseUser>(context, listen: false).uid;
+    final currentUserId =
+        Provider.of<DatabaseService>(context, listen: false).currentUserId;
     return Container(
       child: Center(
         child: StreamBuilder(
@@ -109,7 +115,8 @@ class ConversationsListTile extends StatelessWidget {
         Navigator.pushNamed(context, ChatPage.routeName,
             arguments: ChatPageArgs(
                 currentUserId:
-                    Provider.of<FirebaseUser>(context, listen: false).uid,
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .currentUserId,
                 conversationItem: item));
       },
     );

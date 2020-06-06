@@ -1,16 +1,14 @@
 import 'dart:collection';
 
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:provider/provider.dart';
 
 class UserSearchPage extends StatelessWidget {
-  UserSearchPage({@required this.currentUserItem});
-
-  final UserItem currentUserItem;
+  UserSearchPage();
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +18,14 @@ class UserSearchPage extends StatelessWidget {
           appBar: AppBar(
             title: Text('Select a friend'),
           ),
-          body: UserList(currentUserItem)),
+          body: UserList()),
     );
   }
 }
 
 class UserList extends StatefulWidget {
-  UserList(this.currentUserItem);
-  final UserItem currentUserItem;
+  UserList();
+  // final UserItem currentUserItem;
   @override
   _UserListState createState() => _UserListState();
 }
@@ -40,9 +38,7 @@ class _UserListState extends State<UserList> {
         Consumer<UserSearchViewModel>(builder: (context, selections, child) {
           return Row(children: [
             Row(children: selections.selectedWidgets),
-            SaveButton(
-              currentUserItem: widget.currentUserItem,
-            )
+            SaveButton()
           ]);
         }),
         Expanded(
@@ -52,10 +48,13 @@ class _UserListState extends State<UserList> {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 final querySnapshot = snapshot.data as QuerySnapshot;
 
+                final currentUserId =
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .currentUserId;
                 // remove our own document from the list
                 final filteredUserList = <UserItem>[];
                 for (final docSnapshot in querySnapshot.documents) {
-                  if (docSnapshot.documentID != widget.currentUserItem.uid) {
+                  if (docSnapshot.documentID != currentUserId) {
                     filteredUserList.add(UserItem(
                         uid: docSnapshot.documentID,
                         displayName: docSnapshot['displayName'] as String,
@@ -91,8 +90,7 @@ class _UserListState extends State<UserList> {
 }
 
 class SaveButton extends StatefulWidget {
-  SaveButton({@required this.currentUserItem});
-  final UserItem currentUserItem;
+  SaveButton();
 
   @override
   _SaveButtonState createState() => _SaveButtonState();
@@ -113,28 +111,14 @@ class _SaveButtonState extends State<SaveButton> {
 
           // restructure the data for saving to firestore
           final uids = selectedItems.map((item) => item.uid).toList();
-          uids.add(widget.currentUserItem.uid);
           final displayNames =
               selectedItems.map((item) => item.displayName).toList();
-          displayNames.add(widget.currentUserItem.displayName);
           final photoURLs = selectedItems.map((item) => item.photoURL).toList();
-          photoURLs.add(widget.currentUserItem.photoURL);
+          final db = Provider.of<DatabaseService>(context, listen: false);
 
-          // save everything to firestore
-          Firestore.instance.collection('conversations').add(<String, dynamic>{
-            'createdOn': FieldValue.serverTimestamp(),
-            'createdById': widget.currentUserItem.uid,
-            'uids': uids,
-            'displayNames': displayNames,
-            'photoURLs': photoURLs
-          }).then((docRef) => Navigator.pop(
-              context,
-              ConversationItem(
-                conversationId: docRef.documentID,
-                displayNames: displayNames,
-                photoURLs: photoURLs,
-                uids: uids,
-              )));
+          db
+              .createConversation(uids, displayNames, photoURLs)
+              .then<void>((item) => Navigator.pop(context, item));
 
           // disable the button and give feedback to user of waiting state
           setState(() {
