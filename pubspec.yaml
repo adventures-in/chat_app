@@ -20,6 +20,7 @@ dependencies:
   firebase_messaging:
 
 dev_dependencies:
+  test:
   flutter_test:
     sdk: flutter
   mockito: ^4.1.1
