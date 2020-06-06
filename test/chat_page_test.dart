@@ -22,11 +22,10 @@ void main() {
     testWidgets('Should contain dateTime in chat widget when specified',
         (WidgetTester tester) async {
       var dateTime = DateTime.parse('1969-07-20 20:18:04Z');
+      var formattedDate = '1969-7-20 20:18';
+
       await tester.pumpWidget(
           wrapWidget(ChatMessage(text: 'Test message', dateTime: dateTime)));
-
-      // var formattedDate = '1969-07-20 20:18';
-      var formattedDate ='${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}';
 
       expect(find.text('Test message'), findsOneWidget);
       expect(find.text(formattedDate), findsOneWidget);
