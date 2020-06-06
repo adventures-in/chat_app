@@ -122,23 +122,6 @@ firebase deploy --only hosting:adventures-in
 
 Restart vs code after `flutter upgrade`.
 
-### ios
-
-#### Build Resolution
-
-Most cases the following should be enough.
-
-```sh
-pod install;
-flutter clean;
-```
-
-Nuclear resolution
-
-``` sh
-cd ios/; rm -rf ~/Library/Caches/CocoaPods Pods ~/Library/Developer/Xcode/DerivedData/*; gem install cocoapods --user-install; pod deintegrate; pod setup; pod install;
-```
-
 The following will change versions to the latest and greatest regardless for whats is currently in the lock file.
 
 ```sh
