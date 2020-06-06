@@ -4,6 +4,32 @@ A Chat App for Adventures in Flutter.
 
 ![CI](https://github.com/adventuresin/chat_app/workflows/Mobile%20Apps/badge.svg)
 
+## Local Emulators 
+
+The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) lets the app to connect to a local, emulated version of the Firestore and Cloud Functions, so that you can prototype and test without affecting the live Firestore, and restart from the default data at any time.
+
+With the [Firebase CLI](https://firebase.google.com/docs/cli?hl=pl) installed, start the emulators with: 
+
+```sh
+firebase emulators:start --import=test/data
+```
+
+The app needs to be run with the alternative entry point `lib/main_local.dart` 
+- already set as a VSCode launch option 
+- if someone could add a note on how to do this with AS that would be awesome 
+
+If you want your changes become the new default, in another terminal enter:
+
+```sh
+firebase emulators:export ./test/data
+```
+
+
+
+Notes: 
+- Any service that is not emulated (eg. Auth, Storage) uses the live version 
+
+
 ## Missing Files
 
 ### Firebase Config
