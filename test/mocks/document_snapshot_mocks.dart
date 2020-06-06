@@ -1,6 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FakeDocumentSnapshot implements DocumentSnapshot {
+  final String authorId;
+  final String text;
+  final Timestamp timestamp;
+
+  FakeDocumentSnapshot(this.authorId, this.text, this.timestamp);
+
   @override
   dynamic operator [](String key) {
     // TODO: implement []
@@ -10,9 +16,9 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
   @override
   // TODO: implement data
   Map<String, dynamic> get data => <String, dynamic>{
-        'authorId': '123',
-        'text': 'hellow',
-        'timestamp': Timestamp.fromDate(DateTime.parse('1969-07-20 20:18:04'))
+        'authorId': authorId,
+        'text': text,
+        'timestamp': timestamp
       };
 
   @override
