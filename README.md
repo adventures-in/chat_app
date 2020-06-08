@@ -120,11 +120,11 @@ After making changes to `functions/src/index.ts`
 firebase deploy --only functions
 ```
 
-**Please push up changes to cloud functions in a PR for review before deploying.** 
+**Please push up changes to cloud functions in a PR for review before deploying.**
 
-## Web 
+## Web
 
-### Build 
+### Build
 
 ```sh
 flutter build web -t lib/main_web.dart 
@@ -132,7 +132,13 @@ flutter build web -t lib/main_web.dart
 
 - builds to `build/web/`
 
-### Deploy 
+### Test
+
+```sh
+flutter test
+```
+
+### Deploy
 
 ```sh
 firebase deploy --only hosting:adventures-in
@@ -142,12 +148,17 @@ firebase deploy --only hosting:adventures-in
 
 Restart vs code after `flutter upgrade`.
 
-### ios
+The following will change versions to the latest and greatest regardless for whats is currently in the lock file.
 
-#### clean script
-
-Nuclear Clean
-
-``` sh
-cd ios/; rm -rf ~/Library/Caches/CocoaPods Pods ~/Library/Developer/Xcode/DerivedData/*; pod deintegrate; pod setup; pod install;
+```sh
+pod update
 ```
+
+You can be on `stable` channel or `dev` based on your appietite.
+
+```sh
+flutter channel dev
+flutter upgrade
+```
+
+Close and Reopen VS Code after a upgrade to avoid issues

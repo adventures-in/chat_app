@@ -7,7 +7,7 @@ extension Conversion on DocumentSnapshot {
     return Message(
       authorId: data['authorId'] as String,
       text: data['text'] as String,
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      timestamp: ((data['timestamp'] as Timestamp) ?? Timestamp.now()).toDate(),
     );
   }
 
