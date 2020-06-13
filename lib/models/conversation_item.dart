@@ -17,7 +17,7 @@ class ConversationItem {
   // Conversation items with the same conversationId are considered equivalent
   @override
   bool operator ==(dynamic o) =>
-      o.runtimeType == ConversationItem && o.id == conversationId;
+      o.runtimeType == ConversationItem && o.conversationId == conversationId;
   @override
   int get hashCode => conversationId.hashCode;
 }
