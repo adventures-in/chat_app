@@ -124,8 +124,10 @@ class ConversationsListTile extends StatelessWidget {
 }
 
 class ConversationsViewModel extends ChangeNotifier {
+  ConversationsViewModel(List<ConversationItem> items) : _items = items;
+
   /// Internal, private state of the model.
-  final List<ConversationItem> _items = [];
+  final List<ConversationItem> _items;
 
   /// Unmodifiable view of the widgets in the model.
   Widget getListTile(int index) => ConversationsListTile(item: _items[index]);
