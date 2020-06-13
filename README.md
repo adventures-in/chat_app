@@ -4,6 +4,15 @@ A Chat App for Adventures in Flutter.
 
 ![CI](https://github.com/adventuresin/chat_app/workflows/Mobile%20Apps/badge.svg)
 
+## Quickstart Guide 
+
+1. Join the [adventures-in Firebase project](https://console.firebase.google.com/u/0/project/adventures-in/overview) -> send your google account email to an admin, eg. nick.meinhold@gmail.com
+2. [Install gsutil](https://cloud.google.com/storage/docs/gsutil_install) and login with the same google account you used in the previous step
+3. Download the required credential files -> from the project directory, run `./get-credentials.sh`
+
+- If you're on Android & will use Google Sign In
+  - [Add a SHA fingerprint to the Firebase project](https://support.google.com/firebase/answer/9137403?hl=en)
+
 ## Local Emulators 
 
 The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) lets the app to connect to a local, emulated version of the Firestore and Cloud Functions, so that you can prototype and test without affecting the live Firestore, and restart from the default data at any time.
@@ -24,70 +33,35 @@ If you want your changes become the new default, in another terminal enter:
 firebase emulators:export ./test/data
 ```
 
-
-
 Notes: 
 - Any service that is not emulated (eg. Auth, Storage) uses the live version 
-
-
-## Missing Files
-
-### Firebase Config
-
-Get `GoogleService-Info.plist` and `google-services.json` from the [adventures-in-credentials bucket](https://console.cloud.google.com/storage/browser/adventures-in-credentials?project=adventures-in)
-
-Add them to your project at:
-
-- `ios/Runner/GoogleService-Info.plist`
-- `android/app/google-services.json`
-
-*Note:* if you would like to run the app on Android, you will need to have add your SHA-1 debug key to the firebase project:
-
-1. Run `keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore` to find your SHA-1 debug key
-1. Just press enter when it asks for a password
-1. Open [Firebase](https://console.firebase.google.com) > `adventures-in` > `Project Settings` > `Your Apps` > `Android Chat` > `Add fingerprint`
 
 ### iOS Signing
 
 We are using [match](https://docs.fastlane.tools/actions/match/) to manage Provisioning Profiles and Certificates.
 
-You'll need to get `gc_keys.json` from the [adventures-in-credentials](https://console.cloud.google.com/storage/browser/adventures-in-credentials?forceOnBucketsSortingFiltering=false&project=adventures-in) bucket and add it to `ios/gc_keys.json`, then install the required Provisioning Profiles and Certificates by entering:
-
-Install fastlane
+IF you have not already, install fastlane:
 
 ```sh
 gem install fastlane
 ```
+
+Install the required Provisioning Profiles and Certificates by entering:
 
 ```sh
 cd ios
 fastlane match development
 ```
 
-You will be prompted for `Password (for ci@enspyr.co):` ask Nick or David.
-
-For deploying you may need:
-
-```sh
-fastlane match appstore
-```
-
-### Android Signing
-
-Get `keystore.config` and `keystore.jks` from the [adventures-in-credentials bucket](https://console.cloud.google.com/storage/browser/adventures-in-credentials?project=adventures-in) and put both files in the `android/app` folder.
-
 ## Firebase Backend
 
-To make changes you need to:
-
-- be an Editor on the Firebase project (just ask someone to be added)
-- have installed and setup the [firebase cli](https://firebase.google.com/docs/cli)
+Install the [firebase cli](https://firebase.google.com/docs/cli) if you want to make changes to Firestore Security Rules or Cloud Functions. 
 
 ### Firestore
 
 #### Security Rules
 
-After making changes to `firestore.rules`
+After making changes to `firestore.rules` you can deploy with
 
 ```sh
 firebase deploy --only firestore:rules
@@ -97,7 +71,7 @@ see [Manage and deploy Firebase Security Rules](https://firebase.google.com/docs
 
 #### Indexes
 
-After making changes to `firestore.indexes.json`
+After making changes to `firestore.indexes.json` yo can deploy with
 
 ```sh
 firebase deploy --only firestore:indexes
@@ -107,14 +81,11 @@ see [Managing indexes  |  Firestore  |  Google Cloud](https://cloud.google.c
 
 ### Cloud Functions
 
-We are using Cloud Functions for Firebase to automatically run backend code in response to events triggered by Firebase features, such as:
+We are using Cloud Functions for Firebase to automatically run backend code in response to events triggered by Firebase Auth, Firestore, Cloud Storage.
 
-- Initial Sign In
-- Changes to Firestore that should send an FCM
+The relevant code is in `functions/`
 
-The relevant code is all in `functions/`
-
-After making changes to `functions/src/index.ts`
+After making changes to `functions/src/index.ts` you can deploy with
 
 ```sh
 firebase deploy --only functions
@@ -132,33 +103,14 @@ flutter build web -t lib/main_web.dart
 
 - builds to `build/web/`
 
-### Test
-
-```sh
-flutter test
-```
-
 ### Deploy
 
 ```sh
 firebase deploy --only hosting:adventures-in
 ```
 
-## Misc Tips
-
-Restart vs code after `flutter upgrade`.
-
-The following will change versions to the latest and greatest regardless for whats is currently in the lock file.
+## Testing 
 
 ```sh
-pod update
+flutter test
 ```
-
-You can be on `stable` channel or `dev` based on your appietite.
-
-```sh
-flutter channel dev
-flutter upgrade
-```
-
-Close and Reopen VS Code after a upgrade to avoid issues
