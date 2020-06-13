@@ -4,14 +4,17 @@ import 'package:adventures_in_chat_app/home_page.dart';
 import 'package:adventures_in_chat_app/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/profile_page.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
+import 'package:adventures_in_chat_app/services/fcm_service.dart';
 import 'package:adventures_in_chat_app/splash_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatApp extends StatelessWidget {
   final DatabaseService db = DatabaseService(Firestore.instance);
+  final FCMService fcm = FCMService(FirebaseMessaging());
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,8 @@ class ChatApp extends StatelessWidget {
       providers: [
         Provider<DatabaseService>.value(
           value: db,
-        )
+        ),
+        Provider<FCMService>.value(value: fcm),
       ],
       child: MaterialApp(
         title: 'Adventures In',
