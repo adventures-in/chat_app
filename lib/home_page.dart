@@ -18,7 +18,7 @@ class HomePageState extends State<HomePage> {
         index: _currentIndex,
         children: <Widget>[
           ChangeNotifierProvider(
-            create: (context) => ConversationsViewModel(),
+            create: (context) => ConversationsViewModel([]),
             child: ConversationsPage(),
           ),
           OptionsPage(),
