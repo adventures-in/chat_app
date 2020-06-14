@@ -1,14 +1,13 @@
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
   static final routeName = '/profile';
 
   @override
   Widget build(BuildContext context) {
-    final db = Provider.of<DatabaseService>(context, listen: false);
+    final db = context.db;
     return Scaffold(
       appBar: AppBar(),
       body: StreamBuilder<UserItem>(

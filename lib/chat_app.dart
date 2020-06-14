@@ -1,5 +1,6 @@
 import 'package:adventures_in_chat_app/auth_page.dart';
 import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/home_page.dart';
 import 'package:adventures_in_chat_app/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/profile_page.dart';
@@ -58,12 +59,10 @@ class ChatApp extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
                 // set the database service to use the current user
-                Provider.of<DatabaseService>(context, listen: false)
-                    .currentUserId = snapshot.data.uid;
+                context.db.currentUserId = snapshot.data.uid;
                 return HomePage();
               } else {
-                Provider.of<DatabaseService>(context, listen: false)
-                    .currentUserId = null;
+                context.db.currentUserId = null;
                 return AuthPage();
               }
             }
