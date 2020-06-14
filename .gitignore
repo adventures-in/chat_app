@@ -61,3 +61,7 @@ android/app/keystore.jks
 
 # node_modules created by cloud functions typescript 
 node_modules/
+
+# holds the values for using cdns to config firebase, used for 
+# running locally
+web/cdns_config.html
