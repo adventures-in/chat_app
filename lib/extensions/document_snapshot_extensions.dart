@@ -4,11 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 extension Conversion on DocumentSnapshot {
   Message toMessage() {
+    var timestamp = ((data['timestamp'] as Timestamp) ?? Timestamp.now());
+
     return Message(
-      authorId: data['authorId'] as String,
-      text: data['text'] as String,
-      timestamp: ((data['timestamp'] as Timestamp) ?? Timestamp.now()).toDate(),
-    );
+        authorId: data['authorId'] as String,
+        text: data['text'] as String,
+        timestamp: timestamp.toDate());
   }
 
   UserItem toUserItem() {
