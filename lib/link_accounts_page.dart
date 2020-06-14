@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:apple_sign_in/apple_sign_in.dart' hide AppleSignInButton;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 enum UIStatus {
   loading,
@@ -157,46 +156,46 @@ class LoadedUI extends StatelessWidget {
     // signal to change UI
     streamController.add(UIStatus.loading);
 
-    if (Platform.isAndroid) {
-      streamController.add(UIStatus.error);
-      throw "Not implemented on Android yet, we're working on it...";
-    }
-
     try {
-      final result = await AppleSignIn.performRequests([
-        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-      ]);
+      // AuthorizationCredentialAppleID
+      final appleIdCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        webAuthenticationOptions: WebAuthenticationOptions(
+          clientId: 'adventures-in-chat-service-id',
+          redirectUri: Uri.parse(
+            'https://safe-chatter-mollusk.glitch.me/callbacks/sign_in_with_apple',
+          ),
+        ),
+      );
 
-      switch (result.status) {
-        case AuthorizationStatus.authorized:
+      // get an OAuthCredential
+      final credential = OAuthProvider(providerId: 'apple.com').getCredential(
+        idToken: appleIdCredential.identityToken,
+        accessToken: appleIdCredential.authorizationCode,
+      );
 
-          // retrieve the apple credential and convert to oauth credential
-          final appleIdCredential = result.credential;
-          final oAuthProvider = OAuthProvider(providerId: 'apple.com');
-          final credential = oAuthProvider.getCredential(
-            idToken: String.fromCharCodes(appleIdCredential.identityToken),
-            accessToken:
-                String.fromCharCodes(appleIdCredential.authorizationCode),
-          );
-
-          // use the credential to link accounts
-          await user.linkWithCredential(credential);
-          // we are signed in so reload the user's data and reset the UI
-          await user.reload();
+      // use the credential to link accounts
+      await user.linkWithCredential(credential);
+      // we are signed in so reload the user's data and reset the UI
+      await user.reload();
+      streamController.add(UIStatus.done);
+    } on SignInWithAppleAuthorizationException catch (e) {
+      switch (e.code) {
+        case AuthorizationErrorCode.canceled:
+          // reset the UI if user canceled sign in
           streamController.add(UIStatus.done);
           break;
-        case AuthorizationStatus.error:
-          throw result.error;
-          break;
-        case AuthorizationStatus.cancelled:
-          streamController.add(UIStatus.done);
-          break;
+        default:
+          // reset the UI and display an alert
+          streamController.add(UIStatus.error);
+          rethrow;
       }
     } catch (error) {
       // reset the UI and display an alert
       streamController.add(UIStatus.error);
-      // any specific errors are caught and dealt with so we can assume
-      // anything caught here is a problem and rethrow for display
       rethrow;
     }
   }

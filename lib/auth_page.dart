@@ -1,10 +1,8 @@
-import 'dart:io';
-
-import 'package:apple_sign_in/apple_sign_in.dart' hide AppleSignInButton;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthPage extends StatelessWidget {
   @override
@@ -74,51 +72,52 @@ Stream<int> _googleSignin(BuildContext context) async* {
 }
 
 Stream<int> _appleSignin(BuildContext context) async* {
-  // signal to change UI
-  yield 0;
-
-  if (Platform.isAndroid) {
-    _showDialog(
-        context, "Not implemented on Android yet, we're working on it...");
-    return;
-  }
-
   try {
-    final result = await AppleSignIn.performRequests([
-      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-    ]);
+    // AuthorizationCredentialAppleID
+    final appleIdCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      webAuthenticationOptions: WebAuthenticationOptions(
+        clientId: 'adventures-in-chat-service-id',
+        redirectUri: Uri.parse(
+          'https://safe-chatter-mollusk.glitch.me/callbacks/sign_in_with_apple',
+        ),
+      ),
+    );
 
-    switch (result.status) {
-      case AuthorizationStatus.authorized:
-        // signal to change UI
-        yield 0;
+    // signal to change UI
+    yield 2;
 
-        // retrieve the apple credential and convert to oauth credential
-        final appleIdCredential = result.credential;
-        final oAuthProvider = OAuthProvider(providerId: 'apple.com');
-        final credential = oAuthProvider.getCredential(
-          idToken: String.fromCharCodes(appleIdCredential.identityToken),
-          accessToken:
-              String.fromCharCodes(appleIdCredential.authorizationCode),
-        );
+    // get an OAuthCredential
+    final credential = OAuthProvider(providerId: 'apple.com').getCredential(
+      idToken: appleIdCredential.identityToken,
+      accessToken: appleIdCredential.authorizationCode,
+    );
 
-        // use the credential to sign in to firebase
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    // use the credential to sign in to firebase
+    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // we are signed in so reset the UI
+    yield 0;
+  } on SignInWithAppleAuthorizationException catch (e) {
+    // reset the UI and display an alert (unless user canceled sign in)
+    yield 0;
+
+    switch (e.code) {
+      case AuthorizationErrorCode.canceled:
         break;
-      case AuthorizationStatus.error:
-        throw result.error;
-        break;
-
-      case AuthorizationStatus.cancelled:
-        yield 0;
-        break;
+      default:
+        _showDialog(context, e.toString());
     }
-  } catch (error) {
+  } catch (error, trace) {
     // reset the UI and display an alert
+
     yield 0;
     // any specific errors are caught and dealt with so we can assume
-    // anything caught here is a problem and send to the store for display
-    _showDialog(context, error.toString());
+    // anything caught here is a problem
+    _showDialog(context, 'error: $error, trace: $trace');
   }
 }
 
