@@ -67,7 +67,10 @@ class _ConversationListState extends State<ConversationList> {
                 .where('uids', arrayContains: currentUserId)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return CircularProgressIndicator();
+              if (!snapshot.hasData ||
+                  snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
 
               final querySnapshot = snapshot.data as QuerySnapshot;
               Provider.of<ConversationsViewModel>(context).populateWith(
