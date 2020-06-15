@@ -1,17 +1,18 @@
-import 'package:adventures_in_chat_app/services/database_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final db = Provider.of<DatabaseService>(context, listen: false);
+    final db = context.db;
     return Scaffold(
       appBar: AppBar(
         leading: StreamBuilder<UserItem>(
@@ -57,8 +58,7 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
-    final currentUserId =
-        Provider.of<DatabaseService>(context, listen: false).currentUserId;
+    final currentUserId = context.db.currentUserId;
     return Container(
       child: Center(
         child: StreamBuilder(
@@ -67,7 +67,10 @@ class _ConversationListState extends State<ConversationList> {
                 .where('uids', arrayContains: currentUserId)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return CircularProgressIndicator();
+              if (!snapshot.hasData ||
+                  snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
 
               final querySnapshot = snapshot.data as QuerySnapshot;
               Provider.of<ConversationsViewModel>(context).populateWith(
@@ -114,9 +117,7 @@ class ConversationsListTile extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, ChatPage.routeName,
             arguments: ChatPageArgs(
-                currentUserId:
-                    Provider.of<DatabaseService>(context, listen: false)
-                        .currentUserId,
+                currentUserId: context.db.currentUserId,
                 conversationItem: item));
       },
     );

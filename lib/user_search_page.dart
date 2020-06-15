@@ -1,10 +1,11 @@
 import 'dart:collection';
 
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
+import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
+import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:provider/provider.dart';
 
 class UserSearchPage extends StatelessWidget {
@@ -48,9 +49,7 @@ class _UserListState extends State<UserList> {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 final querySnapshot = snapshot.data as QuerySnapshot;
 
-                final currentUserId =
-                    Provider.of<DatabaseService>(context, listen: false)
-                        .currentUserId;
+                final currentUserId = context.db.currentUserId;
                 // remove our own document from the list
                 final filteredUserList = <UserItem>[];
                 for (final docSnapshot in querySnapshot.documents) {
@@ -114,7 +113,7 @@ class _SaveButtonState extends State<SaveButton> {
           final displayNames =
               selectedItems.map((item) => item.displayName).toList();
           final photoURLs = selectedItems.map((item) => item.photoURL).toList();
-          final db = Provider.of<DatabaseService>(context, listen: false);
+          final db = context.db;
 
           db
               .createConversation(uids, displayNames, photoURLs)
