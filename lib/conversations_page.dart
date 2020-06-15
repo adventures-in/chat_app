@@ -62,10 +62,8 @@ class _ConversationListState extends State<ConversationList> {
     return Container(
       child: Center(
         child: StreamBuilder(
-            stream: Firestore.instance
-                .collection('conversations')
-                .where('uids', arrayContains: currentUserId)
-                .snapshots(),
+            stream: Provider.of<DatabaseService>(context, listen: false)
+                .getConversationsStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData ||
                   snapshot.connectionState == ConnectionState.waiting) {

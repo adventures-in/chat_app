@@ -67,4 +67,9 @@ class DatabaseService {
       .document('users/$currentUserId')
       .snapshots()
       .map((DocumentSnapshot snapshot) => snapshot.toUserItem());
+
+  Stream<QuerySnapshot> getConversationsStream() => firestore
+      .collection('conversations')
+      .where('uids', arrayContains: currentUserId)
+      .snapshots();
 }
