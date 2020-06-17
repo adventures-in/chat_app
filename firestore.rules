@@ -33,6 +33,11 @@ service cloud.firestore {
         allow delete: if false;
         allow read: if request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.uids;
       }
+
+      // a user can add their own userId to the leave collection 
+      match /leave/{userId} {
+        allow create: if request.auth.uid == userId;
+      }
     }
   }
 }
