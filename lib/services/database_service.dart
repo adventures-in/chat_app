@@ -51,6 +51,14 @@ class DatabaseService {
       'photoURLs': photoURLs
     });
 
+    Future<void> leaveConversation(String conversationId) async {
+      final userItem = await getCurrentUserFuture();
+      final uid = userItem.uid;
+      await firestore
+          .document('conversations/$conversationId/leave/$uid')
+          .setData(<String, dynamic>{'leftOn': FieldValue.serverTimestamp()});
+    }
+
     return ConversationItem(
         conversationId: docRef.documentID,
         displayNames: displayNames,
