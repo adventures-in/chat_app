@@ -68,21 +68,19 @@ class DatabaseService {
       .snapshots()
       .map((DocumentSnapshot snapshot) => snapshot.toUserItem());
 
-  Stream<QuerySnapshot> getConversationsStream() => firestore
+  Stream<List<ConversationItem>> getConversationsStream() => firestore
       .collection('conversations')
       .where('uids', arrayContains: currentUserId)
-      .snapshots().map<QuerySnapshot>(
-        (querySnapshot) => querySnapshot.documents.
-
-              //       .map<>(
-              //         (itemDoc) => ConversationItem(
-              //             conversationId: itemDoc.documentID,
-              //             uids: List.from(itemDoc.data['uids'] as List),
-              //             displayNames:
-              //                 List.from(itemDoc.data['displayNames'] as List),
-              //             photoURLs:
-              //                 List.from(itemDoc.data['photoURLs'] as List)),
-              //       )
-              //       .toList(),
-              // );
+      .snapshots()
+      .map(
+        (querySnapshot) => querySnapshot.documents
+            .map(
+              (itemDoc) => ConversationItem(
+                  conversationId: itemDoc.documentID,
+                  uids: List.from(itemDoc.data['uids'] as List),
+                  displayNames: List.from(itemDoc.data['displayNames'] as List),
+                  photoURLs: List.from(itemDoc.data['photoURLs'] as List)),
+            )
+            .toList(),
+      );
 }

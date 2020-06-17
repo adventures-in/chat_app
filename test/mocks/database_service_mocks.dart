@@ -1,15 +1,17 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:adventures_in_chat_app/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:mockito/mockito.dart';
 
-class FakeQuerySnapshotDatabaseService extends Fake implements  {
-  final controller = StreamController<QuerySnapshot>();
+class FakeQuerySnapshotDatabaseService extends Fake implements DatabaseService {
+  final controller = StreamController<List<ConversationItem>>();
 
   @override
-  Stream<QuerySnapshot> get getConversationsStream => controller.stream;
+  Stream<List<ConversationItem>> getConversationsStream() => controller.stream;
 
-  void add(QuerySnapshot conversation) => controller.add(conversation);
+  void add(List<ConversationItem> conversations) =>
+      controller.add(conversations);
 
   void close() {
     controller.close();

@@ -4,7 +4,6 @@ import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +57,7 @@ class _ConversationListState extends State<ConversationList> {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: StreamBuilder(
+        child: StreamBuilder<List<ConversationItem>>(
             stream: context.db.getConversationsStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData ||
@@ -66,12 +65,11 @@ class _ConversationListState extends State<ConversationList> {
                 return CircularProgressIndicator();
               }
 
-              final querySnapshot = snapshot.data as QuerySnapshot;
-              Provider.of<ConversationsViewModel>(context).populateWith(
-                
+              Provider.of<ConversationsViewModel>(context)
+                  .populateWith(snapshot.data);
 
               return ListView.builder(
-                itemCount: querySnapshot.documents.length,
+                itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   return Provider.of<ConversationsViewModel>(context)
                       .getListTile(index);
