@@ -68,18 +68,7 @@ class _ConversationListState extends State<ConversationList> {
 
               final querySnapshot = snapshot.data as QuerySnapshot;
               Provider.of<ConversationsViewModel>(context).populateWith(
-                querySnapshot.documents
-                    .map(
-                      (itemDoc) => ConversationItem(
-                          conversationId: itemDoc.documentID,
-                          uids: List.from(itemDoc.data['uids'] as List),
-                          displayNames:
-                              List.from(itemDoc.data['displayNames'] as List),
-                          photoURLs:
-                              List.from(itemDoc.data['photoURLs'] as List)),
-                    )
-                    .toList(),
-              );
+                
 
               return ListView.builder(
                 itemCount: querySnapshot.documents.length,
