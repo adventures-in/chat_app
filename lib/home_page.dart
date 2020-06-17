@@ -19,7 +19,7 @@ class HomePageState extends State<HomePage> {
         children: <Widget>[
           ChangeNotifierProvider(
             create: (context) => ConversationsViewModel([]),
-            child: ConversationsPage(db: context.db),
+            child: ConversationsPage(),
           ),
           OptionsPage(),
         ],

@@ -11,7 +11,7 @@ import 'mocks/database_service_mocks.dart';
 
 void main() {
   group('ConversationsList', () {
-    testWidgets('conversationId, uids, displaynames and photoURLs',
+    testWidgets('preexisting conversationId, uids, displaynames and photoURLs',
         (WidgetTester tester) async {
       final db = FakeQuerySnapshotDatabaseService();
 
@@ -24,8 +24,6 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
-
       db.add([
         ConversationItem(
             conversationId: 'abc123',
@@ -34,7 +32,9 @@ void main() {
             photoURLs: ['https://url1', 'https://url2'])
       ]);
 
-      tester.
+      await tester.pumpAndSettle();
+
+      expect(find.text('Noel'), findsOneWidget);
     });
   });
 }
