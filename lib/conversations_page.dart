@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
+import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -110,17 +113,41 @@ class ConversationsListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: UserAvatar(url: item.photoURLs.first),
-      title: Text('and ${item.uids.length} others'),
-      subtitle: Text('Coming soon.'),
-      onTap: () {
-        Navigator.pushNamed(context, ChatPage.routeName,
-            arguments: ChatPageArgs(
-                currentUserId: context.db.currentUserId,
-                conversationItem: item));
+    return Dismissible(
+      // Show a red background as the item is swiped away.
+      background: Container(color: Colors.red),
+      key: Key(item.conversationId),
+      onDismissed: (direction) async {
+        final confirmed = await _displayConfirmation(context);
+        if (confirmed) {
+          await context.db.leaveConversation(item.conversationId);
+        }
       },
+      child: ListTile(
+        leading: UserAvatar(url: item.photoURLs.first),
+        title: Text('and ${item.uids.length} others'),
+        subtitle: Text('Coming soon.'),
+        onTap: () {
+          Navigator.pushNamed(context, ChatPage.routeName,
+              arguments: ChatPageArgs(
+                  currentUserId: context.db.currentUserId,
+                  conversationItem: item));
+        },
+      ),
     );
+  }
+
+  Future<bool> _displayConfirmation(BuildContext context) async {
+    final completer = Completer<bool>();
+    final response = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return ConfirmationAlert(
+            question: 'Do you want to leave the conversation?',
+          );
+        });
+    completer.complete(response);
+    return completer.future;
   }
 }
 
