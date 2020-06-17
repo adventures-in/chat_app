@@ -2,7 +2,6 @@ import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,11 +11,10 @@ import 'package:provider/provider.dart';
 class ConversationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final db = context.db;
     return Scaffold(
       appBar: AppBar(
         leading: StreamBuilder<UserItem>(
-            stream: db.getCurrentUserStream(),
+            stream: context.db.getCurrentUserStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return CircularProgressIndicator(
@@ -58,12 +56,10 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.db.currentUserId;
     return Container(
       child: Center(
         child: StreamBuilder(
-            stream: Provider.of<DatabaseService>(context, listen: false)
-                .getConversationsStream(),
+            stream: context.db.getConversationsStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData ||
                   snapshot.connectionState == ConnectionState.waiting) {
