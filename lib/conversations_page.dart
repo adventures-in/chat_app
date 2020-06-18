@@ -4,7 +4,6 @@ import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
@@ -120,12 +119,14 @@ class ConversationsListTile extends StatelessWidget {
       onDismissed: (direction) async {
         final confirmed = await _displayConfirmation(context);
         if (confirmed) {
+          Provider.of<ConversationsViewModel>(context, listen: false)
+              .remove(item: item);
           await context.db.leaveConversation(item.conversationId);
         }
       },
       child: ListTile(
         leading: UserAvatar(url: item.photoURLs.first),
-        title: Text('and ${item.uids.length} others'),
+        title: Text(_combine(item.displayNames)),
         subtitle: Text('Coming soon.'),
         onTap: () {
           Navigator.pushNamed(context, ChatPage.routeName,
@@ -137,14 +138,21 @@ class ConversationsListTile extends StatelessWidget {
     );
   }
 
+  String _combine(List<String> displayNames) {
+    var combinedNames = displayNames[0];
+    for (var i = 1; i < displayNames.length; i++) {
+      combinedNames += ', ' + displayNames[i];
+    }
+    return combinedNames;
+  }
+
   Future<bool> _displayConfirmation(BuildContext context) async {
     final completer = Completer<bool>();
     final response = await showDialog<bool>(
         context: context,
         builder: (context) {
           return ConfirmationAlert(
-            question: 'Do you want to leave the conversation?',
-          );
+              question: 'Do you want to leave the conversation?');
         });
     completer.complete(response);
     return completer.future;
@@ -161,19 +169,22 @@ class ConversationsViewModel extends ChangeNotifier {
   Widget getListTile(int index) => ConversationsListTile(item: _items[index]);
 
   /// Adds a ConversationItem to the view model.
-  /// The only way to modify the cart from outside.
   void add({@required ConversationItem item}) {
     _items.add(item);
     // Tell the widgets that are listening to this model to rebuild.
     notifyListeners();
   }
 
-  /// Adds all conversations, if we don't yet have any
-  /// TODO: this is probably not what we want in this case, review when
-  /// more of the page has been built
+  /// Removes a ConversationItem from the view model.
+  void remove({@required ConversationItem item}) {
+    _items.remove(item);
+    // Tell the widgets that are listening to this model to rebuild.
+    notifyListeners();
+  }
+
+  /// Sets the list of conversations
   void populateWith(List<ConversationItem> models) {
-    if (_items.isEmpty) {
-      _items.addAll(models);
-    }
+    _items.clear();
+    _items.addAll(models);
   }
 }
