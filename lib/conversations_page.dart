@@ -34,16 +34,13 @@ class ConversationsPage extends StatelessWidget {
       body: ConversationList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final conversationItem = await Navigator.push<ConversationItem>(
+          final item = await Navigator.push<ConversationItem>(
             context,
             MaterialPageRoute(
               builder: (context) => UserSearchPage(),
             ),
           );
-          if (conversationItem != null) {
-            Provider.of<ConversationsViewModel>(context, listen: false)
-                .add(item: conversationItem);
-          }
+          // TODO: add item to global state
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
@@ -75,25 +72,19 @@ class _ConversationListState extends State<ConversationList> {
               }
 
               final querySnapshot = snapshot.data as QuerySnapshot;
-              Provider.of<ConversationsViewModel>(context).populateWith(
-                querySnapshot.documents
-                    .map(
-                      (itemDoc) => ConversationItem(
-                          conversationId: itemDoc.documentID,
-                          uids: List.from(itemDoc.data['uids'] as List),
-                          displayNames:
-                              List.from(itemDoc.data['displayNames'] as List),
-                          photoURLs:
-                              List.from(itemDoc.data['photoURLs'] as List)),
-                    )
-                    .toList(),
-              );
 
               return ListView.builder(
                 itemCount: querySnapshot.documents.length,
                 itemBuilder: (context, index) {
-                  return Provider.of<ConversationsViewModel>(context)
-                      .getListTile(index);
+                  final itemDoc = querySnapshot.documents[index];
+                  final item = ConversationItem(
+                    conversationId: itemDoc.documentID,
+                    uids: List.from(itemDoc.data['uids'] as List),
+                    displayNames:
+                        List.from(itemDoc.data['displayNames'] as List),
+                    photoURLs: List.from(itemDoc.data['photoURLs'] as List),
+                  );
+                  return ConversationsListTile(item: item);
                 },
               );
             }),
@@ -119,8 +110,7 @@ class ConversationsListTile extends StatelessWidget {
       onDismissed: (direction) async {
         final confirmed = await _displayConfirmation(context);
         if (confirmed) {
-          Provider.of<ConversationsViewModel>(context, listen: false)
-              .remove(item: item);
+          // TODO: remove item from global state
           await context.db.leaveConversation(item.conversationId);
         }
       },
@@ -156,35 +146,5 @@ class ConversationsListTile extends StatelessWidget {
         });
     completer.complete(response);
     return completer.future;
-  }
-}
-
-class ConversationsViewModel extends ChangeNotifier {
-  ConversationsViewModel(List<ConversationItem> items) : _items = items;
-
-  /// Internal, private state of the model.
-  final List<ConversationItem> _items;
-
-  /// Unmodifiable view of the widgets in the model.
-  Widget getListTile(int index) => ConversationsListTile(item: _items[index]);
-
-  /// Adds a ConversationItem to the view model.
-  void add({@required ConversationItem item}) {
-    _items.add(item);
-    // Tell the widgets that are listening to this model to rebuild.
-    notifyListeners();
-  }
-
-  /// Removes a ConversationItem from the view model.
-  void remove({@required ConversationItem item}) {
-    _items.remove(item);
-    // Tell the widgets that are listening to this model to rebuild.
-    notifyListeners();
-  }
-
-  /// Sets the list of conversations
-  void populateWith(List<ConversationItem> models) {
-    _items.clear();
-    _items.addAll(models);
   }
 }
