@@ -9,7 +9,6 @@ import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override

@@ -1,6 +1,6 @@
 // Import the test package and Counter class
-import 'package:adventures_in_chat_app/conversations_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/models/conversations_view_model.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -16,7 +16,7 @@ void main() {
       vm.add(item: instance);
       expect(inject_list, [instance]);
     });
-    test('.populateWith() replaces _items when previously empty', () {
+    test('.populateWith() replaces _items when empty', () {
       var inject_list = <ConversationItem>[];
       var vm = ConversationsViewModel(inject_list); // start with empty list
       var instance = ConversationItem(
@@ -31,7 +31,7 @@ void main() {
       expect(inject_list, alternate_list);
     });
 
-    test('.populateWith() does not replace _items when pre initialised', () {
+    test('.populateWith() replaces _items when already has items', () {
       var inject_list = <ConversationItem>[];
       var vm = ConversationsViewModel(inject_list); // start with empty list
       var instance = ConversationItem(
@@ -55,8 +55,8 @@ void main() {
 
       vm.populateWith(second_alternative_list);
 
-      // vm will still only have the alternative list as not empty.
-      expect(inject_list, alternate_list);
+      // vm will now have the second_alternative_list
+      expect(inject_list, second_alternative_list);
     });
   });
 }
