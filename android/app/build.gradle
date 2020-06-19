@@ -40,7 +40,7 @@ android {
         applicationId "co.enspyr.adventures_in_chat_app"
         minSdkVersion 21
         targetSdkVersion 28
-        ndkVersion "21.2.6472646"
+        ndkVersion "21.3.6528147"
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
