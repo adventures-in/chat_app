@@ -128,11 +128,7 @@ class ConversationsListTile extends StatelessWidget {
   }
 
   String _combine(List<String> displayNames) {
-    var combinedNames = displayNames[0];
-    for (var i = 1; i < displayNames.length; i++) {
-      combinedNames += ', ' + displayNames[i];
-    }
-    return combinedNames;
+    return displayNames.join(', ');
   }
 
   Future<bool> _displayConfirmation(BuildContext context) async {

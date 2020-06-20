@@ -12,9 +12,13 @@ extension Conversion on DocumentSnapshot {
   }
 
   UserItem toUserItem() {
+    String displayName;
+    String photoURL;
+    if (data != null) {
+      displayName = data['displayName'] as String;
+      photoURL = data['photoURL'] as String;
+    }
     return UserItem(
-        uid: documentID,
-        displayName: data['displayName'] as String,
-        photoURL: data['photoURL'] as String);
+        uid: documentID, displayName: displayName, photoURL: photoURL);
   }
 }
