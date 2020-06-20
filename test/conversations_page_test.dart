@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'chat_page_test.dart';
 import 'mocks/database_mocks.dart';
+import 'utils/image_test_utils.dart';
 
 void main() {
   group('ConversationsList', () {
@@ -14,31 +15,33 @@ void main() {
       final fake = FakeDatabase();
       final db = DatabaseService(database: fake);
 
-      await tester.pumpWidget(wrapWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-                create: (context) => ConversationsViewModel([])),
-            Provider<DatabaseService>.value(value: db),
-          ],
-          child: ConversationsPage(),
-        ),
-      ));
+      await provideMockedNetworkImages(() async {
+        await tester.pumpWidget(wrapWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                  create: (context) => ConversationsViewModel([])),
+              Provider<DatabaseService>.value(value: db),
+            ],
+            child: ConversationsPage(),
+          ),
+        ));
 
-      fake.add(ConversationItem(conversationId: 'abc123', uids: [
-        '123',
-        '456'
-      ], displayNames: [
-        'Leon',
-        'Noel'
-      ], photoURLs: [
-        'https://lh3.googleusercontent.com/a-/AOh14GgcLuTiYf_wdIIMAw5CPaBDQowtVTHczbRV8eZrIQ=s96-c',
-        'https://lh3.googleusercontent.com/a-/AOh14GgcLuTiYf_wdIIMAw5CPaBDQowtVTHczbRV8eZrIQ=s96-c',
-      ]));
+        fake.add(ConversationItem(conversationId: 'abc123', uids: [
+          '123',
+          '456'
+        ], displayNames: [
+          'Leon',
+          'Noel'
+        ], photoURLs: [
+          'https://lh3.googleusercontent.com/a-/AOh14GgcLuTiYf_wdIIMAw5CPaBDQowtVTHczbRV8eZrIQ=s96-c',
+          'https://lh3.googleusercontent.com/a-/AOh14GgcLuTiYf_wdIIMAw5CPaBDQowtVTHczbRV8eZrIQ=s96-c',
+        ]));
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.text('Noel'), findsOneWidget);
+        expect(find.text('Noel'), findsOneWidget);
+      });
     });
   });
 }
