@@ -93,7 +93,7 @@ class ConversationsListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: UserAvatar(url: item.photoURLs.first),
-      title: Text('and ${item.uids.length} others'),
+      title: Text(_combine(item.displayNames)),
       subtitle: Text('Coming soon.'),
       onTap: () {
         Navigator.pushNamed(context, ChatPage.routeName,
@@ -102,6 +102,14 @@ class ConversationsListTile extends StatelessWidget {
                 conversationItem: item));
       },
     );
+  }
+
+  String _combine(List<String> displayNames) {
+    var combinedNames = displayNames[0];
+    for (var i = 1; i < displayNames.length; i++) {
+      combinedNames += ', ' + displayNames[i];
+    }
+    return combinedNames;
   }
 }
 

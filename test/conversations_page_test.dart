@@ -40,7 +40,7 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        expect(find.text('Noel'), findsOneWidget);
+        expect(find.text('Leon, Noel'), findsOneWidget);
       });
     });
   });
