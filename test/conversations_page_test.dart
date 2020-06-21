@@ -10,9 +10,20 @@ import 'utils/image_test_utils.dart';
 
 void main() {
   group('ConversationsList', () {
-    testWidgets('preexisting conversationId, uids, displaynames and photoURLs',
+    testWidgets('find conversationId, uids, displaynames and photoURLs',
         (WidgetTester tester) async {
       final fake = FakeDatabase();
+      fake.add(ConversationItem(conversationId: 'abc123', uids: [
+        '123',
+        '456'
+      ], displayNames: [
+        'Leon',
+        'Noel'
+      ], photoURLs: [
+        'https://example.com/leon.png',
+        'https://example.com/noel.png'
+      ]));
+
       final db = DatabaseService(database: fake);
 
       await provideMockedNetworkImages(() async {
@@ -27,20 +38,45 @@ void main() {
           ),
         ));
 
-        fake.add(ConversationItem(conversationId: 'abc123', uids: [
-          '123',
-          '456'
-        ], displayNames: [
-          'Leon',
-          'Noel'
-        ], photoURLs: [
-          'https://example.com/leon.png',
-          'https://example.com/noel.png'
-        ]));
-
         await tester.pumpAndSettle();
 
         expect(find.text('Leon, Noel'), findsOneWidget);
+      });
+    });
+    testWidgets('no exception when null displaynames',
+        (WidgetTester tester) async {
+      final fake = FakeDatabase();
+      fake.add(ConversationItem(conversationId: 'abc123', uids: [
+        '123',
+        '456',
+        'abc'
+      ], displayNames: [
+        'Leon',
+        'Noel',
+        null
+      ], photoURLs: [
+        'https://example.com/leon.png',
+        'https://example.com/noel.png',
+        'https://example.com/null.png',
+      ]));
+
+      final db = DatabaseService(database: fake);
+
+      await provideMockedNetworkImages(() async {
+        await tester.pumpWidget(wrapWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                  create: (context) => ConversationsViewModel([])),
+              Provider<DatabaseService>.value(value: db),
+            ],
+            child: ConversationsPage(),
+          ),
+        ));
+
+        await tester.pumpAndSettle();
+
+        expect(find.text('Leon, Noel, null'), findsOneWidget);
       });
     });
   });
