@@ -6,18 +6,17 @@ import '../../mocks/document_snapshot_mocks.dart';
 
 void main() {
   group('toMessage()', () {
-    test(
-        'toMessage will return valid DateTime when valid Timestamp in database',
-        () {
-      var fake = FakeMessageDocumentSnapshot('123455679', 'Test Message',
+    test('will return valid DateTime when valid Timestamp in database', () {
+      var fake = FakeDocumentSnapshot.asMessage('123455679', 'Test Message',
           Timestamp.fromDate(DateTime.parse('1969-07-20 20:18:04')));
       var message = fake.toMessage();
 
       expect(message.timestamp, DateTime.parse('1969-07-20 20:18:04'));
     });
 
-    test('toMessage will return current DateTime when in null Timestamp', () {
-      var fake = FakeMessageDocumentSnapshot('123455679', 'Test Message', null);
+    test('will return current DateTime when in null Timestamp', () {
+      var fake =
+          FakeDocumentSnapshot.asMessage('123455679', 'Test Message', null);
       var before = DateTime.now();
       var message = fake.toMessage();
       var after = DateTime.now();
@@ -30,18 +29,17 @@ void main() {
   });
 
   group('toUserItem()', () {
-    test('toUserItem will have empty displayName and photoURL if not populated',
-        () {
-      var fake = FakeUserItemDocumentSnapshot.nullData();
+    test('will have empty displayName and photoURL if not populated', () {
+      var fake = FakeDocumentSnapshot.nullData();
       var userItem = fake.toUserItem();
 
       expect(userItem.displayName, null);
       expect(userItem.photoURL, null);
     });
 
-    test('toUserItem will have displayName and photoURL', () {
-      var fake =
-          FakeUserItemDocumentSnapshot('leon', 'https://example.com/leon.png');
+    test('will have displayName and photoURL', () {
+      var fake = FakeDocumentSnapshot.asUserItem(
+          'leon', 'https://example.com/leon.png');
       var userItem = fake.toUserItem();
 
       expect(userItem.displayName, 'leon');
