@@ -33,8 +33,7 @@ class FakeDatabase implements Database {
         UserItem(
             uid: 'uid',
             displayName: 'name',
-            photoURL:
-                'https://lh3.googleusercontent.com/a-/AOh14GgcLuTiYf_wdIIMAw5CPaBDQowtVTHczbRV8eZrIQ=s96-c')
+            photoURL: 'https://example.com/name.png')
       ]);
 
   @override
