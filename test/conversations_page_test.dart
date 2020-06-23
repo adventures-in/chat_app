@@ -9,8 +9,8 @@ import 'mocks/database_mocks.dart';
 import 'utils/image_test_utils.dart';
 
 void main() {
-  group('ConversationsList', () {
-    testWidgets('find conversationId, uids, displaynames and photoURLs',
+  group('ConversationsPage', () {
+    testWidgets('should show combined display names',
         (WidgetTester tester) async {
       final fake = FakeDatabase();
       fake.add(ConversationItem(conversationId: 'abc123', uids: [
@@ -43,7 +43,8 @@ void main() {
         expect(find.text('Leon, Noel'), findsOneWidget);
       });
     });
-    testWidgets('no exception when null displaynames',
+
+    testWidgets('should show the string \'null\' when a displayName is null',
         (WidgetTester tester) async {
       final fake = FakeDatabase();
       fake.add(ConversationItem(conversationId: 'abc123', uids: [

@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// The [_data] member is used in the override of the [DocumentSnapshot.data] getter.
+///
+/// For convenience, named constructors [forMessage] and [forUserItem] create
+/// [FakeDocumentSnapshot] objects with the relevant members set for conversion
+/// to their respective types ([Message] and [UserItem]).
 class FakeDocumentSnapshot implements DocumentSnapshot {
   var _data = <String, dynamic>{};
 
-  FakeDocumentSnapshot.nullData() {
-    _data = null;
-  }
+  FakeDocumentSnapshot();
 
-  FakeDocumentSnapshot.asMessage(
+  /// Create a [FakeDocumentSnapshot] for use with the toMessage() extension function.
+  FakeDocumentSnapshot.forMessage(
       String authorId, String text, Timestamp timestamp) {
     _data = <String, dynamic>{};
     _data.addAll(<String, dynamic>{
@@ -17,7 +21,8 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
     });
   }
 
-  FakeDocumentSnapshot.asUserItem(String displayName, dynamic photoURL) {
+  /// Create a [FakeDocumentSnapshot] for use with the toUserItem() extension function.
+  FakeDocumentSnapshot.forUserItem(String displayName, dynamic photoURL) {
     _data = <String, dynamic>{};
     _data.addAll(<String, dynamic>{
       'documentID': documentID,
@@ -26,14 +31,15 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
     });
   }
 
+  /// Override [DocumentSnapshot.data] to return [_data].
+  @override
+  Map<String, dynamic> get data => _data;
+
   @override
   dynamic operator [](String key) {
     // TODO: implement []
     throw UnimplementedError();
   }
-
-  @override
-  Map<String, dynamic> get data => _data;
 
   @override
   // TODO: implement documentID
