@@ -2,21 +2,18 @@ import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final db = context.db;
     return Scaffold(
       appBar: AppBar(
         leading: StreamBuilder<UserItem>(
-            stream: db.getCurrentUserStream(),
+            stream: context.db.getCurrentUserStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return CircularProgressIndicator(
@@ -58,37 +55,21 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.db.currentUserId;
     return Container(
       child: Center(
-        child: StreamBuilder(
-            stream: Firestore.instance
-                .collection('conversations')
-                .where('uids', arrayContains: currentUserId)
-                .snapshots(),
+        child: StreamBuilder<List<ConversationItem>>(
+            stream: context.db.getConversationsStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData ||
                   snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
               }
 
-              final querySnapshot = snapshot.data as QuerySnapshot;
-              Provider.of<ConversationsViewModel>(context).populateWith(
-                querySnapshot.documents
-                    .map(
-                      (itemDoc) => ConversationItem(
-                          conversationId: itemDoc.documentID,
-                          uids: List.from(itemDoc.data['uids'] as List),
-                          displayNames:
-                              List.from(itemDoc.data['displayNames'] as List),
-                          photoURLs:
-                              List.from(itemDoc.data['photoURLs'] as List)),
-                    )
-                    .toList(),
-              );
+              Provider.of<ConversationsViewModel>(context)
+                  .populateWith(snapshot.data);
 
               return ListView.builder(
-                itemCount: querySnapshot.documents.length,
+                itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   return Provider.of<ConversationsViewModel>(context)
                       .getListTile(index);
@@ -112,7 +93,7 @@ class ConversationsListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: UserAvatar(url: item.photoURLs.first),
-      title: Text('and ${item.uids.length} others'),
+      title: Text(_combine(item.displayNames)),
       subtitle: Text('Coming soon.'),
       onTap: () {
         Navigator.pushNamed(context, ChatPage.routeName,
@@ -121,6 +102,10 @@ class ConversationsListTile extends StatelessWidget {
                 conversationItem: item));
       },
     );
+  }
+
+  String _combine(List<String> displayNames) {
+    return displayNames.join(', ');
   }
 }
 

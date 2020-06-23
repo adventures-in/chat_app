@@ -1,11 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FakeDocumentSnapshot implements DocumentSnapshot {
-  final String authorId;
-  final String text;
-  final Timestamp timestamp;
+  var _data = <String, dynamic>{};
 
-  FakeDocumentSnapshot(this.authorId, this.text, this.timestamp);
+  FakeDocumentSnapshot.nullData() {
+    _data = null;
+  }
+
+  FakeDocumentSnapshot.asMessage(
+      String authorId, String text, Timestamp timestamp) {
+    _data = <String, dynamic>{};
+    _data.addAll(<String, dynamic>{
+      'authorId': authorId,
+      'text': text,
+      'timestamp': timestamp
+    });
+  }
+
+  FakeDocumentSnapshot.asUserItem(String displayName, dynamic photoURL) {
+    _data = <String, dynamic>{};
+    _data.addAll(<String, dynamic>{
+      'documentID': documentID,
+      'displayName': displayName,
+      'photoURL': photoURL
+    });
+  }
 
   @override
   dynamic operator [](String key) {
@@ -14,16 +33,11 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
   }
 
   @override
-  // TODO: implement data
-  Map<String, dynamic> get data => <String, dynamic>{
-        'authorId': authorId,
-        'text': text,
-        'timestamp': timestamp
-      };
+  Map<String, dynamic> get data => _data;
 
   @override
   // TODO: implement documentID
-  String get documentID => throw UnimplementedError();
+  String get documentID => 'abc123';
 
   @override
   // TODO: implement exists
