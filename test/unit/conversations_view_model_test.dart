@@ -1,10 +1,9 @@
-// Import the test package and Counter class
 import 'package:adventures_in_chat_app/conversations_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ConversationViewModel', () {
+  group('ConversationsViewModel', () {
     test('.add()', () {
       var inject_list = <ConversationItem>[];
       var vm = ConversationsViewModel(inject_list);
