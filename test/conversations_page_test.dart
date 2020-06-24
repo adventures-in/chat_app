@@ -13,7 +13,7 @@ void main() {
     testWidgets('find conversationId, uids, displaynames and photoURLs',
         (WidgetTester tester) async {
       final fake = FakeDatabase();
-      fake.add(ConversationItem(conversationId: 'abc123', uids: [
+      final item = ConversationItem(conversationId: 'abc123', uids: [
         '123',
         '456'
       ], displayNames: [
@@ -22,7 +22,8 @@ void main() {
       ], photoURLs: [
         'https://example.com/leon.png',
         'https://example.com/noel.png'
-      ]));
+      ]);
+      fake.add(item);
 
       final db = DatabaseService(database: fake);
 
@@ -40,13 +41,13 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        expect(find.text('Leon, Noel'), findsOneWidget);
+        expect(find.text(item.truncatedNames(15)), findsOneWidget);
       });
     });
     testWidgets('no exception when null displaynames',
         (WidgetTester tester) async {
       final fake = FakeDatabase();
-      fake.add(ConversationItem(conversationId: 'abc123', uids: [
+      final item = ConversationItem(conversationId: 'abc123', uids: [
         '123',
         '456',
         'abc'
@@ -58,7 +59,8 @@ void main() {
         'https://example.com/leon.png',
         'https://example.com/noel.png',
         'https://example.com/null.png',
-      ]));
+      ]);
+      fake.add(item);
 
       final db = DatabaseService(database: fake);
 
@@ -76,7 +78,7 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        expect(find.text('Leon, Noel, null'), findsOneWidget);
+        expect(find.text(item.truncatedNames(15)), findsOneWidget);
       });
     });
   });
