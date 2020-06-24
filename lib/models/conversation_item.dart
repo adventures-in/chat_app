@@ -14,6 +14,14 @@ class ConversationItem {
   final List<String> displayNames;
   final List<String> photoURLs;
 
+  // generate a truncated string of the combined display names
+  String truncatedNames(int cutoff) {
+    final joined = displayNames?.join(', ') ?? '';
+    return (joined.length <= cutoff)
+        ? joined
+        : '${joined.substring(0, cutoff)}...';
+  }
+
   // Conversation items with the same conversationId are considered equivalent
   @override
   bool operator ==(dynamic o) =>
