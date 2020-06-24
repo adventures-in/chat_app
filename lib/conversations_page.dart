@@ -7,7 +7,6 @@ import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ConversationsPage extends StatelessWidget {
@@ -65,19 +64,10 @@ class _ConversationListState extends State<ConversationList> {
                 return CircularProgressIndicator();
               }
 
-              final querySnapshot = snapshot.data as QuerySnapshot;
-
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final itemDoc = querySnapshot.documents[index];
-                  final item = ConversationItem(
-                    conversationId: itemDoc.documentID,
-                    uids: List.from(itemDoc.data['uids'] as List),
-                    displayNames:
-                        List.from(itemDoc.data['displayNames'] as List),
-                    photoURLs: List.from(itemDoc.data['photoURLs'] as List),
-                  );
+                  final item = snapshot.data[index];
                   return ConversationsListTile(item: item);
                 },
               );
@@ -110,7 +100,7 @@ class ConversationsListTile extends StatelessWidget {
       },
       child: ListTile(
         leading: UserAvatar(url: item.photoURLs.first),
-        title: Text(_combine(item.displayNames)),
+        title: Text(item.truncatedNames(15)),
         subtitle: Text('Coming soon.'),
         onTap: () {
           Navigator.pushNamed(context, ChatPage.routeName,
@@ -120,14 +110,6 @@ class ConversationsListTile extends StatelessWidget {
         },
       ),
     );
-  }
-
-  String _combine(List<String> displayNames) {
-    var combinedNames = displayNames[0];
-    for (var i = 1; i < displayNames.length; i++) {
-      combinedNames += ', ' + displayNames[i];
-    }
-    return combinedNames;
   }
 
   Future<bool> _displayConfirmation(BuildContext context) async {
