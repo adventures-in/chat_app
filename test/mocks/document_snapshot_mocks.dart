@@ -1,11 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// The [_data] member is used in the override of the [DocumentSnapshot.data] getter.
+///
+/// For convenience, named constructors [forMessage] and [forUserItem] create
+/// [FakeDocumentSnapshot] objects with the relevant members set for conversion
+/// to their respective types ([Message] and [UserItem]).
 class FakeDocumentSnapshot implements DocumentSnapshot {
-  final String authorId;
-  final String text;
-  final Timestamp timestamp;
+  var _data = <String, dynamic>{};
 
-  FakeDocumentSnapshot(this.authorId, this.text, this.timestamp);
+  FakeDocumentSnapshot();
+
+  /// Create a [FakeDocumentSnapshot] for use with the toMessage() extension function.
+  FakeDocumentSnapshot.forMessage(
+      String authorId, String text, Timestamp timestamp) {
+    _data = <String, dynamic>{};
+    _data.addAll(<String, dynamic>{
+      'authorId': authorId,
+      'text': text,
+      'timestamp': timestamp
+    });
+  }
+
+  /// Create a [FakeDocumentSnapshot] for use with the toUserItem() extension function.
+  FakeDocumentSnapshot.forUserItem(String displayName, dynamic photoURL) {
+    _data = <String, dynamic>{};
+    _data.addAll(<String, dynamic>{
+      'documentID': documentID,
+      'displayName': displayName,
+      'photoURL': photoURL
+    });
+  }
+
+  /// Override [DocumentSnapshot.data] to return [_data].
+  @override
+  Map<String, dynamic> get data => _data;
 
   @override
   dynamic operator [](String key) {
@@ -14,16 +42,8 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
   }
 
   @override
-  // TODO: implement data
-  Map<String, dynamic> get data => <String, dynamic>{
-        'authorId': authorId,
-        'text': text,
-        'timestamp': timestamp
-      };
-
-  @override
   // TODO: implement documentID
-  String get documentID => throw UnimplementedError();
+  String get documentID => 'abc123';
 
   @override
   // TODO: implement exists

@@ -1,78 +1,42 @@
-import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:adventures_in_chat_app/services/database.dart';
+import 'package:adventures_in_chat_app/services/firestore_database.dart';
 import 'package:flutter/foundation.dart';
 
 class DatabaseService {
-  final Firestore firestore;
   String currentUserId;
+  final Database _database;
 
-  DatabaseService(this.firestore);
+  DatabaseService({Database database})
+      : _database = database ?? FirestoreDatabase();
 
-  Stream<List<Message>> getMessagesStream(String conversationId) => firestore
-      .collection('conversations/$conversationId/messages')
-      .orderBy('timestamp', descending: false)
-      .snapshots()
-      .map((QuerySnapshot snapshot) =>
-          snapshot.documents.map((document) => document.toMessage()).toList());
+  Stream<List<Message>> getMessagesStream(String conversationId) =>
+      _database.getMessagesStream(conversationId);
 
   Future<String> sendMessage({
     @required String text,
     @required String userId,
     @required String conversationId,
   }) =>
-      firestore
-          .collection('conversations')
-          .document(conversationId)
-          .collection('messages')
-          .add(<String, dynamic>{
-        'authorId': userId,
-        'text': text,
-        'timestamp': FieldValue.serverTimestamp(),
-      }).then((documentReference) => documentReference.documentID);
+      _database.sendMessage(
+          text: text, userId: userId, conversationId: conversationId);
 
   Future<ConversationItem> createConversation(List<String> uids,
-      List<String> displayNames, List<String> photoURLs) async {
-    // add the current user before saving to firestore
-    final item = await getCurrentUserFuture();
-    uids.add(item.uid);
-    displayNames.add(item.displayName);
-    photoURLs.add(item.photoURL);
+          List<String> displayNames, List<String> photoURLs) =>
+      _database.createConversation(
+          currentUserId, uids, displayNames, photoURLs);
 
-    // save everything to firestore
-    final docRef =
-        await firestore.collection('conversations').add(<String, dynamic>{
-      'createdOn': FieldValue.serverTimestamp(),
-      'createdById': currentUserId,
-      'uids': uids,
-      'displayNames': displayNames,
-      'photoURLs': photoURLs
-    });
+  Future<UserItem> getCurrentUserFuture() =>
+      _database.getCurrentUserFuture(currentUserId);
 
-    return ConversationItem(
-        conversationId: docRef.documentID,
-        displayNames: displayNames,
-        photoURLs: photoURLs,
-        uids: uids);
-  }
+  Stream<UserItem> getCurrentUserStream() =>
+      _database.getCurrentUserStream(currentUserId);
 
-  Future<void> leaveConversation(String conversationId) async {
-    final userItem = await getCurrentUserFuture();
-    final uid = userItem.uid;
-    await firestore
-        .document('conversations/$conversationId/leave/$uid')
-        .setData(<String, dynamic>{'leftOn': FieldValue.serverTimestamp()});
-  }
+  Stream<List<ConversationItem>> getConversationsStream() =>
+      _database.getConversationsStream(currentUserId);
 
-  Future<UserItem> getCurrentUserFuture() => firestore
-      .document('users/$currentUserId')
-      .get()
-      .then((DocumentSnapshot snapshot) => snapshot.toUserItem());
-
-  Stream<UserItem> getCurrentUserStream() => firestore
-      .document('users/$currentUserId')
-      .snapshots()
-      .map((DocumentSnapshot snapshot) => snapshot.toUserItem());
+  Future<void> leaveConversation(String conversationId) =>
+      _database.leaveConversation(conversationId, currentUserId);
 }

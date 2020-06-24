@@ -13,11 +13,10 @@ import 'package:flutter/material.dart';
 class ConversationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final db = context.db;
     return Scaffold(
       appBar: AppBar(
         leading: StreamBuilder<UserItem>(
-            stream: db.getCurrentUserStream(),
+            stream: context.db.getCurrentUserStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return CircularProgressIndicator(
@@ -56,14 +55,10 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.db.currentUserId;
     return Container(
       child: Center(
-        child: StreamBuilder(
-            stream: Firestore.instance
-                .collection('conversations')
-                .where('uids', arrayContains: currentUserId)
-                .snapshots(),
+        child: StreamBuilder<List<ConversationItem>>(
+            stream: context.db.getConversationsStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData ||
                   snapshot.connectionState == ConnectionState.waiting) {
@@ -73,7 +68,7 @@ class _ConversationListState extends State<ConversationList> {
               final querySnapshot = snapshot.data as QuerySnapshot;
 
               return ListView.builder(
-                itemCount: querySnapshot.documents.length,
+                itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   final itemDoc = querySnapshot.documents[index];
                   final item = ConversationItem(
