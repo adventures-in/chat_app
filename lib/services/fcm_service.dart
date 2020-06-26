@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class FCMService {
@@ -5,27 +7,29 @@ class FCMService {
 
   FCMService(FirebaseMessaging firebaseMessaging)
       : _firebaseMessaging = firebaseMessaging {
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print('onMessage: $message');
-        // _showItemDialog(message);
-      },
-      // TODO: remove the check for iOS when the plugin has updated
-      // Platform.isIOS ? null :
-      onBackgroundMessage: backgroundMessageHandler,
-      onLaunch: (Map<String, dynamic> message) async {
-        print('onLaunch: $message');
-        // _navigateToItemDetail(message);
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('onResume: $message');
-        // _navigateToItemDetail(message);
-      },
-    );
+    if (!Platform.isMacOS) {
+      _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print('onMessage: $message');
+          // _showItemDialog(message);
+        },
+        // TODO: remove the check for iOS when the plugin has updated
+        // Platform.isIOS ? null :
+        onBackgroundMessage: backgroundMessageHandler,
+        onLaunch: (Map<String, dynamic> message) async {
+          print('onLaunch: $message');
+          // _navigateToItemDetail(message);
+        },
+        onResume: (Map<String, dynamic> message) async {
+          print('onResume: $message');
+          // _navigateToItemDetail(message);
+        },
+      );
 
-    _firebaseMessaging.requestNotificationPermissions();
+      _firebaseMessaging.requestNotificationPermissions();
 
-    _firebaseMessaging.getToken().then(print);
+      _firebaseMessaging.getToken().then(print);
+    }
   }
 }
 
