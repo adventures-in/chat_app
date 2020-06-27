@@ -1,5 +1,5 @@
-import 'package:adventures_in_chat_app/conversations_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/models/conversations_view_model.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -70,7 +70,9 @@ void main() {
 
       // call populateWith again and check the vm was not updated again
       vm.populateWith(second_alternative_list);
-      expect(inject_list, alternate_list);
+
+      // vm will now have the second_alternative_list
+      expect(inject_list, second_alternative_list);
     });
   });
 }

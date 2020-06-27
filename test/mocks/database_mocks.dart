@@ -57,4 +57,10 @@ class FakeDatabase implements Database {
     // TODO: implement sendMessage
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> leaveConversation(String conversationId, String userId) {
+    // TODO: implement leaveConversation
+    throw UnimplementedError();
+  }
 }

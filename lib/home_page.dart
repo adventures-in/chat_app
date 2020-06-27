@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/conversations_page.dart';
 import 'package:adventures_in_chat_app/options_page.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,10 +16,7 @@ class HomePageState extends State<HomePage> {
       body: IndexedStack(
         index: _currentIndex,
         children: <Widget>[
-          ChangeNotifierProvider(
-            create: (context) => ConversationsViewModel([]),
-            child: ConversationsPage(),
-          ),
+          ConversationsPage(),
           OptionsPage(),
         ],
       ),
