@@ -1,5 +1,6 @@
 import 'package:adventures_in_chat_app/conversations_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/models/conversations_view_model.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';

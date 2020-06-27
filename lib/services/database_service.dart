@@ -36,4 +36,7 @@ class DatabaseService {
 
   Stream<List<ConversationItem>> getConversationsStream() =>
       _database.getConversationsStream(currentUserId);
+
+  Future<void> leaveConversation(String conversationId) =>
+      _database.leaveConversation(conversationId, currentUserId);
 }
