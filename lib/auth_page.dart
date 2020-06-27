@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
@@ -11,13 +13,14 @@ class AuthPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          GoogleSignInButton(
-            onPressed: () async {
-              _googleSignin(context).listen((event) {
-                print(event);
-              });
-            },
-          ),
+          if (!Platform.isMacOS)
+            GoogleSignInButton(
+              onPressed: () async {
+                _googleSignin(context).listen((event) {
+                  print(event);
+                });
+              },
+            ),
           AppleSignInButton(
               style: AppleButtonStyle.black,
               onPressed: () async {
