@@ -20,4 +20,6 @@ abstract class Database {
   Stream<UserItem> getCurrentUserStream(String userId);
 
   Stream<List<ConversationItem>> getConversationsStream(String userId);
+
+  Future<void> leaveConversation(String conversationId, String userId);
 }

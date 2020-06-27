@@ -92,4 +92,11 @@ class FirestoreDatabase implements Database {
                 )
                 .toList(),
           );
+
+  @override
+  Future<void> leaveConversation(String conversationId, String userId) async {
+    await _firestore
+        .document('conversations/$conversationId/leave/$userId')
+        .setData(<String, dynamic>{'leftOn': FieldValue.serverTimestamp()});
+  }
 }

@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:adventures_in_chat_app/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/user_search_page.dart';
+import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
 import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override
@@ -29,16 +31,13 @@ class ConversationsPage extends StatelessWidget {
       body: ConversationList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final conversationItem = await Navigator.push<ConversationItem>(
+          final item = await Navigator.push<ConversationItem>(
             context,
             MaterialPageRoute(
               builder: (context) => UserSearchPage(),
             ),
           );
-          if (conversationItem != null) {
-            Provider.of<ConversationsViewModel>(context, listen: false)
-                .add(item: conversationItem);
-          }
+          // TODO: add item to global state
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
@@ -65,14 +64,11 @@ class _ConversationListState extends State<ConversationList> {
                 return CircularProgressIndicator();
               }
 
-              Provider.of<ConversationsViewModel>(context)
-                  .populateWith(snapshot.data);
-
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return Provider.of<ConversationsViewModel>(context)
-                      .getListTile(index);
+                  final item = snapshot.data[index];
+                  return ConversationsListTile(item: item);
                 },
               );
             }),
@@ -91,43 +87,40 @@ class ConversationsListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: UserAvatar(url: item.photoURLs.first),
-      title: Text(item.truncatedNames(15)),
-      subtitle: Text('Coming soon.'),
-      onTap: () {
-        Navigator.pushNamed(context, ChatPage.routeName,
-            arguments: ChatPageArgs(
-                currentUserId: context.db.currentUserId,
-                conversationItem: item));
+    return Dismissible(
+      // Show a red background as the item is swiped away.
+      background: Container(color: Colors.red),
+      key: Key(item.conversationId),
+      onDismissed: (direction) async {
+        final confirmed = await _displayConfirmation(context);
+        if (confirmed) {
+          // TODO: remove item from global state
+          await context.db.leaveConversation(item.conversationId);
+        }
       },
+      child: ListTile(
+        leading: UserAvatar(url: item.photoURLs.first),
+        title: Text(item.truncatedNames(15)),
+        subtitle: Text('Coming soon.'),
+        onTap: () {
+          Navigator.pushNamed(context, ChatPage.routeName,
+              arguments: ChatPageArgs(
+                  currentUserId: context.db.currentUserId,
+                  conversationItem: item));
+        },
+      ),
     );
   }
-}
 
-class ConversationsViewModel extends ChangeNotifier {
-  ConversationsViewModel(List<ConversationItem> items) : _items = items;
-
-  /// Internal, private state of the model.
-  final List<ConversationItem> _items;
-
-  /// Unmodifiable view of the widgets in the model.
-  Widget getListTile(int index) => ConversationsListTile(item: _items[index]);
-
-  /// Adds a ConversationItem to the view model.
-  /// The only way to modify the cart from outside.
-  void add({@required ConversationItem item}) {
-    _items.add(item);
-    // Tell the widgets that are listening to this model to rebuild.
-    notifyListeners();
-  }
-
-  /// Adds all conversations, if we don't yet have any
-  /// TODO: this is probably not what we want in this case, review when
-  /// more of the page has been built
-  void populateWith(List<ConversationItem> models) {
-    if (_items.isEmpty) {
-      _items.addAll(models);
-    }
+  Future<bool> _displayConfirmation(BuildContext context) async {
+    final completer = Completer<bool>();
+    final response = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return ConfirmationAlert(
+              question: 'Do you want to leave the conversation?');
+        });
+    completer.complete(response);
+    return completer.future;
   }
 }
