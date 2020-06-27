@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockDatabase extends Mock implements DatabaseService {
-  MockDatabase();
+class MockDatabaseService extends Mock implements DatabaseService {
+  MockDatabaseService();
 }
 
 void main() {
@@ -61,7 +61,7 @@ void main() {
   group('ChatPage', () {
     testWidgets('Should contain an empty container and a bottom bar',
         (WidgetTester tester) async {
-      final db = MockDatabase();
+      final db = MockDatabaseService();
 
       await tester.pumpWidget(wrapWidget(ChatPage(
         db: db,
@@ -82,7 +82,7 @@ void main() {
 
     testWidgets('Should contain a list of messages when available',
         (WidgetTester tester) async {
-      final db = MockDatabase();
+      final db = MockDatabaseService();
       final messages = [
         Message(text: 'Message1'),
         Message(text: 'Message2'),
@@ -111,7 +111,7 @@ void main() {
 
     testWidgets('Should send a message when submit is pressed',
         (WidgetTester tester) async {
-      final db = MockDatabase();
+      final db = MockDatabaseService();
       final testMessage = 'Test message';
       final testConversationId = 'testConversationId';
       final testUsers = ['testUser1', 'testUser2'];
