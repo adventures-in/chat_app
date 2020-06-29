@@ -93,6 +93,17 @@ firebase deploy --only functions
 
 **Please push up changes to cloud functions in a PR for review before deploying.**
 
+## macOS 
+
+### Setup 
+
+Run 
+```sh
+flutter config --enable-macos-desktop
+```
+
+See: https://flutter.dev/desktop
+
 ## Web
 
 ### Build
