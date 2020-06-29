@@ -3,6 +3,7 @@
 A Chat App for Adventures in Flutter.
 
 ![CI](https://github.com/adventuresin/chat_app/workflows/Mobile%20Apps/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/Adventures-In/chat_app/badge.svg)](https://coveralls.io/github/Adventures-In/chat_app)
 
 ## Quickstart Guide 
 
