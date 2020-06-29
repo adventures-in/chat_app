@@ -1,21 +1,22 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 class FCMService {
   final FirebaseMessaging _firebaseMessaging;
 
   FCMService(FirebaseMessaging firebaseMessaging)
       : _firebaseMessaging = firebaseMessaging {
-    if (!Platform.isMacOS) {
+    // FCM plugin does not currently support web or mac
+    if (!kIsWeb && !Platform.isMacOS) {
       _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           print('onMessage: $message');
           // _showItemDialog(message);
         },
         // TODO: remove the check for iOS when the plugin has updated
-        // Platform.isIOS ? null :
-        onBackgroundMessage: backgroundMessageHandler,
+        onBackgroundMessage: Platform.isIOS ? null : backgroundMessageHandler,
         onLaunch: (Map<String, dynamic> message) async {
           print('onLaunch: $message');
           // _navigateToItemDetail(message);
