@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,13 +19,14 @@ class AuthPage extends StatelessWidget {
               });
             },
           ),
-          AppleSignInButton(
-              style: AppleButtonStyle.black,
-              onPressed: () async {
-                _appleSignin(context).listen((event) {
-                  print(event);
-                });
-              }),
+          if (!kIsWeb)
+            AppleSignInButton(
+                style: AppleButtonStyle.black,
+                onPressed: () async {
+                  _appleSignin(context).listen((event) {
+                    print(event);
+                  });
+                }),
         ],
       ),
     );

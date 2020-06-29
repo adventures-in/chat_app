@@ -10,6 +10,13 @@
             "type": "dart"
         },
         {
+            "name": "Web",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_web.dart",
+            "args": ["--web-port", "5000"]
+        },
+        {
             "name": "Local",
             "request": "launch",
             "type": "dart",
