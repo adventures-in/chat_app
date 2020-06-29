@@ -51,7 +51,14 @@ jobs:
     # run tests, build android, build ios
     ##############################################
     - run: flutter pub get
-    - run: flutter test
+    - run: flutter test --coverage
     - run: flutter build appbundle --build-number=$GITHUB_RUN_NUMBER
     - run: flutter build ios --release --no-codesign --build-number=$GITHUB_RUN_NUMBER
 
+    ##############################################
+    # upload coverage to coveralls.io
+    ##############################################
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
