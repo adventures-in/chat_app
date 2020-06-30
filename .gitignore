@@ -47,6 +47,7 @@ app.*.map.json
 
 # don't add project credentials to version control
 ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist
 android/app/google-services.json
 
 # credentials used by Match to access bucket with iOS signing credentials
