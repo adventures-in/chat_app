@@ -1,4 +1,4 @@
-import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

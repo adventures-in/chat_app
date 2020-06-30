@@ -1,4 +1,4 @@
-import 'package:adventures_in_chat_app/conversations_page.dart';
+import 'package:adventures_in_chat_app/widgets/conversations/conversations_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/conversations_view_model.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
