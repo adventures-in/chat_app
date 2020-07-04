@@ -18,18 +18,6 @@ void main() {
 
       expect(find.text('Test message'), findsOneWidget);
     });
-
-    testWidgets('Should contain dateTime in chat widget when specified',
-        (WidgetTester tester) async {
-      var dateTime = DateTime.parse('1969-07-20 20:18:04Z');
-      var formattedDate = '1969-7-20 20:18';
-
-      await tester.pumpWidget(
-          wrapWidget(ChatMessage(text: 'Test message', dateTime: dateTime)));
-
-      expect(find.text('Test message'), findsOneWidget);
-      expect(find.text(formattedDate), findsOneWidget);
-    });
   });
 
   group('BottomChatBar', () {

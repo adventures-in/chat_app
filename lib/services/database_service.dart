@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
@@ -5,15 +7,33 @@ import 'package:adventures_in_chat_app/services/database.dart';
 import 'package:adventures_in_chat_app/services/firestore_database.dart';
 import 'package:flutter/foundation.dart';
 
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
+
 class DatabaseService {
   String currentUserId;
   final Database _database;
+  final _controller = StreamController<List<MessagesListItem>>();
 
   DatabaseService({Database database})
       : _database = database ?? FirestoreDatabase();
 
-  Stream<List<Message>> getMessagesStream(String conversationId) =>
-      _database.getMessagesStream(conversationId);
+  Stream<List<MessagesListItem>> getMessagesStream(String conversationId) {
+    _database.getMessagesStream(conversationId).listen((messagesList) {
+      var latest = messagesList.first.timestamp;
+      final newList = <MessagesListItem>[SectionDate(latest)];
+      for (final message in messagesList) {
+        // if message is first in a new day - insert SectionDate
+        if (!message.timestamp.isSameDate(latest)) {
+          latest = message.timestamp;
+          newList.add(SectionDate(latest));
+        }
+        newList.add(message);
+      }
+      _controller.add(newList);
+    });
+
+    return _controller.stream;
+  }
 
   Future<String> sendMessage({
     @required String text,

@@ -32,7 +32,7 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: StreamBuilder<List<Message>>(
+            child: StreamBuilder<List<MessagesListItem>>(
               stream: widget.db
                   .getMessagesStream(widget.conversationItem.conversationId),
               builder: (context, snapshot) {
@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
                 }
 
                 return MessagesList(
-                    controller: _controller, messages: snapshot.data);
+                    controller: _controller, items: snapshot.data);
               },
             ),
           ),
@@ -67,12 +67,12 @@ class MessagesList extends StatefulWidget {
   const MessagesList({
     Key key,
     @required ScrollController controller,
-    @required this.messages,
+    @required this.items,
   })  : controller = controller,
         super(key: key);
 
   final ScrollController controller;
-  final List<Message> messages;
+  final List<MessagesListItem> items;
 
   @override
   _MessagesListState createState() => _MessagesListState();
@@ -90,13 +90,26 @@ class _MessagesListState extends State<MessagesList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      controller: widget.controller,
-      itemCount: widget.messages.length,
-      itemBuilder: (context, index) => ChatMessage(
-        text: widget.messages[index].text,
-        dateTime: widget.messages[index].timestamp,
-      ),
-    );
+        shrinkWrap: true,
+        controller: widget.controller,
+        itemCount: widget.items.length,
+        itemBuilder: (context, index) {
+          final item = widget.items[index];
+
+          return (item.runtimeType == Message)
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ChatMessage(text: item.outputText),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ChatMessage(text: item.outputText),
+                  ],
+                );
+        });
   }
 }
 
