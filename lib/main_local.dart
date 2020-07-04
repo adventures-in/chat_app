@@ -1,4 +1,4 @@
-import 'package:adventures_in_chat_app/chat_app.dart';
+import 'package:adventures_in_chat_app/widgets/chat_app.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

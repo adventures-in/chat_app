@@ -1,8 +1,8 @@
-import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
-import 'package:adventures_in_chat_app/widgets/chat_message.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

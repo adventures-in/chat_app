@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:adventures_in_chat_app/conversations_page.dart';
-import 'package:adventures_in_chat_app/options_page.dart';
+import 'package:adventures_in_chat_app/widgets/conversations/conversations_page.dart';
+import 'package:adventures_in_chat_app/widgets/options/options_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
