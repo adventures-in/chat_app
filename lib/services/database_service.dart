@@ -12,37 +12,30 @@ import 'package:adventures_in_chat_app/extensions/extensions.dart';
 class DatabaseService {
   String currentUserId;
   final Database _database;
-  final _controllers = <String, StreamController<List<MessagesListItem>>>{};
 
   DatabaseService({Database database})
       : _database = database ?? FirestoreDatabase();
 
   Stream<List<MessagesListItem>> getMessagesStream(String conversationId) {
-    // fresh controller per unique conversation.
-    StreamController<List<MessagesListItem>> _controller;
-    if (_controllers.containsKey(conversationId)) {
-      _controller = _controllers[conversationId];
-    } else {
-      _controller = StreamController<List<MessagesListItem>>();
-    }
-
-    _database.getMessagesStream(conversationId).listen((messagesList) {
-      var latest = DateTime.fromMicrosecondsSinceEpoch(0); // init to minimum
-      final newList = <MessagesListItem>[];
+    return _database
+        .getMessagesStream(conversationId)
+        .transform<List<MessagesListItem>>(
+            StreamTransformer.fromHandlers(handleData: (messagesList, sink) {
+      var latest =
+          messagesList.isNotEmpty ? messagesList.first.timestamp : null;
+      final itemsList = <MessagesListItem>[];
 
       for (final message in messagesList) {
         // if message is first in a new day - insert SectionDate
         if (!message.timestamp.isSameDate(latest)) {
           latest = message.timestamp;
-          newList.add(SectionDate(latest));
+          itemsList.add(SectionDate(latest));
         }
-        newList.add(message);
+        itemsList.add(message);
       }
 
-      _controller.add(newList);
-    });
-
-    return _controller.stream;
+      sink.add(itemsList);
+    }));
   }
 
   Future<String> sendMessage({
