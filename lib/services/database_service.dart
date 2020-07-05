@@ -19,12 +19,8 @@ class DatabaseService {
 
   Stream<List<MessagesListItem>> getMessagesStream(String conversationId) {
     // fresh controller per unique conversation.
-    StreamController<List<MessagesListItem>> _controller;
-    if (_controllers.containsKey(conversationId)) {
-      _controller = _controllers[conversationId];
-    } else {
-      _controller = StreamController<List<MessagesListItem>>();
-    }
+    final _controller = _controllers[conversationId] ??
+        StreamController<List<MessagesListItem>>();
 
     _database.getMessagesStream(conversationId).listen((messagesList) {
       var latest = DateTime.fromMicrosecondsSinceEpoch(0); // init to minimum
