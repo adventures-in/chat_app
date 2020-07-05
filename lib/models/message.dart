@@ -26,4 +26,6 @@ class Message implements MessagesListItem {
 
   @override
   String get outputText => text;
+
+  String get authorUserId => authorId;
 }

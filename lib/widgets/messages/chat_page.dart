@@ -3,6 +3,7 @@ import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/widgets/messages/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/extensions/extensions.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({
@@ -98,7 +99,10 @@ class _MessagesListState extends State<MessagesList> {
 
           return (item.runtimeType == Message)
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: ((item as Message).authorUserId ==
+                          context.db.currentUserId)
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.end,
                   children: [
                     ChatMessage(text: item.outputText),
                   ],
