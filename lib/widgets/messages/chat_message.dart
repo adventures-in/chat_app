@@ -9,9 +9,6 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var formattedDate = (dateTime == null)
-        ? ''
-        : '${dateTime.year}-${dateTime.month}-${dateTime.day} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}';
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -20,24 +17,17 @@ class ChatMessage extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(text,
-                    style: theme.textTheme.bodyText1.merge(TextStyle(
-                        fontSize: 20,
-                        background: Paint()
-                          ..strokeWidth = 30.0
-                          ..color = theme.backgroundColor
-                          ..style = PaintingStyle.stroke
-                          ..strokeJoin = StrokeJoin.round))),
-              ),
-            ),
             Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(formattedDate,
-                    style: theme.textTheme.bodyText1
-                        .merge(TextStyle(fontSize: 12)))),
+              padding: EdgeInsets.all(16.0),
+              child: Text(text,
+                  style: theme.textTheme.bodyText1.merge(TextStyle(
+                      fontSize: 20,
+                      background: Paint()
+                        ..strokeWidth = 30.0
+                        ..color = theme.backgroundColor
+                        ..style = PaintingStyle.stroke
+                        ..strokeJoin = StrokeJoin.round))),
+            ),
           ],
         ),
       ],

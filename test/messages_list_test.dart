@@ -15,7 +15,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: MessagesList(
         controller: _controller,
-        messages: messages,
+        items: messages,
       )));
 
       await tester.pumpAndSettle();
