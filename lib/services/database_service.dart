@@ -12,15 +12,24 @@ import 'package:adventures_in_chat_app/extensions/extensions.dart';
 class DatabaseService {
   String currentUserId;
   final Database _database;
-  final _controller = StreamController<List<MessagesListItem>>();
+  final _controllers = <String, StreamController<List<MessagesListItem>>>{};
 
   DatabaseService({Database database})
       : _database = database ?? FirestoreDatabase();
 
   Stream<List<MessagesListItem>> getMessagesStream(String conversationId) {
+    // fresh controller per unique conversation.
+    StreamController<List<MessagesListItem>> _controller;
+    if (_controllers.containsKey(conversationId)) {
+      _controller = _controllers[conversationId];
+    } else {
+      _controller = StreamController<List<MessagesListItem>>();
+    }
+
     _database.getMessagesStream(conversationId).listen((messagesList) {
-      var latest = messagesList.first.timestamp;
-      final newList = <MessagesListItem>[SectionDate(latest)];
+      var latest = DateTime.fromMicrosecondsSinceEpoch(0); // init to minimum
+      final newList = <MessagesListItem>[];
+
       for (final message in messagesList) {
         // if message is first in a new day - insert SectionDate
         if (!message.timestamp.isSameDate(latest)) {
@@ -29,6 +38,7 @@ class DatabaseService {
         }
         newList.add(message);
       }
+
       _controller.add(newList);
     });
 
