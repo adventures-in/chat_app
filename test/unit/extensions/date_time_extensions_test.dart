@@ -22,7 +22,7 @@ void main() {
       DateTime t1;
 
       expect(false, t0.isSameDate(t1));
-    });
+    }, skip: true);
 
     test('.isSameDate() returns False when compared to day before', () {
       var t0 = DateTime.parse('1969-07-20 20:18:04');
