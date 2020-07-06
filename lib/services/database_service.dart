@@ -21,9 +21,14 @@ class DatabaseService {
         .getMessagesStream(conversationId)
         .transform<List<MessagesListItem>>(
             StreamTransformer.fromHandlers(handleData: (messagesList, sink) {
-      var latest =
-          messagesList.isNotEmpty ? messagesList.first.timestamp : null;
-      final itemsList = <MessagesListItem>[];
+      // if the list is empty just emit an empty list and return
+      if (messagesList.isEmpty) {
+        sink.add(<MessagesListItem>[]);
+        return;
+      }
+
+      var latest = messagesList.first.timestamp;
+      final itemsList = <MessagesListItem>[SectionDate(latest)];
 
       for (final message in messagesList) {
         // if message is first in a new day - insert SectionDate
