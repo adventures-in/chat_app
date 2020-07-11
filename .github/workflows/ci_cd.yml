@@ -34,12 +34,12 @@ jobs:
     ##############################################
     # the setup-gcloud action seems to need python
     - uses: actions/setup-python@v1
-      if: github.event_name = 'pull_request'
+      if: github.event_name == 'pull_request'
       with:
         python-version: '3.x'
     # use setup-gcloud configured with auth credentials 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.event_name = 'pull_request'
+      if: github.event_name == 'pull_request'
       with:
         version: '270.0.0'
         service_account_email: ${{ secrets.GCS_EMAIL }}
@@ -49,7 +49,7 @@ jobs:
     # download credential files 
     ############################################
     - name: Download credential files
-      if: github.event_name = 'pull_request'
+      if: github.event_name == 'pull_request'
       run: ./get-credentials.sh
     
     ##############################################
@@ -59,11 +59,11 @@ jobs:
     - run: flutter test --coverage
     
     - name: Build Android
-      if: github.event_name = 'pull_request'
+      if: github.event_name == 'pull_request'
       run: flutter build appbundle --build-number=$GITHUB_RUN_NUMBER
     
     - name: Build iOS
-      if: github.event_name = 'pull_request'
+      if: github.event_name == 'pull_request'
       run: flutter build ios --release --no-codesign --build-number=$GITHUB_RUN_NUMBER
 
     ##############################################
