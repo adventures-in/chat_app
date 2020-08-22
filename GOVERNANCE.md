@@ -1,3 +1,7 @@
+# Governance Model 
+
+## This is a WIP, to be updated with input from contributors
+
 ### PRs 
 - everyone is a collaborator 
 - branches are protected with 1 review required for merging 
