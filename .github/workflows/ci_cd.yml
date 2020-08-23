@@ -27,7 +27,7 @@ jobs:
     # use flutter-action configured with flutter channel
     - uses: subosito/flutter-action@v1
       with:
-        channel: 'test' # or: 'stable' or 'beta'
+        channel: 'dev' # or: 'stable' or 'beta'
     
     ##############################################
     # setup-gcloud
