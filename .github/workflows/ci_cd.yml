@@ -42,7 +42,7 @@ jobs:
     ##############################################
     - name: Run tests and save coverage
       # run on PR for status check and on push for coverage
-      if: ${{ github.base_ref == 'refs/heads/test' || github.ref == 'refs/heads/test' }}
+      if: ${{ github.base_ref == 'test' || github.ref == 'refs/heads/test' }}
       run: flutter test --coverage
 
     - name: Coveralls
@@ -57,12 +57,12 @@ jobs:
     ##############################################
     # the setup-gcloud action seems to need python
     - uses: actions/setup-python@v1
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/build'
       with:
         python-version: '3.x'
     # use setup-gcloud configured with auth credentials 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/build'
       with:
         version: '270.0.0'
         service_account_email: ${{ secrets.GCS_EMAIL }}
