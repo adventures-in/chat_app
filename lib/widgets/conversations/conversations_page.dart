@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/user_search_page.dart';
+import 'package:adventures_in_chat_app/widgets/conversations/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
-import 'package:adventures_in_chat_app/widgets/user_avatar.dart';
+import 'package:adventures_in_chat_app/widgets/shared/user_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ConversationsPage extends StatelessWidget {

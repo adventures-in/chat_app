@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:adventures_in_chat_app/link_accounts_page.dart';
-import 'package:adventures_in_chat_app/profile_page.dart';
+import 'package:adventures_in_chat_app/widgets/auth/link_accounts_page.dart';
+import 'package:adventures_in_chat_app/widgets/options/profile_page.dart';
 
 class OptionsPage extends StatelessWidget {
   @override
