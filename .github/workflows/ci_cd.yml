@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - test
+      - build
 
 jobs:
   build:
@@ -28,7 +29,22 @@ jobs:
     - uses: subosito/flutter-action@v1
       with:
         channel: 'dev' # or: 'stable' or 'beta'
+
+    - run: flutter pub get
     
+    ##############################################
+    # run tests and upload coverage
+    ##############################################
+    - name: Run tests and save coverage
+      if: github.ref == 'refs/heads/test'
+      run: flutter test --coverage
+
+    - name: Coveralls
+      if: github.ref == 'refs/heads/test'
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
     ##############################################
     # setup-gcloud
     ##############################################
@@ -49,27 +65,16 @@ jobs:
     # download credential files 
     ############################################
     - name: Download credential files
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/build'
       run: ./get-credentials.sh
-    
+      
     ##############################################
-    # run tests, build android, build ios
+    # build android, build ios  to coveralls.io
     ##############################################
-    - run: flutter pub get
-    - run: flutter test --coverage
-    
     - name: Build Android
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/build'
       run: flutter build appbundle --build-number=$GITHUB_RUN_NUMBER
     
     - name: Build iOS
-      if: github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/build'
       run: flutter build ios --release --no-codesign --build-number=$GITHUB_RUN_NUMBER
-
-    ##############################################
-    # upload coverage to coveralls.io
-    ##############################################
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
