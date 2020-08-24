@@ -14,6 +14,11 @@ jobs:
     name: CI
     runs-on: macOS-latest
     steps:
+
+    # output config used in this job
+    - name: Output Run Info
+      run: echo "build-number=$GITHUB_RUN_NUMBER, event = ${{ github.event_name }}, branch = ${{ github.ref }}, target = ${{ github.base_ref }}"
+    
     # several actions use checkout 
     # docs in flutter-action say to use v1 but we should try to upgrade to v2 at some point 
     - uses: actions/checkout@v1
@@ -37,7 +42,7 @@ jobs:
     ##############################################
     - name: Run tests and save coverage
       # run on PR for status check and on push for coverage
-      if: ${{ github.head_ref == 'refs/heads/test' || github.ref == 'refs/heads/test' }}
+      if: ${{ github.base_ref == 'refs/heads/test' || github.ref == 'refs/heads/test' }}
       run: flutter test --coverage
 
     - name: Coveralls
