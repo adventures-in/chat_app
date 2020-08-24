@@ -1,8 +1,8 @@
-import 'package:adventures_in_chat_app/chat_page.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
-import 'package:adventures_in_chat_app/widgets/chat_message.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -17,18 +17,6 @@ void main() {
       await tester.pumpWidget(wrapWidget(ChatMessage(text: 'Test message')));
 
       expect(find.text('Test message'), findsOneWidget);
-    });
-
-    testWidgets('Should contain dateTime in chat widget when specified',
-        (WidgetTester tester) async {
-      var dateTime = DateTime.parse('1969-07-20 20:18:04Z');
-      var formattedDate = '1969-7-20 20:18';
-
-      await tester.pumpWidget(
-          wrapWidget(ChatMessage(text: 'Test message', dateTime: dateTime)));
-
-      expect(find.text('Test message'), findsOneWidget);
-      expect(find.text(formattedDate), findsOneWidget);
     });
   });
 

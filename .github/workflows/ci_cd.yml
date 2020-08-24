@@ -3,14 +3,22 @@ name: Mobile Apps
 on:
   pull_request:
     branches:
-      - dev
-      - master
+      - test
+  push:
+    branches:
+      - test
+      - build
 
 jobs:
   build:
     name: CI
     runs-on: macOS-latest
     steps:
+
+    # output config used in this job
+    - name: Output Run Info
+      run: echo "build-number=$GITHUB_RUN_NUMBER, event = ${{ github.event_name }}, branch = ${{ github.ref }}, target = ${{ github.base_ref }}"
+    
     # several actions use checkout 
     # docs in flutter-action say to use v1 but we should try to upgrade to v2 at some point 
     - uses: actions/checkout@v1
@@ -26,16 +34,35 @@ jobs:
     - uses: subosito/flutter-action@v1
       with:
         channel: 'dev' # or: 'stable' or 'beta'
+
+    - run: flutter pub get
     
+    ##############################################
+    # run tests and upload coverage
+    ##############################################
+    - name: Run tests and save coverage
+      # run on PR for status check and on push for coverage
+      if: ${{ github.base_ref == 'test' || github.ref == 'refs/heads/test' }}
+      run: flutter test --coverage
+
+    - name: Coveralls
+      # run on push to test branch, for the coverage
+      if: github.ref == 'refs/heads/test'
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
     ##############################################
     # setup-gcloud
     ##############################################
     # the setup-gcloud action seems to need python
     - uses: actions/setup-python@v1
+      if: github.ref == 'refs/heads/build'
       with:
         python-version: '3.x'
     # use setup-gcloud configured with auth credentials 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      if: github.ref == 'refs/heads/build'
       with:
         version: '270.0.0'
         service_account_email: ${{ secrets.GCS_EMAIL }}
@@ -45,13 +72,16 @@ jobs:
     # download credential files 
     ############################################
     - name: Download credential files
+      if: github.ref == 'refs/heads/build'
       run: ./get-credentials.sh
+      
+    ##############################################
+    # build android, build ios  to coveralls.io
+    ##############################################
+    - name: Build Android
+      if: github.ref == 'refs/heads/build'
+      run: flutter build appbundle --build-number=$GITHUB_RUN_NUMBER
     
-    ##############################################
-    # run tests, build android, build ios
-    ##############################################
-    - run: flutter pub get
-    - run: flutter test
-    - run: flutter build appbundle --build-number=$GITHUB_RUN_NUMBER
-    - run: flutter build ios --release --no-codesign --build-number=$GITHUB_RUN_NUMBER
-
+    - name: Build iOS
+      if: github.ref == 'refs/heads/build'
+      run: flutter build ios --release --no-codesign --build-number=$GITHUB_RUN_NUMBER
