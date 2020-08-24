@@ -37,7 +37,7 @@ jobs:
     ##############################################
     - name: Run tests and save coverage
       # run on PR for status check and on push for coverage
-      if: ${{ github.base_ref == 'refs/heads/test' || github.ref == 'refs/heads/test' }}
+      if: ${{ github.head_ref == 'refs/heads/test' || github.ref == 'refs/heads/test' }}
       run: flutter test --coverage
 
     - name: Coveralls
