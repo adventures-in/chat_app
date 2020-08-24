@@ -36,10 +36,12 @@ jobs:
     # run tests and upload coverage
     ##############################################
     - name: Run tests and save coverage
-      if: github.ref == 'refs/heads/test'
+      # run on PR for status check and on push for coverage
+      if: ${{ github.base_ref == 'refs/heads/test' || github.ref == 'refs/heads/test' }}
       run: flutter test --coverage
 
     - name: Coveralls
+      # run on push to test branch, for the coverage
       if: github.ref == 'refs/heads/test'
       uses: coverallsapp/github-action@master
       with:
