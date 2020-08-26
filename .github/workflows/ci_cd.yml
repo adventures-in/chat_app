@@ -21,7 +21,7 @@ jobs:
     
     # several actions use checkout 
     # docs in flutter-action say to use v1 but we should try to upgrade to v2 at some point 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     
     ##############################################
     # flutter-action
@@ -38,7 +38,7 @@ jobs:
     - run: flutter pub get
     
     ##############################################
-    # run tests and upload coverage
+    # run tests and upload coverage to coveralls
     ##############################################
     - name: Run tests and save coverage
       # run on PR for status check and on push for coverage
@@ -55,28 +55,28 @@ jobs:
     ##############################################
     # setup-gcloud
     ##############################################
-    # the setup-gcloud action seems to need python
-    - uses: actions/setup-python@v1
-      if: github.ref == 'refs/heads/build'
-      with:
-        python-version: '3.x'
     # use setup-gcloud configured with auth credentials 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       if: github.ref == 'refs/heads/build'
       with:
-        version: '270.0.0'
-        service_account_email: ${{ secrets.GCS_EMAIL }}
-        service_account_key: ${{ secrets.GCS_KEY }}
+        version: '290.0.1'
+        service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+        service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
     
     ############################################
-    # download credential files 
+    # download files 
     ############################################
+    # credential files for signing 
     - name: Download credential files
       if: github.ref == 'refs/heads/build'
       run: ./get-credentials.sh
+    # firebase config files 
+    - name: Download firebase config files
+      if: github.ref == 'refs/heads/build'
+      run: ./get-config.sh
       
     ##############################################
-    # build android, build ios  to coveralls.io
+    # build android, build ios
     ##############################################
     - name: Build Android
       if: github.ref == 'refs/heads/build'
