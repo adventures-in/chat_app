@@ -69,11 +69,11 @@ jobs:
     # credential files for signing 
     - name: Download credential files
       if: github.ref == 'refs/heads/build'
-      run: ./get-credentials.sh
+      run: ./scripts/get-credentials.sh
     # firebase config files 
     - name: Download firebase config files
       if: github.ref == 'refs/heads/build'
-      run: ./get-config.sh
+      run: ./scripts/get-config.sh
       
     ##############################################
     # build android, build ios
