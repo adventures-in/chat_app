@@ -7,7 +7,7 @@ A Chat App for Adventures in Flutter.
 
 ## Quickstart Guide 
 
-1. Join the [adventures-in Firebase project](https://console.firebase.google.com/u/0/project/adventures-in/overview) -> send your google account email to an admin, eg. nick.meinhold@gmail.com
+1. Join the [adventures-in-chat Firebase project](https://console.firebase.google.com/u/0/project/adventures-in-chat/overview) -> send your google account email to an admin, eg. nick.meinhold@gmail.com
 2. [Install gsutil](https://cloud.google.com/storage/docs/gsutil_install) and login with the same google account you used in the previous step
 3. Download the required credential files -> from the project directory, run `./get-credentials.sh`
 
@@ -118,7 +118,7 @@ flutter build web -t lib/main_web.dart
 ### Deploy
 
 ```sh
-firebase deploy --only hosting:adventures-in
+firebase deploy --only hosting:adventures-in-chat
 ```
 
 ## Testing 
