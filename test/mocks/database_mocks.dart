@@ -1,7 +1,13 @@
-import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/models/message.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
+import 'package:adventures_in_chat_app/models/message.dart';
+import 'package:adventures_in_chat_app/models/user_item.dart';
 import 'package:adventures_in_chat_app/services/database.dart';
+import 'package:adventures_in_chat_app/services/database_service.dart';
+import 'package:mockito/mockito.dart';
+
+class MockDatabaseService extends Mock implements DatabaseService {
+  MockDatabaseService();
+}
 
 /// Holds a List of [ConversationItem] that is used to provide a stream.
 ///
