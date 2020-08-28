@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -44,8 +44,8 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
                   // Errors are already displayed as alert dialogs
                   case UIStatus.done:
                   case UIStatus.error:
-                    return FutureBuilder<FirebaseUser>(
-                      future: FirebaseAuth.instance.currentUser(),
+                    return FutureBuilder<auth.User>(
+                      future: auth.FirebaseAuth.instance.currentUser,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           print(snapshot.error.toString());

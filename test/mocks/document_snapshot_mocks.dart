@@ -31,9 +31,8 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
     });
   }
 
-  /// Override [DocumentSnapshot.data] to return [_data].
   @override
-  Map<String, dynamic> get data => _data;
+  Map<String, dynamic> data() => _data;
 
   @override
   dynamic operator [](String key) {
@@ -56,4 +55,14 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
   @override
   // TODO: implement reference
   DocumentReference get reference => throw UnimplementedError();
+
+  @override
+  dynamic get(dynamic field) {
+    // TODO: implement get
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement id
+  String get id => throw UnimplementedError();
 }

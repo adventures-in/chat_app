@@ -17,11 +17,18 @@ dependencies:
   sign_in_with_apple:
   flutter_auth_buttons:
   cloud_firestore:
+  # TODO: change when https://github.com/flutter/flutter/issues/21421 is fixed  
   firebase_messaging:
+    git:
+      url: git://github.com/preetjdp/flutterfire.git
+      ref: fix-3312
+      path: packages/firebase_messaging
 
 dev_dependencies:
   test:
   flutter_test:
+    sdk: flutter
+  flutter_driver:
     sdk: flutter
   mockito:
   flutter_launcher_icons:
