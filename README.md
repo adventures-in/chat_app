@@ -5,124 +5,50 @@ A Chat App for Adventures in Flutter.
 ![CI](https://github.com/adventuresin/chat_app/workflows/Mobile%20Apps/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Adventures-In/chat_app/badge.svg)](https://coveralls.io/github/Adventures-In/chat_app)
 
-## Quickstart Guide 
+## Quickstart Guide for Adventures In members 
 
-1. Join the [adventures-in-chat Firebase project](https://console.firebase.google.com/u/0/project/adventures-in-chat/overview) -> send your google account email to an admin, eg. nick.meinhold@gmail.com
-2. [Install gsutil](https://cloud.google.com/storage/docs/gsutil_install) and login with the same google account you used in the previous step
-3. Download the required credential files -> from the project directory, run `./get-credentials.sh`
-
-- If you're on Android & will use Google Sign In
-  - [Add a SHA fingerprint to the Firebase project](https://support.google.com/firebase/answer/9137403?hl=en)
-
-## Local Emulators 
-
-The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) lets the app to connect to a local, emulated version of the Firestore and Cloud Functions, so that you can prototype and test without affecting the live Firestore, and restart from the default data at any time.
-
-With the [Firebase CLI](https://firebase.google.com/docs/cli?hl=pl) installed, start the emulators with: 
-
+1. If you haven't been added yet, ask an admin to add you to: 
+   - the [Adventures In GitHub organisation](https://github.com/Adventures-In) and the [Chat App team](https://github.com/orgs/Adventures-In/teams/chat-app) 
+   - the [Adventures In Asana workspace](https://app.asana.com/0/home/1186146549087468), and specifically the [Chat - Setup project](https://app.asana.com/0/1190914295930489/list) 
+   - the [adventures-in-chat](https://console.firebase.google.com/u/0/project/adventures-in-chat/overview) Firebase project 
+2. If you're on Android & will use Google Sign In
+   - [Add your SHA fingerprint to the Firebase project](https://support.google.com/firebase/answer/9137403?hl=en)
+3. If you haven't previously, [install gsutil](https://cloud.google.com/storage/docs/gsutil_install) 
+   - make sure you are logged in to gsutil with the same google account that was added to the Firebase project in step 1 
+4. Download the required firebase config files by running (from the project directory):
 ```sh
-firebase emulators:start --import=test/data
+./scripts/get-config.sh
+```
+5. If you want to target the web or desktop, follow the setup steps below 
+6. Review the [Contributing](https://github.com/Adventures-In/chat_app/wiki/Contributing) wiki page for information on how to proceed.
+
+## Setup for other platforms 
+
+### Channel 
+
+As of now (Aug 2020) you'll need to change to `beta` channel for web and `dev` channel for macOS (`dev` channel will work for both): 
+```sh
+flutter channel dev
+flutter upgrade
 ```
 
-The app needs to be run with the alternative entry point `lib/main_local.dart` 
-- already set as a VSCode launch option 
-- if someone could add a note on how to do this with AS that would be awesome 
-
-If you want your changes become the new default, in another terminal enter:
+### Web   
 
 ```sh
-firebase emulators:export ./test/data
+flutter config --enable-web
 ```
 
-Notes: 
-- Any service that is not emulated (eg. Auth, Storage) uses the live version 
+See: https://flutter.dev/web
 
-### iOS Signing
+### macOS Setup 
 
-We are using [match](https://docs.fastlane.tools/actions/match/) to manage Provisioning Profiles and Certificates.
-
-IF you have not already, install fastlane:
-
-```sh
-gem install fastlane
-```
-
-Install the required Provisioning Profiles and Certificates by entering:
-
-```sh
-cd ios
-fastlane match development
-```
-
-## Firebase Backend
-
-Install the [firebase cli](https://firebase.google.com/docs/cli) if you want to make changes to Firestore Security Rules or Cloud Functions. 
-
-### Firestore
-
-#### Security Rules
-
-After making changes to `firestore.rules` you can deploy with
-
-```sh
-firebase deploy --only firestore:rules
-```
-
-see [Manage and deploy Firebase Security Rules](https://firebase.google.com/docs/rules/manage-deploy)
-
-#### Indexes
-
-After making changes to `firestore.indexes.json` yo can deploy with
-
-```sh
-firebase deploy --only firestore:indexes
-```
-
-see [Managing indexes  |  Firestore  |  Google Cloud](https://cloud.google.com/firestore/docs/query-data/indexing)
-
-### Cloud Functions
-
-We are using Cloud Functions for Firebase to automatically run backend code in response to events triggered by Firebase Auth, Firestore, Cloud Storage.
-
-The relevant code is in `functions/`
-
-After making changes to `functions/src/index.ts` you can deploy with
-
-```sh
-firebase deploy --only functions
-```
-
-**Please push up changes to cloud functions in a PR for review before deploying.**
-
-## macOS 
-
-### Setup 
-
-Run 
 ```sh
 flutter config --enable-macos-desktop
 ```
 
 See: https://flutter.dev/desktop
 
-## Web
+## Using another Firebase project 
 
-### Build
+See wiki page: [Use a different Firebase project (WIP)](https://github.com/Adventures-In/chat_app/wiki/Use-a-different-Firebase-project-(WIP))
 
-```sh
-flutter build web -t lib/main_web.dart 
-```
-
-- builds to `build/web/`
-
-### Deploy
-
-```sh
-firebase deploy --only hosting:adventures-in-chat
-```
-
-## Testing 
-
-```sh
-flutter test
-```
