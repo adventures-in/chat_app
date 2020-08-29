@@ -34,7 +34,7 @@ class NavigationManager {
       context: _navKey.currentState.overlay.context,
       builder: (context) => ConfirmationAlert(question: question));
 
-  bool hasError(AsyncSnapshot<Object> snapshot) {
+  bool findsErrorIn(AsyncSnapshot<Object> snapshot) {
     if (snapshot.hasError) {
       display(snapshot.error, StackTrace.current);
     }
