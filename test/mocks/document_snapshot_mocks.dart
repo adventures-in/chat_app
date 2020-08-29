@@ -25,25 +25,17 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
   FakeDocumentSnapshot.forUserItem(String displayName, dynamic photoURL) {
     _data = <String, dynamic>{};
     _data.addAll(<String, dynamic>{
-      'documentID': documentID,
+      'documentID': id,
       'displayName': displayName,
       'photoURL': photoURL
     });
   }
 
-  /// Override [DocumentSnapshot.data] to return [_data].
   @override
-  Map<String, dynamic> get data => _data;
+  String get id => 'abc123';
 
   @override
-  dynamic operator [](String key) {
-    // TODO: implement []
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement documentID
-  String get documentID => 'abc123';
+  Map<String, dynamic> data() => _data;
 
   @override
   // TODO: implement exists
@@ -56,4 +48,11 @@ class FakeDocumentSnapshot implements DocumentSnapshot {
   @override
   // TODO: implement reference
   DocumentReference get reference => throw UnimplementedError();
+
+  @override
+  dynamic get(dynamic field) => _data[field];
+
+  @override
+  // TODO: implement documentID
+  String get documentID => throw UnimplementedError();
 }

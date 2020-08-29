@@ -65,4 +65,4 @@ node_modules/
 
 # holds the values for using cdns to config firebase, used for 
 # running locally
-web/cdns_config.html
+web/index.html

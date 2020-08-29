@@ -43,7 +43,8 @@ class _UserListState extends State<UserList> {
         }),
         Expanded(
           child: StreamBuilder(
-              stream: Firestore.instance.collection('users').snapshots(),
+              stream:
+                  FirebaseFirestore.instance.collection('users').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 final querySnapshot = snapshot.data as QuerySnapshot;
@@ -51,12 +52,12 @@ class _UserListState extends State<UserList> {
                 final currentUserId = context.db.currentUserId;
                 // remove our own document from the list
                 final filteredUserList = <UserItem>[];
-                for (final docSnapshot in querySnapshot.documents) {
-                  if (docSnapshot.documentID != currentUserId) {
+                for (final docSnapshot in querySnapshot.docs) {
+                  if (docSnapshot.id != currentUserId) {
                     filteredUserList.add(UserItem(
-                        uid: docSnapshot.documentID,
-                        displayName: docSnapshot['displayName'] as String,
-                        photoURL: docSnapshot.data['photoURL'] as String));
+                        uid: docSnapshot.id,
+                        displayName: docSnapshot.get('displayName') as String,
+                        photoURL: docSnapshot.get('photoURL') as String));
                   }
                 }
 

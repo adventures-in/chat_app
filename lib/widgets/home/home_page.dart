@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:adventures_in_chat_app/widgets/conversations/conversations_page.dart';
 import 'package:adventures_in_chat_app/widgets/options/options_page.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,9 +23,9 @@ class HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('Chats')),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text('Settings')),
+              icon: Icon(Icons.settings), label: 'Settings'),
         ],
         onTap: (int index) {
           setState(() {

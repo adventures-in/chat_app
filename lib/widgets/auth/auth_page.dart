@@ -14,7 +14,7 @@ class AuthPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          if (!Platform.isMacOS)
+          if (kIsWeb || !Platform.isMacOS)
             GoogleSignInButton(
               onPressed: () async {
                 _googleSignin(context).listen((event) {
@@ -54,7 +54,7 @@ Stream<int> _googleSignin(BuildContext context) async* {
 
     final googleAuth = await _googleUser.authentication;
 
-    final credential = GoogleAuthProvider.getCredential(
+    final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
@@ -96,7 +96,7 @@ Stream<int> _appleSignin(BuildContext context) async* {
     yield 2;
 
     // get an OAuthCredential
-    final credential = OAuthProvider(providerId: 'apple.com').getCredential(
+    final credential = OAuthProvider('apple.com').credential(
       idToken: appleIdCredential.identityToken,
       accessToken: appleIdCredential.authorizationCode,
     );

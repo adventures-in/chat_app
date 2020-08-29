@@ -7,10 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
 class FirestoreDatabase implements Database {
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
-  FirestoreDatabase({Firestore firestore})
-      : _firestore = firestore ?? Firestore.instance;
+  FirestoreDatabase({FirebaseFirestore firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Stream<List<Message>> getMessagesStream(String conversationId) => _firestore
@@ -18,7 +18,7 @@ class FirestoreDatabase implements Database {
       .orderBy('timestamp', descending: false)
       .snapshots()
       .map((QuerySnapshot snapshot) =>
-          snapshot.documents.map((document) => document.toMessage()).toList());
+          snapshot.docs.map((document) => document.toMessage()).toList());
 
   @override
   Future<String> sendMessage({
@@ -28,13 +28,13 @@ class FirestoreDatabase implements Database {
   }) =>
       _firestore
           .collection('conversations')
-          .document(conversationId)
+          .doc(conversationId)
           .collection('messages')
           .add(<String, dynamic>{
         'authorId': userId,
         'text': text,
         'timestamp': FieldValue.serverTimestamp(),
-      }).then((documentReference) => documentReference.documentID);
+      }).then((documentReference) => documentReference.id);
 
   @override
   Future<ConversationItem> createConversation(String userId, List<String> uids,
@@ -56,7 +56,7 @@ class FirestoreDatabase implements Database {
     });
 
     return ConversationItem(
-        conversationId: docRef.documentID,
+        conversationId: docRef.id,
         displayNames: displayNames,
         photoURLs: photoURLs,
         uids: uids);
@@ -64,13 +64,13 @@ class FirestoreDatabase implements Database {
 
   @override
   Future<UserItem> getCurrentUserFuture(String userId) => _firestore
-      .document('users/$userId')
+      .doc('users/$userId')
       .get()
       .then((DocumentSnapshot snapshot) => snapshot.toUserItem());
 
   @override
   Stream<UserItem> getCurrentUserStream(String userId) => _firestore
-      .document('users/$userId')
+      .doc('users/$userId')
       .snapshots()
       .map((DocumentSnapshot snapshot) => snapshot.toUserItem());
 
@@ -81,14 +81,14 @@ class FirestoreDatabase implements Database {
           .where('uids', arrayContains: userId)
           .snapshots()
           .map(
-            (querySnapshot) => querySnapshot.documents
+            (querySnapshot) => querySnapshot.docs
                 .map(
                   (itemDoc) => ConversationItem(
-                      conversationId: itemDoc.documentID,
-                      uids: List.from(itemDoc.data['uids'] as List),
+                      conversationId: itemDoc.id,
+                      uids: List.from(itemDoc.get('uids') as List),
                       displayNames:
-                          List.from(itemDoc.data['displayNames'] as List),
-                      photoURLs: List.from(itemDoc.data['photoURLs'] as List)),
+                          List.from(itemDoc.get('displayNames') as List),
+                      photoURLs: List.from(itemDoc.get('photoURLs') as List)),
                 )
                 .toList(),
           );
@@ -96,7 +96,7 @@ class FirestoreDatabase implements Database {
   @override
   Future<void> leaveConversation(String conversationId, String userId) async {
     await _firestore
-        .document('conversations/$conversationId/leave/$userId')
-        .setData(<String, dynamic>{'leftOn': FieldValue.serverTimestamp()});
+        .doc('conversations/$conversationId/leave/$userId')
+        .set(<String, dynamic>{'leftOn': FieldValue.serverTimestamp()});
   }
 }
