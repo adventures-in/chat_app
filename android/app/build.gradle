@@ -70,7 +70,6 @@ flutter {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-messaging:20.1.5'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
