@@ -14,7 +14,7 @@ class AuthPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          if (!Platform.isMacOS)
+          if (kIsWeb || !Platform.isMacOS)
             GoogleSignInButton(
               onPressed: () async {
                 _googleSignin(context).listen((event) {
