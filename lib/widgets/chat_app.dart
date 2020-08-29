@@ -1,6 +1,7 @@
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/services/fcm_service.dart';
+import 'package:adventures_in_chat_app/services/navigation_service.dart';
 import 'package:adventures_in_chat_app/widgets/auth/auth_page.dart';
 import 'package:adventures_in_chat_app/widgets/auth/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/widgets/home/home_page.dart';
@@ -17,10 +18,6 @@ class ChatApp extends StatelessWidget {
   // Create the initilization Future outside of `build`:
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-  // Create the services
-  final DatabaseService db = DatabaseService();
-  final FCMService fcm = FCMService(FirebaseMessaging());
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Object>(
@@ -28,24 +25,31 @@ class ChatApp extends StatelessWidget {
         builder: (context, snapshot) {
           // Check for errors
           if (snapshot.hasError) {
-            return SomethingWentWrong();
+            return Text(snapshot.error.toString());
           }
 
           // If not complete, show something whilst waiting for initialization to complete
           if (snapshot.connectionState != ConnectionState.done) {
-            return Loading();
+            return CircularProgressIndicator();
           }
+
+          // Create the services
+          final navigationService = NavigationService();
+          final databaseService = DatabaseService();
+          final fcmService = FCMService(FirebaseMessaging());
 
           // Otherwise, show the application
           return MultiProvider(
             providers: [
               Provider<DatabaseService>.value(
-                value: db,
+                value: databaseService,
               ),
-              Provider<FCMService>.value(value: fcm),
+              Provider<FCMService>.value(value: fcmService),
+              Provider<NavigationService>.value(value: navigationService),
             ],
             child: MaterialApp(
               title: 'Adventures In',
+              navigatorKey: navigationService.key,
               theme: ThemeData(
                 primarySwatch: Colors.blue,
               ),
@@ -62,7 +66,7 @@ class ChatApp extends StatelessWidget {
                       return ChatPage(
                         conversationItem: args.conversationItem,
                         currentUserId: args.currentUserId,
-                        db: db,
+                        db: databaseService,
                       );
                     },
                   );

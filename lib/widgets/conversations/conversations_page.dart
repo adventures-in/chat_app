@@ -1,13 +1,12 @@
-import 'dart:async';
-
-import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
+import 'package:adventures_in_chat_app/services/navigation_service.dart';
 import 'package:adventures_in_chat_app/widgets/conversations/user_search_page.dart';
-import 'package:adventures_in_chat_app/widgets/shared/confirmation_alert.dart';
+import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/widgets/shared/user_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatelessWidget {
   @override
@@ -92,7 +91,9 @@ class ConversationsListTile extends StatelessWidget {
       background: Container(color: Colors.red),
       key: Key(item.conversationId),
       onDismissed: (direction) async {
-        final confirmed = await _displayConfirmation(context);
+        final confirmed = await context
+            .read<NavigationService>()
+            .confirm('Do you want to leave the conversation?');
         if (confirmed) {
           // TODO: remove item from global state
           await context.db.leaveConversation(item.conversationId);
@@ -110,17 +111,5 @@ class ConversationsListTile extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<bool> _displayConfirmation(BuildContext context) async {
-    final completer = Completer<bool>();
-    final response = await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          return ConfirmationAlert(
-              question: 'Do you want to leave the conversation?');
-        });
-    completer.complete(response);
-    return completer.future;
   }
 }

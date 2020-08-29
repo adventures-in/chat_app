@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 extension Conversion on DocumentSnapshot {
   Message toMessage() {
     return Message(
-      authorId: data['authorId'] as String,
-      text: data['text'] as String,
-      timestamp: ((data['timestamp'] as Timestamp) ?? Timestamp.now()).toDate(),
+      authorId: get('authorId') as String,
+      text: get('text') as String,
+      timestamp: ((get('timestamp') as Timestamp) ?? Timestamp.now()).toDate(),
     );
   }
 
@@ -15,10 +15,9 @@ extension Conversion on DocumentSnapshot {
     String displayName;
     String photoURL;
     if (data != null) {
-      displayName = data['displayName'] as String;
-      photoURL = data['photoURL'] as String;
+      displayName = get('displayName') as String;
+      photoURL = get('photoURL') as String;
     }
-    return UserItem(
-        uid: documentID, displayName: displayName, photoURL: photoURL);
+    return UserItem(uid: id, displayName: displayName, photoURL: photoURL);
   }
 }

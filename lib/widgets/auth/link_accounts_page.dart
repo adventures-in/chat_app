@@ -44,27 +44,9 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
                   // Errors are already displayed as alert dialogs
                   case UIStatus.done:
                   case UIStatus.error:
-                    return FutureBuilder<auth.User>(
-                      future: auth.FirebaseAuth.instance.currentUser,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error.toString());
-                          return ErrorUI(
-                            title: 'Something went wrong',
-                            message:
-                                'There was a problem while loading your data. Please try again later.',
-                          );
-                        }
-
-                        if (snapshot.hasData) {
-                          return LoadedUI(
-                              user: snapshot.data,
-                              streamController: _uiController);
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
-                    );
+                    return LoadedUI(
+                        user: auth.FirebaseAuth.instance.currentUser,
+                        streamController: _uiController);
                   default:
                     return CircularProgressIndicator();
                 }
@@ -77,7 +59,7 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
   }
 }
 
-bool _hasLinkedProvider(String id, List<UserInfo> providersInfo) {
+bool _hasLinkedProvider(String id, List<auth.UserInfo> providersInfo) {
   for (final info in providersInfo) {
     if (info.providerId == id) {
       return true;
@@ -110,12 +92,12 @@ void _showDialog(BuildContext context, String errorMessage) {
 }
 
 class LoadedUI extends StatelessWidget {
-  final FirebaseUser user;
+  final auth.User user;
   final StreamController<UIStatus> streamController;
 
   const LoadedUI({Key key, this.user, this.streamController}) : super(key: key);
 
-  Future<void> _linkGoogle(FirebaseUser user) async {
+  Future<void> _linkGoogle(auth.User user) async {
     // signal to change UI
     streamController.add(UIStatus.loading);
 
@@ -132,7 +114,7 @@ class LoadedUI extends StatelessWidget {
 
       final googleAuth = await _googleUser.authentication;
 
-      final credential = GoogleAuthProvider.getCredential(
+      final credential = auth.GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
@@ -152,7 +134,7 @@ class LoadedUI extends StatelessWidget {
     }
   }
 
-  Future<void> _linkApple(FirebaseUser user) async {
+  Future<void> _linkApple(auth.User user) async {
     // signal to change UI
     streamController.add(UIStatus.loading);
 
@@ -172,7 +154,7 @@ class LoadedUI extends StatelessWidget {
       );
 
       // get an OAuthCredential
-      final credential = OAuthProvider(providerId: 'apple.com').getCredential(
+      final credential = auth.OAuthProvider('apple.com').credential(
         idToken: appleIdCredential.identityToken,
         accessToken: appleIdCredential.authorizationCode,
       );
