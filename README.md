@@ -12,7 +12,8 @@ A Chat App for Adventures in Flutter.
    - the [Adventures In Asana workspace](https://app.asana.com/0/home/1186146549087468), and specifically the [Chat - Setup project](https://app.asana.com/0/1190914295930489/list) 
    - the [adventures-in-chat](https://console.firebase.google.com/u/0/project/adventures-in-chat/overview) Firebase project 
 2. If you're on Android & will use Google Sign In
-   - [Add your SHA fingerprint to the Firebase project](https://support.google.com/firebase/answer/9137403?hl=en)
+   - [Get your SHA fingerprint](https://developers.google.com/android/guides/client-auth) and create an Asana task for an admin to add your fingerprint to the Firebase project
+   
 3. If you haven't previously, [install gsutil](https://cloud.google.com/storage/docs/gsutil_install) 
    - make sure you are logged in to gsutil with the same google account that was added to the Firebase project in step 1 
 4. Download the required firebase config files by running (from the project directory):
