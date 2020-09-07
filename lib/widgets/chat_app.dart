@@ -84,7 +84,7 @@ class ChatApp extends StatelessWidget {
                 });
               },
               home: StreamBuilder<auth.User>(
-                stream: auth.FirebaseAuth.instance.authStateChanges(),
+                stream: authService.authStateStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     if (snapshot.hasData) {

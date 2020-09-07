@@ -15,6 +15,12 @@ class AuthService {
 
   Stream<AuthStep> get authStepStream => _controller.stream;
 
+  Stream<User> get authStateStream => _firebaseAuth.authStateChanges();
+
+  User get currentUser => _firebaseAuth.currentUser;
+
+  Future<void> signOut() => _firebaseAuth.signOut();
+
   void signInWithGoogle() async {
     try {
       // emit the inital step
@@ -86,7 +92,7 @@ class AuthService {
       );
 
       // use the credential to sign in to firebase
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      await _firebaseAuth.signInWithCredential(credential);
 
       // we are signed in so reset the UI
       _controller.add(AuthStep.WAITING_FOR_INPUT);

@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:adventures_in_chat_app/services/auth_service.dart';
 import 'package:adventures_in_chat_app/widgets/auth/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/widgets/options/profile_page.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OptionsPage extends StatelessWidget {
   @override
@@ -14,12 +15,7 @@ class OptionsPage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.account_circle, size: 32),
               title: const Text('View Profile'),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  ProfilePage.routeName,
-                );
-              },
+              onTap: () => Navigator.pushNamed(context, ProfilePage.routeName),
             ),
             ListTile(
               leading: const Icon(Icons.textsms, size: 32),
@@ -51,7 +47,7 @@ class OptionsPage extends StatelessWidget {
                                 style: TextStyle(
                                     color: Theme.of(context).errorColor)),
                             onPressed: () async {
-                              await FirebaseAuth.instance.signOut();
+                              await context.read<AuthService>().signOut();
 
                               Navigator.pop(dialogContext);
                             },

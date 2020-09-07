@@ -31,8 +31,7 @@ class _AuthPageState extends State<AuthPage> {
         child: StreamBuilder<AuthStep>(
             stream: _auth.authStepStream,
             builder: (context, snapshot) {
-              // display an error if found
-              if (_nav.findsErrorIn(snapshot)) {
+              if (_nav.displayIfError(snapshot)) {
                 return AuthButtons(_auth);
               }
 
