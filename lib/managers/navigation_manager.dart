@@ -4,9 +4,9 @@ import 'package:adventures_in_chat_app/widgets/dialogs/confirmation_alert.dart';
 import 'package:adventures_in_chat_app/widgets/dialogs/error_alert.dart';
 import 'package:flutter/material.dart';
 
-class NavigationService {
+class NavigationManager {
   final _navKey = GlobalKey<NavigatorState>();
-  NavigationService();
+  NavigationManager();
 
   GlobalKey<NavigatorState> get key => _navKey;
 
@@ -33,4 +33,11 @@ class NavigationService {
   Future<bool> confirm(String question) => showDialog<bool>(
       context: _navKey.currentState.overlay.context,
       builder: (context) => ConfirmationAlert(question: question));
+
+  bool displayIfError(AsyncSnapshot<Object> snapshot) {
+    if (snapshot.hasError) {
+      display(snapshot.error, StackTrace.current);
+    }
+    return snapshot.hasError;
+  }
 }

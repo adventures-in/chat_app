@@ -1,150 +1,78 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:adventures_in_chat_app/enums/auth_step.dart';
+import 'package:adventures_in_chat_app/managers/navigation_manager.dart';
+import 'package:adventures_in_chat_app/services/auth_service.dart';
+import 'package:adventures_in_chat_app/widgets/shared/waiting_indicator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:provider/provider.dart';
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
+  @override
+  _AuthPageState createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> {
+  AuthService _auth;
+  NavigationManager _nav;
+
+  @override
+  void initState() {
+    _auth = context.read<AuthService>();
+    _nav = context.read<NavigationManager>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          if (kIsWeb || !Platform.isMacOS)
-            GoogleSignInButton(
-              onPressed: () async {
-                _googleSignin(context).listen((event) {
-                  print(event);
-                });
-              },
-            ),
-          if (!kIsWeb)
-            AppleSignInButton(
-                style: AppleButtonStyle.black,
-                onPressed: () async {
-                  _appleSignin(context).listen((event) {
-                    print(event);
-                  });
-                }),
-        ],
-      ),
-    );
+        child: StreamBuilder<AuthStep>(
+            stream: _auth.authStepStream,
+            builder: (context, snapshot) {
+              if (_nav.displayIfError(snapshot)) {
+                return AuthButtons(_auth);
+              }
+
+              // return the relevant widget
+              switch (snapshot.data) {
+                case AuthStep.WAITING_FOR_INPUT:
+                  return AuthButtons(_auth);
+                case AuthStep.SIGNING_IN_WITH_APPLE:
+                  return WaitingIndicator('Signing In With Apple');
+                case AuthStep.SIGNING_IN_WITH_GOOGLE:
+                  return WaitingIndicator('Signing In With Google');
+                case AuthStep.SIGNING_IN_WITH_FIREBASE:
+                  return WaitingIndicator('Signing In With Firebase');
+              }
+              return AuthButtons(_auth);
+            }));
   }
 }
 
-Stream<int> _googleSignin(BuildContext context) async* {
-  try {
-    final _fireAuth = FirebaseAuth.instance;
-    final _googleSignIn = GoogleSignIn(scopes: <String>['email']);
-    final _googleUser = await _googleSignIn.signIn();
+class AuthButtons extends StatelessWidget {
+  final AuthService _auth;
+  const AuthButtons(
+    this._auth, {
+    Key key,
+  }) : super(key: key);
 
-    // if the user canceled signin, an error is thrown but it gets swallowed
-    // by the signIn() method so we need to reset the UI and close the stream
-    if (_googleUser == null) {
-      yield 0;
-      return;
-    }
-
-    // signal to change UI
-    yield 2;
-
-    final googleAuth = await _googleUser.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    /// the auth info will be picked up by the listener on [onAuthStateChanged]
-    /// and emitted by [streamOfStateChanges]
-    await _fireAuth.signInWithCredential(credential);
-
-    // we are signed in so reset the UI
-    yield 0;
-  } catch (error) {
-    // reset the UI and display an alert
-
-    yield 0;
-    // errors with code kSignInCanceledError are swallowed by the
-    // GoogleSignIn.signIn() method so we can assume anything caught here
-    // is unexpected and for display
-    _showDialog(context, error.toString());
-  }
-}
-
-Stream<int> _appleSignin(BuildContext context) async* {
-  try {
-    // AuthorizationCredentialAppleID
-    final appleIdCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      webAuthenticationOptions: WebAuthenticationOptions(
-        clientId: 'adventures-in-chat-service-id',
-        redirectUri: Uri.parse(
-          'https://safe-chatter-mollusk.glitch.me/callbacks/sign_in_with_apple',
-        ),
-      ),
-    );
-
-    // signal to change UI
-    yield 2;
-
-    // get an OAuthCredential
-    final credential = OAuthProvider('apple.com').credential(
-      idToken: appleIdCredential.identityToken,
-      accessToken: appleIdCredential.authorizationCode,
-    );
-
-    // use the credential to sign in to firebase
-    await FirebaseAuth.instance.signInWithCredential(credential);
-
-    // we are signed in so reset the UI
-    yield 0;
-  } on SignInWithAppleAuthorizationException catch (e) {
-    // reset the UI and display an alert (unless user canceled sign in)
-    yield 0;
-
-    switch (e.code) {
-      case AuthorizationErrorCode.canceled:
-        break;
-      default:
-        _showDialog(context, e.toString());
-    }
-  } catch (error, trace) {
-    // reset the UI and display an alert
-
-    yield 0;
-    // any specific errors are caught and dealt with so we can assume
-    // anything caught here is a problem
-    _showDialog(context, 'error: $error, trace: $trace');
-  }
-}
-
-void _showDialog(BuildContext context, String errorMessage) {
-  // flutter defined function
-  showDialog<dynamic>(
-    context: context,
-    builder: (BuildContext context) {
-      // return object of type Dialog
-      return AlertDialog(
-        title: Text('Alert Dialog title'),
-        content: Text(errorMessage),
-        actions: <Widget>[
-          // usually buttons at the bottom of the dialog
-          FlatButton(
-            child: Text('Close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        if (kIsWeb || !Platform.isMacOS)
+          GoogleSignInButton(
+            onPressed: () => _auth.signInWithGoogle(),
           ),
-        ],
-      );
-    },
-  );
+        if (!kIsWeb)
+          AppleSignInButton(
+            style: AppleButtonStyle.black,
+            onPressed: () => _auth.signinWithApple(),
+          ),
+      ],
+    );
+  }
 }

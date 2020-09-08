@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:adventures_in_chat_app/enums/auth_step.dart';
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
+import 'package:adventures_in_chat_app/managers/navigation_manager.dart';
+import 'package:adventures_in_chat_app/services/auth_service.dart';
 import 'package:adventures_in_chat_app/services/database_service.dart';
 import 'package:adventures_in_chat_app/services/fcm_service.dart';
-import 'package:adventures_in_chat_app/services/navigation_service.dart';
 import 'package:adventures_in_chat_app/widgets/auth/auth_page.dart';
 import 'package:adventures_in_chat_app/widgets/auth/link_accounts_page.dart';
 import 'package:adventures_in_chat_app/widgets/home/home_page.dart';
@@ -9,6 +13,7 @@ import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/widgets/options/profile_page.dart';
 import 'package:adventures_in_chat_app/widgets/splash/splash_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +39,11 @@ class ChatApp extends StatelessWidget {
           }
 
           // Create the services
-          final navigationService = NavigationService();
+          final navigationManager = NavigationManager();
           final databaseService = DatabaseService();
           final fcmService = FCMService(FirebaseMessaging());
+          final authService = AuthService(FirebaseAuth.instance,
+              StreamController<AuthStep>(), navigationManager);
 
           // Otherwise, show the application
           return MultiProvider(
@@ -45,11 +52,12 @@ class ChatApp extends StatelessWidget {
                 value: databaseService,
               ),
               Provider<FCMService>.value(value: fcmService),
-              Provider<NavigationService>.value(value: navigationService),
+              Provider<AuthService>.value(value: authService),
+              Provider<NavigationManager>.value(value: navigationManager),
             ],
             child: MaterialApp(
               title: 'Adventures In',
-              navigatorKey: navigationService.key,
+              navigatorKey: navigationManager.key,
               theme: ThemeData(
                 primarySwatch: Colors.blue,
               ),
@@ -76,7 +84,7 @@ class ChatApp extends StatelessWidget {
                 });
               },
               home: StreamBuilder<auth.User>(
-                stream: auth.FirebaseAuth.instance.authStateChanges(),
+                stream: authService.authStateStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     if (snapshot.hasData) {

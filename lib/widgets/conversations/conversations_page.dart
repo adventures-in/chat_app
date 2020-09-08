@@ -1,7 +1,7 @@
 import 'package:adventures_in_chat_app/extensions/extensions.dart';
+import 'package:adventures_in_chat_app/managers/navigation_manager.dart';
 import 'package:adventures_in_chat_app/models/conversation_item.dart';
 import 'package:adventures_in_chat_app/models/user_item.dart';
-import 'package:adventures_in_chat_app/services/navigation_service.dart';
 import 'package:adventures_in_chat_app/widgets/conversations/user_search_page.dart';
 import 'package:adventures_in_chat_app/widgets/messages/chat_page.dart';
 import 'package:adventures_in_chat_app/widgets/shared/user_avatar.dart';
@@ -92,7 +92,7 @@ class ConversationsListTile extends StatelessWidget {
       key: Key(item.conversationId),
       onDismissed: (direction) async {
         final confirmed = await context
-            .read<NavigationService>()
+            .read<NavigationManager>()
             .confirm('Do you want to leave the conversation?');
         if (confirmed) {
           // TODO: remove item from global state

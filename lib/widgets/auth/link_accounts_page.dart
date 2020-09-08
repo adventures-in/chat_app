@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:adventures_in_chat_app/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 enum UIStatus {
@@ -45,7 +47,7 @@ class LinkAccountsPageState extends State<LinkAccountsPage> {
                   case UIStatus.done:
                   case UIStatus.error:
                     return LoadedUI(
-                        user: auth.FirebaseAuth.instance.currentUser,
+                        user: context.read<AuthService>().currentUser,
                         streamController: _uiController);
                   default:
                     return CircularProgressIndicator();
